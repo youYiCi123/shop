@@ -1,0 +1,30 @@
+server:
+  port: 8083
+
+spring:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8089  #sentinel配置
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher  #必须添加，否则knife4j无法捕捉该服务的接口信息
+
+seata:
+  tx-service-group: hefei
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+      username: nacos
+      password: nacos
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+      namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+      data-id: seataServer.properties

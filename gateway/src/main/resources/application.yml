@@ -1,0 +1,45 @@
+server:
+  port: 8079
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:     #配置gateway路由规则
+        - id: user-route
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - StripPrefix=1
+        - id: prod-route
+          uri: lb://prod-service
+          predicates:
+            - Path=/prod-service/**
+          filters:
+            - StripPrefix=1
+
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+        username: nacos
+        password: nacos
+
+secure:
+  ignore:
+    urls: #配置白名单路径
+      - "/doc.html"
+      - "/swagger-resources/**"
+      - "/swagger/**"
+      - "/*/v2/api-docs"
+      - "/*/*.js"
+      - "/*/*.css"
+      - "/*/*.png"
+      - "/*/*.ico"
+      - "/webjars/**"
+      - "/actuator/**"
+
+
+
+

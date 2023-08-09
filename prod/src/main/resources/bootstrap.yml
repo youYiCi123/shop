@@ -1,0 +1,14 @@
+#nacos一定需要在这个文件中配置信息
+spring:
+  application:
+    name: prod-service #应用名称 nacos会将该作为服务名称
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+    sentinel:   #sentinel配置
+      transport:
+        dashboard: localhost:8089

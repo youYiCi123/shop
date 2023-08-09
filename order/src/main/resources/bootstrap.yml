@@ -1,0 +1,14 @@
+#nacos一定需要在这个文件中配置信息
+spring:
+  application:
+    name: order-service #应用名称 nacos会将该作为服务名称
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery: #nacos服务注册发现
+        username: nacos
+        password: nacos
+        namespace: 5bf17891-cbb5-4379-87c7-328de242f02d #namespace默认public不用写命名空间Id,其余命名空间需要写id
+      config: #nacos配置中心
+        file-extension: yaml #nacos客户端，默认是porperties的文件扩展名
+        namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
