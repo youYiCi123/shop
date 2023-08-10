@@ -1,24 +1,33 @@
 package com.jxm.prod.controller;
 
+import com.jxm.common.api.CommonResult;
+import com.jxm.common.generator.UniqueIdGenerator;
+import com.jxm.prod.dao.SeriesModel;
 import com.jxm.prod.feign.UserFeignService;
+import com.jxm.prod.service.ProdService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/prod")
 public class ProdController {
 
-    @Autowired
-    private UserFeignService userFeignService;
 
-    @ApiOperation("王瑞12获取了token")
-    @GetMapping("/getProd")
-   public String getProd(){
-       System.out.println("下单成功");
-        String userName=userFeignService.getUser2();
-       return "Hello word12wr"+userName;
-   }
+
+    @Autowired
+    private ProdService prodService;
+
+    @ApiOperation("创建所有类型")
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult create(@RequestBody SeriesModel seriesModel) {
+
+        int count = prodService.create(seriesModel);
+
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
 }

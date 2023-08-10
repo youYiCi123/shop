@@ -35,7 +35,7 @@
         <pagehelper.version>5.3.0</pagehelper.version>
         <druid.version>1.2.9</druid.version>
         <hutool.version>5.8.0</hutool.version>
-        <mybatis.version>3.5.9</mybatis.version>
+        <mybatis-starter-version>2.2.2</mybatis-starter-version>
         <mysql-connector.version>8.0.29</mysql-connector.version>
         <spring-data-commons.version>2.7.0</spring-data-commons.version>
         <nimbus-jose-jwt.version>9.23</nimbus-jose-jwt.version>
@@ -134,11 +134,11 @@
                 <artifactId>knife4j-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
-            <!-- MyBatis-->
+            <!--mybatis-->
             <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-starter-version}</version>
             </dependency>
             <!--Mysql数据库驱动-->
             <dependency>

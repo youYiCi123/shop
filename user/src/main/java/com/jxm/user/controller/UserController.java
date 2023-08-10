@@ -1,30 +1,40 @@
 package com.jxm.user.controller;
 
+import com.jxm.common.api.CommonResult;
+import com.jxm.user.dao.SeriesModel;
+import com.jxm.user.service.ProdSeriesService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
 @RefreshScope  //@Value无法动态感知配置文件内容修改
 public class UserController {
 
-    @Value("${user.name}")
-    private String name;
+    @Autowired
+    private ProdSeriesService prodSeriesService;
 
-    @GetMapping("/getUser")
-    public String getUser() throws InterruptedException {
-        System.out.println("用户成功"+name);
-        return "Hello word11"+name;
+    @ApiOperation("获取所有类型")
+    @RequestMapping(value = "/listAll", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<SeriesModel>> listAll() {
+        List<SeriesModel> seriesList = prodSeriesService.listAll();
+        return CommonResult.success(seriesList);
     }
 
-    @ApiOperation("王瑞获取了token")
-    @GetMapping("/getUser2")
-    public String getUser2(){
-        System.out.println("用户成功"+name);
-        return "Hello word11"+name;
+    @ApiOperation("创建所有类型")
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult create(@RequestBody SeriesModel seriesModel) {
+        int count = prodSeriesService.create(seriesModel);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
     }
 }
