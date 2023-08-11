@@ -17,13 +17,19 @@ import java.text.ParseException;
 
 /**
  * 将登录用户的JWT转化成用户信息的全局过滤器
- * Created by macro on 2020/6/17.
+ * Ordered接口是spring框架的一个规范接口，用于元素排序或者需要有序的对象实现该接口
  */
 @Component
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AuthGlobalFilter.class);
 
+    /**
+     *
+     * @param exchange 请求上下文，里面可以获取Request、Response等信息
+     * @param chain 用来把请求委托给下一个过滤器
+     * @return 返回标示当前过滤器业务结束
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String token = exchange.getRequest().getHeaders().getFirst(AuthConstant.JWT_TOKEN_HEADER);

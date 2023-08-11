@@ -28,5 +28,4 @@ public class ProdServiceImpl implements ProdService {
         int p=10/0;
         return i;
     }
-
 }

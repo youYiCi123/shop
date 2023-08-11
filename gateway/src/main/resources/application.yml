@@ -7,9 +7,9 @@ spring:
     gateway:
       routes:     #配置gateway路由规则
         - id: user-route
-          uri: lb://user-service
+          uri: lb://upstage-service
           predicates:
-            - Path=/user-service/**
+            - Path=/upstage-service/**
           filters:
             - StripPrefix=1
         - id: prod-route

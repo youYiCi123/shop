@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "user-service",path = "/user",fallback = UserFeignServiceFallBack.class)
+@FeignClient(name = "upstage-service",path = "/user",fallback = UserFeignServiceFallBack.class)
 public interface UserFeignService {
 
     @PostMapping("/create")

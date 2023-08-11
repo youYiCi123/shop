@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>prod</module>
-        <module>user</module>
+        <module>upstage</module>
         <module>stock</module>
         <module>order</module>
         <module>gateway</module>
@@ -40,6 +40,7 @@
         <spring-data-commons.version>2.7.0</spring-data-commons.version>
         <nimbus-jose-jwt.version>9.23</nimbus-jose-jwt.version>
         <jjwt.version>0.9.1</jjwt.version>
+        <spring-cloud-starter-oauth2.version>2.2.5.RELEASE</spring-cloud-starter-oauth2.version>
     </properties>
 
     <dependencies>
