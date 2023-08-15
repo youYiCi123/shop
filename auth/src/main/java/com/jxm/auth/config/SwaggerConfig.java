@@ -18,10 +18,10 @@ public class SwaggerConfig extends BaseSwaggerConfig {
     @Override
     public SwaggerProperties swaggerProperties() {
         return SwaggerProperties.builder()
-                .apiBasePackage("com.macro.mall.auth.controller")
-                .title("mall认证中心")
-                .description("mall认证中心相关接口文档")
-                .contactName("macro")
+                .apiBasePackage("com.jxm.auth.controller")
+                .title("商城系统")
+                .description("商城系统相关接口文档")
+                .contactName("王瑞")
                 .version("1.0")
                 .enableSecurity(true)
                 .build();

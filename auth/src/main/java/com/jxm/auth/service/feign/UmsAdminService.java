@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Created by macro on 2019/10/18.
  */
-@FeignClient("mall-admin")
+@FeignClient("upstage-service")
 public interface UmsAdminService {
 
-    @GetMapping("/admin/loadByUsername")
+    @GetMapping("/upstage/loadByUsername")
     UserDto loadUserByUsername(@RequestParam String username);
 }

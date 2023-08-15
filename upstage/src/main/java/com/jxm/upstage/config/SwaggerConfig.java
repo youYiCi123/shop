@@ -20,7 +20,7 @@ public class SwaggerConfig extends BaseSwaggerConfig {
     @Override
     public SwaggerProperties swaggerProperties() {
         return SwaggerProperties.builder()
-                .apiBasePackage("com.jxm.user.controller")
+                .apiBasePackage("com.jxm.upstage.controller")
                 .title("商城系统")
                 .description("商城系统相关接口文档")
                 .contactName("王瑞")

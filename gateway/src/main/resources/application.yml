@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: 'http://localhost:8085/auth-service/rsa/publicKey' #配置RSA的公钥访问地址
+
   cloud:
     gateway:
       routes:     #配置gateway路由规则
@@ -18,13 +24,19 @@ spring:
             - Path=/prod-service/**
           filters:
             - StripPrefix=1
-
+        - id: auth-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth-service/**
+          filters:
+            - StripPrefix=1
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
         namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
         username: nacos
         password: nacos
+
 
 secure:
   ignore:
