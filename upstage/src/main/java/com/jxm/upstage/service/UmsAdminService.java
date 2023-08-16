@@ -4,6 +4,7 @@ package com.jxm.upstage.service;
 
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.domain.UserDto;
+import com.jxm.upstage.dto.UmsAdminLoginParam;
 import com.jxm.upstage.dto.UmsAdminParam;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsRole;
@@ -34,11 +35,9 @@ public interface UmsAdminService {
 
     /**
      * 登录功能
-     * @param username 用户名
-     * @param password 密码
      * @return 调用认证中心返回结果
      */
-    CommonResult login(String username, String password);
+    CommonResult login(UmsAdminLoginParam umsAdminLoginParam);
 
     /**
      * 获取用户信息

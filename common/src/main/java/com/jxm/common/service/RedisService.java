@@ -3,6 +3,7 @@ package com.jxm.common.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * redis操作Service
@@ -14,6 +15,11 @@ public interface RedisService {
      * 保存属性
      */
     void set(String key, Object value, long time);
+
+    /**
+     * 保存属性
+     */
+    void set(String key, Object value, long time, TimeUnit timeUnit);
 
     /**
      * 保存属性

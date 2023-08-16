@@ -8,6 +8,8 @@ import com.jxm.common.api.ResultCode;
 import com.jxm.common.constant.AuthConstant;
 import com.jxm.common.domain.UserDto;
 import com.jxm.common.exception.Asserts;
+import com.jxm.common.service.RedisService;
+import com.jxm.upstage.dto.UmsAdminLoginParam;
 import com.jxm.upstage.dto.UmsAdminParam;
 import com.jxm.upstage.feign.AuthService;
 import com.jxm.upstage.mapper.UmsAdminMapper;
@@ -15,6 +17,7 @@ import com.jxm.upstage.mapper.UmsAdminRoleRelationDao;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsRole;
 import com.jxm.upstage.service.UmsAdminService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +36,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Autowired
     private UmsAdminMapper adminMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private AuthService authService;
@@ -73,16 +79,27 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     @Override
-    public CommonResult login(String username, String password) {
-        if(StrUtil.isEmpty(username)||StrUtil.isEmpty(password)){
+    public CommonResult login(UmsAdminLoginParam umsAdminLoginParam) {
+        // 查询验证码
+        String code = (String) redisService.get(umsAdminLoginParam.getUuid());
+        // 清除验证码
+        redisService.del(umsAdminLoginParam.getUuid());
+        if (StringUtils.isBlank(code)) {
+            return CommonResult.failed("验证码不存在或已过期");
+        }
+        if (StringUtils.isBlank(umsAdminLoginParam.getCode()) || !umsAdminLoginParam.getCode().equalsIgnoreCase(code)) {
+            return CommonResult.failed("验证码错误");
+        }
+
+        if(StrUtil.isEmpty(umsAdminLoginParam.getUsername())||StrUtil.isEmpty(umsAdminLoginParam.getPassword())){
             Asserts.fail("用户名或密码不能为空！");
         }
         Map<String, String> params = new HashMap<>();
         params.put("client_id", AuthConstant.ADMIN_CLIENT_ID);
         params.put("client_secret","wr123456");
         params.put("grant_type","password");
-        params.put("username",username);
-        params.put("password",password);
+        params.put("username",umsAdminLoginParam.getUsername());
+        params.put("password",umsAdminLoginParam.getPassword());
         CommonResult restResult = authService.getAccessToken(params);
         if(ResultCode.SUCCESS.getCode()==restResult.getCode()&&restResult.getData()!=null){
 //            updateLoginTimeByUsername(username);

@@ -23,6 +23,15 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
+    public void set(String key, Object value, long time, TimeUnit timeUnit) {
+        if (time > 0) {
+            redisTemplate.opsForValue().set(key, value, time, timeUnit);
+        } else {
+            set(key, value);
+        }
+    }
+
+    @Override
     public void set(String key, Object value) {
         redisTemplate.opsForValue().set(key, value);
     }

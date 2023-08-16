@@ -11,6 +11,9 @@
 
     <artifactId>upstage</artifactId>
 
+    <properties>
+        <easy-captcha.version>1.6.2</easy-captcha.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
@@ -56,6 +59,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!-- Java图形验证码 -->
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>${easy-captcha.version}</version>
         </dependency>
     </dependencies>
 
