@@ -3,6 +3,8 @@ package com.jxm.upstage.service.Impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
+import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.json.JSONUtil;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.api.ResultCode;
 import com.jxm.common.constant.AuthConstant;
@@ -16,13 +18,18 @@ import com.jxm.upstage.mapper.UmsAdminMapper;
 import com.jxm.upstage.mapper.UmsAdminRoleRelationDao;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsRole;
+import com.jxm.upstage.service.UmsAdminCacheService;
 import com.jxm.upstage.service.UmsAdminService;
+import com.nimbusds.jose.JWSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +46,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private AuthService authService;
@@ -109,6 +119,27 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     @Override
+    public UmsAdmin getCurrentAdmin() throws ParseException {
+        String token = request.getHeader(AuthConstant.JWT_TOKEN_HEADER);
+        if(StrUtil.isEmpty(token)){
+            Asserts.fail(ResultCode.UNAUTHORIZED);
+        }
+        String realToken = token.replace(AuthConstant.JWT_TOKEN_PREFIX, "");
+        JWSObject jwsObject = JWSObject.parse(realToken);
+        String userStr = jwsObject.getPayload().toString();
+        UserDto userDto = JSONUtil.toBean(userStr, UserDto.class);
+
+        UmsAdmin admin = getCacheService().getAdmin(userDto.getId());
+        if(admin!=null){
+            return admin;
+        }else{
+            admin = adminMapper.selectByPrimaryKey(userDto.getId());
+            getCacheService().setAdmin(admin);
+            return admin;
+        }
+    }
+
+    @Override
     public UserDto loadUserByUsername(String username){
         //获取用户信息
         UmsAdmin admin = getAdminByUsername(username);
@@ -123,5 +154,10 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             return userDTO;
         }
         return null;
+    }
+
+    @Override
+    public UmsAdminCacheService getCacheService() {
+        return SpringUtil.getBean(UmsAdminCacheService.class);
     }
 }

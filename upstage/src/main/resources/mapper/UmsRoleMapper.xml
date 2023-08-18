@@ -14,4 +14,13 @@
     id, name, description, admin_count, create_time, status, sort
   </sql>
 
+  <select id="selectAllRole"  resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ums_role
+  </select>
+
 </mapper>

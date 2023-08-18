@@ -1,5 +1,6 @@
 package com.jxm.upstage.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.domain.UserDto;
@@ -9,7 +10,9 @@ import com.jxm.upstage.domin.LoginProperties;
 import com.jxm.upstage.dto.UmsAdminLoginParam;
 import com.jxm.upstage.dto.UmsAdminParam;
 import com.jxm.upstage.model.UmsAdmin;
+import com.jxm.upstage.model.UmsRole;
 import com.jxm.upstage.service.UmsAdminService;
+import com.jxm.upstage.service.UmsRoleService;
 import com.wf.captcha.base.Captcha;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +21,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/upstage")
@@ -35,6 +41,9 @@ public class UserController {
 
     @Resource
     private LoginProperties loginProperties;
+
+    @Autowired
+    private UmsRoleService roleService;
 
     private static final String VerificationCode="Verification-Code";
 
@@ -76,6 +85,23 @@ public class UserController {
     public CommonResult login(@Validated @RequestBody UmsAdminLoginParam umsAdminLoginParam) {
         return adminService.login(umsAdminLoginParam);
     }
+
+    @ApiOperation(value = "获取当前登录用户信息")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getAdminInfo() throws ParseException {
+            UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", umsAdmin.getUsername());
+        data.put("menus", roleService.getMenuList(umsAdmin.getId()));
+        data.put("icon", umsAdmin.getIcon());
+        List<UmsRole> roleList = adminService.getRoleList(umsAdmin.getId());
+        if(CollUtil.isNotEmpty(roleList)){
+            List<String> roles = roleList.stream().map(UmsRole::getName).collect(Collectors.toList());
+            data.put("roles",roles);
+        }
+        return CommonResult.success(data);
+    }
     
     @ApiOperation("根据用户名获取通用用户信息")
     @RequestMapping(value = "/loadByUsername", method = RequestMethod.GET)
@@ -84,4 +110,6 @@ public class UserController {
         UserDto userDTO = adminService.loadUserByUsername(username);
         return userDTO;
     }
+
+
 }

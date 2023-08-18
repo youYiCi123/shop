@@ -7,7 +7,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: 'http://localhost:8085/auth-service/rsa/publicKey' #配置RSA的公钥访问地址
+          jwk-set-uri: 'http://localhost:8079/auth-service/rsa/publicKey' #配置RSA的公钥访问地址
 
   cloud:
     gateway:
@@ -53,6 +53,7 @@ secure:
       - "/actuator/**"
       - "/upstage-service/upstage/code"
       - "/upstage-service/upstage/login"
+      - "/auth-service/rsa/publicKey"
 
 
 

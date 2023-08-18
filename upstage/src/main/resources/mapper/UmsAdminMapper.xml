@@ -40,4 +40,11 @@
     username = #{username,jdbcType=VARCHAR}
   </select>
 
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_admin
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
 </mapper>

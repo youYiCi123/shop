@@ -9,6 +9,7 @@ import com.jxm.upstage.dto.UmsAdminParam;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsRole;
 
+import java.text.ParseException;
 import java.util.List;
 
 
@@ -39,9 +40,20 @@ public interface UmsAdminService {
      */
     CommonResult login(UmsAdminLoginParam umsAdminLoginParam);
 
+
+    /**
+     * 获取当前登录后台用户
+     */
+    UmsAdmin getCurrentAdmin() throws ParseException;
+
     /**
      * 获取用户信息
      */
     UserDto loadUserByUsername(String username);
+
+    /**
+     * 获取缓存服务
+     */
+    UmsAdminCacheService getCacheService();
 
 }
