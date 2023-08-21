@@ -24,10 +24,18 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     private Long REDIS_EXPIRE;
     @Value("${spring.redis.key.admin}")
     private String REDIS_KEY_ADMIN;
+    @Value("${spring.redis.key.resourceList}")
+    private String REDIS_KEY_RESOURCE_LIST;
 
     @Override
     public void delAdmin(Long adminId) {
         String key = REDIS_DATABASE + ":" + REDIS_KEY_ADMIN + ":" + adminId;
+        redisService.del(key);
+    }
+
+    @Override
+    public void delResourceList(Long adminId) {
+        String key = REDIS_DATABASE + ":" + REDIS_KEY_RESOURCE_LIST + ":" + adminId;
         redisService.del(key);
     }
 

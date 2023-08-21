@@ -2,6 +2,7 @@ package com.jxm.upstage.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
+import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.domain.UserDto;
 import com.jxm.common.service.RedisService;
@@ -9,7 +10,9 @@ import com.jxm.upstage.domin.LoginCodeEnum;
 import com.jxm.upstage.domin.LoginProperties;
 import com.jxm.upstage.dto.UmsAdminLoginParam;
 import com.jxm.upstage.dto.UmsAdminParam;
+import com.jxm.upstage.dto.UpdateAdminPasswordParam;
 import com.jxm.upstage.model.UmsAdmin;
+import com.jxm.upstage.model.UmsAdminRoleRelation;
 import com.jxm.upstage.model.UmsRole;
 import com.jxm.upstage.service.UmsAdminService;
 import com.jxm.upstage.service.UmsRoleService;
@@ -22,14 +25,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/upstage")
+@RequestMapping("/admin")
 @RefreshScope  //@Value无法动态感知配置文件内容修改
 public class UserController {
 
@@ -58,6 +59,7 @@ public class UserController {
         return CommonResult.success(umsAdmin);
     }
 
+    @ApiOperation(value = "验证码")
     @ResponseBody
     @GetMapping("/code")
     public CommonResult getCode() {
@@ -102,7 +104,111 @@ public class UserController {
         }
         return CommonResult.success(data);
     }
-    
+
+    @ApiOperation("根据用户名或姓名分页获取用户列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<UmsAdmin>> list(@RequestParam(value = "keyword", required = false) String keyword,
+                                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+        List<UmsAdmin> adminList = adminService.list(keyword, pageSize, pageNum);
+        return CommonResult.success(CommonPage.restPage(adminList));
+    }
+
+    @ApiOperation("获取指定用户信息")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<UmsAdmin> getItem(@PathVariable Long id) {
+        UmsAdmin admin = adminService.getItem(id);
+        return CommonResult.success(admin);
+    }
+
+    @ApiOperation("修改指定用户密码")
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updatePassword(@RequestBody UpdateAdminPasswordParam updatePasswordParam) {
+        int status = adminService.updatePassword(updatePasswordParam);
+        if (status > 0) {
+            return CommonResult.success(status);
+        } else if (status == -1) {
+            return CommonResult.failed("提交参数不合法");
+        } else if (status == -2) {
+            return CommonResult.failed("找不到该用户");
+        } else if (status == -3) {
+            return CommonResult.failed("旧密码错误");
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+    @ApiOperation("删除指定用户信息")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult delete(@PathVariable Long id) {
+        int count = adminService.delete(id);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation("批量删除用户信息")
+    @RequestMapping(value = "/deleteBatch", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteBatch(@RequestBody Long[] multipleSelectionId) {
+        List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        int count = adminService.deleteBatch(idList);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation("修改帐号状态")
+    @RequestMapping(value = "/updateStatus/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateStatus(@PathVariable Long id,@RequestParam(value = "status") Integer status) {
+        UmsAdmin umsAdmin = new UmsAdmin();
+        umsAdmin.setStatus(status);
+        int count = adminService.update(id,umsAdmin);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation("修改指定用户信息")
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult update(@PathVariable Long id, @RequestBody UmsAdmin admin) {
+        int count = adminService.update(id, admin);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation("获取指定用户的角色")
+    @RequestMapping(value = "/role/{adminId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<UmsRole>> getRoleList(@PathVariable Long adminId) {
+        List<UmsRole> roleList = adminService.getRoleList(adminId);
+        return CommonResult.success(roleList);
+    }
+
+    @ApiOperation("给用户分配角色")
+    @RequestMapping(value = "/role/update", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateRole(@RequestParam("adminId") Long adminId,
+                                   @RequestParam("roleIds") List<Long> roleIds) {
+        int count = adminService.updateRole(adminId, roleIds);
+        if (count >= 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+
     @ApiOperation("根据用户名获取通用用户信息")
     @RequestMapping(value = "/loadByUsername", method = RequestMethod.GET)
     @ResponseBody

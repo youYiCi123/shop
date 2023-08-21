@@ -22,9 +22,13 @@ public class UmsAdminParam {
     private String password;
     @ApiModelProperty(value = "用户头像")
     private String icon;
+    @ApiModelProperty(value = "性别")
+    private Integer sex;
     @ApiModelProperty(value = "邮箱")
     @Email
     private String email;
+    @ApiModelProperty(value = "职务")
+    private String duty;
     @ApiModelProperty(value = "用户昵称")
     private String nickName;
     @ApiModelProperty(value = "备注")

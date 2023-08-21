@@ -13,6 +13,11 @@ public interface UmsAdminCacheService {
     void delAdmin(Long adminId);
 
     /**
+     * 删除后台用户资源列表缓存
+     */
+    void delResourceList(Long adminId);
+
+    /**
      * 获取缓存后台用户信息
      */
     UmsAdmin getAdmin(Long adminId);

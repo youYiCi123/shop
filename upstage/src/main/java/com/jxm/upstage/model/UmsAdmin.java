@@ -22,6 +22,9 @@ public class UmsAdmin implements Serializable {
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
+    @ApiModelProperty(value = "性别")
+    private Integer sex;
+
     @ApiModelProperty(value = "备注信息")
     private String note;
 
@@ -33,6 +36,11 @@ public class UmsAdmin implements Serializable {
 
     @ApiModelProperty(value = "帐号启用状态：0->禁用；1->启用")
     private Integer status;
+
+    @ApiModelProperty(value = "职责")
+    private String duty;
+
+
 
     public Long getId() {
         return id;
@@ -114,6 +122,22 @@ public class UmsAdmin implements Serializable {
         this.status = status;
     }
 
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public String getDuty() {
+        return duty;
+    }
+
+    public void setDuty(String duty) {
+        this.duty = duty;
+    }
+
     @Override
     public String toString() {
         return "UmsAdmin{" +
@@ -123,10 +147,12 @@ public class UmsAdmin implements Serializable {
                 ", icon='" + icon + '\'' +
                 ", email='" + email + '\'' +
                 ", nickName='" + nickName + '\'' +
+                ", sex=" + sex +
                 ", note='" + note + '\'' +
                 ", createTime=" + createTime +
                 ", loginTime=" + loginTime +
                 ", status=" + status +
+                ", duty='" + duty + '\'' +
                 '}';
     }
 }

@@ -23,4 +23,29 @@
     from ums_role
   </select>
 
+  <update id="subAdminCountByClass" parameterType="com.jxm.upstage.dto.RoleGroupCount">
+    <foreach collection="RoleGroupCounts" item="item" index="index" separator=";">
+      update ums_role
+      set
+      admin_count = admin_count - #{item.count,jdbcType=BIGINT}
+      where
+      id = #{item.roleId,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+  <update id="addAdminCount" parameterType="java.lang.Long">
+    update ums_role set admin_count=admin_count+1
+    where id in
+    <foreach collection="roleId" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <update id="subAdminCount" parameterType="java.lang.Long">
+    update ums_role set admin_count=admin_count-1
+    where id in
+    <foreach collection="roleId" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </update>
 </mapper>

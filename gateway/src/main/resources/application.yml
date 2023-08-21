@@ -51,8 +51,8 @@ secure:
       - "/*/*.ico"
       - "/webjars/**"
       - "/actuator/**"
-      - "/upstage-service/upstage/code"
-      - "/upstage-service/upstage/login"
+      - "/upstage-service/admin/code"
+      - "/upstage-service/admin/login"
       - "/auth-service/rsa/publicKey"
 
 

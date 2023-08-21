@@ -22,6 +22,13 @@ public class UmsRoleServiceImpl implements UmsRoleService {
 
     @Autowired
     private UmsRoleDao roleDao;
+    @Autowired
+    private UmsRoleMapper roleMapper;
+
+    @Override
+    public List<UmsRole> list() {
+        return roleMapper.selectAllRole();
+    }
 
     @Override
     public List<UmsMenu> getMenuList(Long adminId) {
