@@ -51,4 +51,9 @@ public class UmsResourceServiceImpl implements UmsResourceService {
         return resourceRoleMap;
 
     }
+
+    @Override
+    public List<UmsResource> listAll() {
+        return resourceMapper.selectAllResource();
+    }
 }

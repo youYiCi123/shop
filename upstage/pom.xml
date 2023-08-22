@@ -13,6 +13,7 @@
 
     <properties>
         <easy-captcha.version>1.6.2</easy-captcha.version>
+        <easyexcel.version>2.2.3</easyexcel.version>
     </properties>
     <dependencies>
         <dependency>
@@ -69,6 +70,12 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
+        <!--easyExcel-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>${easyexcel.version}</version>
         </dependency>
     </dependencies>
 

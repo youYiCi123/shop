@@ -22,4 +22,8 @@ public interface UmsAdminMapper {
     UmsAdmin selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(UmsAdmin record);
+
+    List<String> getAllUserPhone();
+
+    int saveBatch(@Param("list") List<UmsAdmin> list);
 }

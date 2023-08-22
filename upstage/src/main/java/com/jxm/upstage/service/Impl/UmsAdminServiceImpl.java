@@ -178,18 +178,20 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         if (count > 0) {
             //修改用户角色对应的count用户数
             List<UmsAdminRoleRelation> oldRoleIds=adminRoleRelationMapper.selectRoleListByAdminId(idList);
-            Map<Long, Long> needSubRoleMap = oldRoleIds.stream().collect(Collectors.groupingBy(UmsAdminRoleRelation::getRoleId, Collectors.counting()));
-            List<RoleGroupCount> RoleGroupCountList=new ArrayList<>();
-            for (Map.Entry<Long, Long> longLongEntry : needSubRoleMap.entrySet()) {
-                RoleGroupCount roleGroupCount = new RoleGroupCount();
-                roleGroupCount.setRoleId(longLongEntry.getKey());
-                roleGroupCount.setCount(longLongEntry.getValue());
-                RoleGroupCountList.add(roleGroupCount);
+            if(oldRoleIds.size()!=0){
+                Map<Long, Long> needSubRoleMap = oldRoleIds.stream().collect(Collectors.groupingBy(UmsAdminRoleRelation::getRoleId, Collectors.counting()));
+                List<RoleGroupCount> RoleGroupCountList=new ArrayList<>();
+                for (Map.Entry<Long, Long> longLongEntry : needSubRoleMap.entrySet()) {
+                    RoleGroupCount roleGroupCount = new RoleGroupCount();
+                    roleGroupCount.setRoleId(longLongEntry.getKey());
+                    roleGroupCount.setCount(longLongEntry.getValue());
+                    RoleGroupCountList.add(roleGroupCount);
+                }
+                umsRoleMapper.subAdminCountByClass(RoleGroupCountList);
+                //删除用户角色对应关系
+                return adminRoleRelationMapper.deleteByAdminIds(idList);
             }
-            umsRoleMapper.subAdminCountByClass(RoleGroupCountList);
-
-            //删除用户角色对应关系
-            return adminRoleRelationMapper.deleteByAdminIds(idList);
+            return count;
         }
         return -1;
     }
@@ -282,5 +284,15 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Override
     public UmsAdminCacheService getCacheService() {
         return SpringUtil.getBean(UmsAdminCacheService.class);
+    }
+
+    @Override
+    public List<String> getAllUserPhone() {
+        return adminMapper.getAllUserPhone();
+    }
+
+    @Override
+    public int saveBatch(List<UmsAdmin> umsAdmins) {
+        return adminMapper.saveBatch(umsAdmins);
     }
 }

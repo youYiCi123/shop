@@ -8,7 +8,15 @@ import java.util.List;
 
 public interface UmsRoleMapper {
 
+    int insert(UmsRole record);
+
+    int updateByPrimaryKey(UmsRole record);
+
+    int deleteByIds(@Param("ids") List<Long> ids);
+
     List<UmsRole> selectAllRole();
+
+    List<UmsRole> selectByName(String keyword);
 
     int addAdminCount(@Param("roleId") List<Long> roleId);
 

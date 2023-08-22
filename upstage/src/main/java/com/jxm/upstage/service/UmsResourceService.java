@@ -17,4 +17,9 @@ public interface UmsResourceService {
      * 初始化资源角色规则
      */
     Map<String,List<String>> initResourceRolesMap();
+
+    /**
+     * 查询全部资源
+     */
+    List<UmsResource> listAll();
 }

@@ -58,6 +58,7 @@ public interface UmsAdminService {
     /**
      * 批量删除指定用户
      */
+    @Transactional
     int deleteBatch(List<Long> idList);
 
 
@@ -94,5 +95,15 @@ public interface UmsAdminService {
      * 获取缓存服务
      */
     UmsAdminCacheService getCacheService();
+
+    /**
+     * 获取所有用户手机号
+     */
+    List<String> getAllUserPhone();
+
+    /**
+     * 批量保存用户信息
+     */
+    int saveBatch(List<UmsAdmin> umsAdmins);
 
 }

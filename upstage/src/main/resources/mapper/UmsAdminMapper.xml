@@ -50,6 +50,11 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
+  <select id="getAllUserPhone" resultType="java.lang.String">
+    select username
+    from ums_admin
+  </select>
+
   <select id="selectByQuery" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
@@ -116,4 +121,17 @@
       #{id}
     </foreach>
   </delete>
+
+  <insert id="saveBatch" parameterType="java.util.List">
+    insert into ums_admin (id,username,password,icon,email,nick_name,note,create_time,login_time,status,duty)
+    values
+    <foreach collection="list" item="userItem" index="index" separator=",">
+      (#{userItem.id},#{userItem.username},
+      #{userItem.password},#{userItem.icon},
+      #{userItem.email},#{userItem.nickName},#{userItem.note},
+      #{userItem.createTime,jdbcType=TIMESTAMP},
+      #{userItem.loginTime,jdbcType=TIMESTAMP},
+      #{userItem.status},#{userItem.duty})
+    </foreach>
+  </insert>
 </mapper>

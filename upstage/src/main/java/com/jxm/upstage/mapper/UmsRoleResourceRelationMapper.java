@@ -9,4 +9,7 @@ public interface UmsRoleResourceRelationMapper {
 
     List<UmsRoleResourceRelation> selectAllRoleResource();
 
+    int deleteByRoleId(Long roleId);
+
+    int insert(UmsRoleResourceRelation record);
 }

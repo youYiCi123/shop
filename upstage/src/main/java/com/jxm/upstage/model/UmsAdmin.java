@@ -1,5 +1,7 @@
 package com.jxm.upstage.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -7,6 +9,8 @@ import java.util.Date;
 
 public class UmsAdmin implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     private String username;
