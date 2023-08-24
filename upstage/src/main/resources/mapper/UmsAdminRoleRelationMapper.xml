@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.upstage.mapper.UmsAdminRoleRelationMapper">
+  <resultMap id="BaseResultMap" type="com.jxm.upstage.model.UmsAdminRoleRelation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="admin_id" jdbcType="BIGINT" property="adminId" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, admin_id, role_id
+  </sql>
+
+  <delete id="deleteById"  parameterType="java.lang.Long" >
+    delete from ums_admin_role_relation
+    where admin_id=#{adminId}
+  </delete>
+
+  <delete id="deleteByAdminIds" parameterType="java.lang.Long">
+    delete from ums_admin_role_relation
+    where
+    admin_id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <select id="selectRoleListByAdminId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_admin_role_relation
+    where
+    admin_id
+    in
+    <foreach collection="adminIds" open="(" close=")" item="item" separator=",">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="selectById" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select
+    role_id
+    from ums_admin_role_relation
+   where
+   admin_id=#{id}
+  </select>
+</mapper>
