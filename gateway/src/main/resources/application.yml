@@ -54,6 +54,7 @@ secure:
       - "/upstage-service/admin/code"
       - "/upstage-service/admin/login"
       - "/auth-service/rsa/publicKey"
+      - "/upstage-service/excel/download"
 
 
 

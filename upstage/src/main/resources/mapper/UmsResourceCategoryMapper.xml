@@ -12,9 +12,6 @@
   </sql>
   <select id="selectResourceCategory"  resultMap="BaseResultMap">
     select
-    <if test="distinct">
-      distinct
-    </if>
     <include refid="Base_Column_List" />
     from ums_resource_category
       order by sort desc

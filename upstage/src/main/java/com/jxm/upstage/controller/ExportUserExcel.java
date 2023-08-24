@@ -7,6 +7,7 @@ import com.jxm.upstage.Listener.UserExcelListener;
 import com.jxm.upstage.dto.ExcelUser;
 import com.jxm.upstage.utils.SpringUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +17,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequestMapping("/excel")
@@ -46,4 +49,45 @@ public class ExportUserExcel {
         return CommonResult.success(msg);
     }
 
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @ResponseBody
+    public void downloadFile(HttpServletResponse response) {
+        // 读取resource目下文件
+        String templatePath = "classpath:files/user.xlsx";
+        String filename = "user.xlsx";
+        File file = null;
+        try {
+            file = ResourceUtils.getFile(templatePath);
+        } catch (FileNotFoundException e) {
+            System.out.println("文件不存在 "+ filename);
+            // todo, 可以在流中返回“文件不存在“，这样用户可以下载到文件，但是内容为”文件不存在”
+            return;
+        }
+
+        if (file.isFile()) {
+            byte[] fileNameBytes = filename.getBytes(StandardCharsets.UTF_8);
+            filename = new String(fileNameBytes, 0, fileNameBytes.length, StandardCharsets.UTF_8);
+
+            response.reset();
+            response.setContentType("application/force-download");
+            response.setCharacterEncoding("utf-8");
+            response.setContentLength((int) file.length());
+            response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+
+            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                byte[] buff = new byte[1024];
+                OutputStream os = response.getOutputStream();
+                int i;
+                while ((i = bis.read(buff)) != -1) {
+                    os.write(buff, 0, i);
+                    os.flush();
+                }
+            } catch (IOException e) {
+                System.out.println("下载出错"+filename+"，错误原因 "+e.getMessage());
+            }
+        } else {
+            System.out.println("文件不存在 "+ filename);
+            // todo, 可以在流中返回“文件不存在“，这样用户可以下载到文件，但是内容为”文件不存在”
+        }
+    }
 }

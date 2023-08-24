@@ -11,9 +11,6 @@
   </sql>
   <select id="selectAllRoleResource"  resultMap="BaseResultMap">
     select
-    <if test="distinct">
-      distinct
-    </if>
     <include refid="Base_Column_List" />
     from ums_role_resource_relation
   </select>
