@@ -71,7 +71,10 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             JWSObject jwsObject = JWSObject.parse(realToken);
             String userStr = jwsObject.getPayload().toString();
             UserDto userDto = JSONUtil.toBean(userStr, UserDto.class);
-            if (AuthConstant.ADMIN_CLIENT_ID.equals(userDto.getClientId()) && !pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
+            if (AuthConstant.ADMIN_CLIENT_ID.equals(userDto.getClientId()) &&
+                    !(pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())||
+                    pathMatcher.match(AuthConstant.PROD_URL_PATTERN, uri.getPath())
+                    )) {
                 return Mono.just(new AuthorizationDecision(false));
             }
             if (AuthConstant.PORTAL_CLIENT_ID.equals(userDto.getClientId()) && pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
@@ -81,17 +84,14 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             e.printStackTrace();
             return Mono.just(new AuthorizationDecision(false));
         }
-        //非管理端路径直接放行
-        if (!pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
-            return Mono.just(new AuthorizationDecision(true));
-        }
         //管理端路径需校验权限
         Map<Object, Object> resourceRolesMap = redisTemplate.opsForHash().entries(AuthConstant.RESOURCE_ROLES_MAP_KEY);
         Iterator<Object> iterator = resourceRolesMap.keySet().iterator();
         List<String> authorities = new ArrayList<>();
+        String requestUri = uri.getPath().substring(uri.getPath().indexOf("/",1));
         while (iterator.hasNext()) {
             String pattern = (String) iterator.next();
-            if (pathMatcher.match(pattern, uri.getPath())) {
+            if (pathMatcher.match(pattern, requestUri)) {
                 authorities.addAll(Convert.toList(String.class, resourceRolesMap.get(pattern)));
             }
         }

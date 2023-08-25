@@ -32,6 +32,10 @@ public interface AuthConstant {
     String ADMIN_URL_PATTERN = "/upstage-service/**";
 
     /**
+     * 商品接口路径匹配
+     */
+    String PROD_URL_PATTERN = "/prod-service/**";
+    /**
      * Redis缓存权限规则key
      */
     String RESOURCE_ROLES_MAP_KEY = "auth:resourceRolesMap";
