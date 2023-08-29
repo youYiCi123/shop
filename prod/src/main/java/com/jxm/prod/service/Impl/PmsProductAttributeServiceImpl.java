@@ -1,7 +1,9 @@
 package com.jxm.prod.service.Impl;
 
 import com.github.pagehelper.PageHelper;
+import com.jxm.prod.mapper.PmsProductAttributeDao;
 import com.jxm.prod.dto.PmsProductAttributeParam;
+import com.jxm.prod.dto.ProductAttrInfo;
 import com.jxm.prod.mapper.PmsProductAttributeCategoryMapper;
 import com.jxm.prod.mapper.PmsProductAttributeMapper;
 import com.jxm.prod.model.PmsProductAttribute;
@@ -24,7 +26,8 @@ public class PmsProductAttributeServiceImpl implements PmsProductAttributeServic
     private PmsProductAttributeMapper productAttributeMapper;
     @Autowired
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
-
+    @Autowired
+    private PmsProductAttributeDao productAttributeDao;
     @Override
     public int create(PmsProductAttributeParam pmsProductAttributeParam) {
         PmsProductAttribute pmsProductAttribute = new PmsProductAttribute();
@@ -83,5 +86,10 @@ public class PmsProductAttributeServiceImpl implements PmsProductAttributeServic
     public List<PmsProductAttribute> getList(Long cid, Integer type, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
         return productAttributeMapper.selectByCidAndType(cid, type);
+    }
+
+    @Override
+    public List<ProductAttrInfo> getProductAttrInfo(Long productCategoryId) {
+        return productAttributeDao.getProductAttrInfo(productCategoryId);
     }
 }

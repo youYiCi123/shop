@@ -1,6 +1,7 @@
 package com.jxm.prod.service;
 
 import com.jxm.prod.dto.PmsProductAttributeParam;
+import com.jxm.prod.dto.ProductAttrInfo;
 import com.jxm.prod.model.PmsProductAttribute;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,4 +39,5 @@ public interface PmsProductAttributeService {
      */
     List<PmsProductAttribute> getList(Long cid, Integer type, Integer pageSize, Integer pageNum);
 
+    List<ProductAttrInfo> getProductAttrInfo(Long productCategoryId);
 }

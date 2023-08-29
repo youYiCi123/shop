@@ -2,6 +2,7 @@ package com.jxm.prod.controller;
 
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
+import com.jxm.prod.dto.PmsProductAttributeCategoryItem;
 import com.jxm.prod.model.PmsProductAttributeCategory;
 import com.jxm.prod.service.PmsProductAttributeCategoryService;
 import io.swagger.annotations.Api;
@@ -62,6 +63,14 @@ public class PmsProductAttributeCategoryController {
     public CommonResult<CommonPage<PmsProductAttributeCategory>> getList(@RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "1") Integer pageNum) {
         List<PmsProductAttributeCategory> productAttributeCategoryList = productAttributeCategoryService.getList(pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(productAttributeCategoryList));
+    }
+
+    @ApiOperation("获取所有商品属性分类及其下属性")
+    @RequestMapping(value = "/list/withAttr", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<PmsProductAttributeCategoryItem>> getListWithAttr() {
+        List<PmsProductAttributeCategoryItem> productAttributeCategoryResultList = productAttributeCategoryService.getListWithAttr();
+        return CommonResult.success(productAttributeCategoryResultList);
     }
 
 }

@@ -3,6 +3,7 @@ package com.jxm.prod.controller;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.prod.dto.PmsProductAttributeParam;
+import com.jxm.prod.dto.ProductAttrInfo;
 import com.jxm.prod.model.PmsProductAttribute;
 import com.jxm.prod.service.PmsProductAttributeService;
 import io.swagger.annotations.Api;
@@ -84,4 +85,11 @@ public class PmsProductAttributeController {
         return CommonResult.success(CommonPage.restPage(productAttributeList));
     }
 
+    @ApiOperation("根据商品分类的id获取商品属性及属性分类")
+    @RequestMapping(value = "/attrInfo/{productCategoryId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<ProductAttrInfo>> getAttrInfo(@PathVariable Long productCategoryId) {
+        List<ProductAttrInfo> productAttrInfoList = productAttributeService.getProductAttrInfo(productCategoryId);
+        return CommonResult.success(productAttrInfoList);
+    }
 }

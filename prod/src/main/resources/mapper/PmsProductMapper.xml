@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.prod.mapper.PmsProductMapper">
+  <resultMap id="BaseResultMap" type="com.jxm.prod.model.PmsProduct">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="brand_id" jdbcType="BIGINT" property="brandId" />
+    <result column="product_category_id" jdbcType="BIGINT" property="productCategoryId" />
+    <result column="feight_template_id" jdbcType="BIGINT" property="feightTemplateId" />
+    <result column="product_attribute_category_id" jdbcType="BIGINT" property="productAttributeCategoryId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="product_sn" jdbcType="VARCHAR" property="productSn" />
+    <result column="delete_status" jdbcType="INTEGER" property="deleteStatus" />
+    <result column="publish_status" jdbcType="INTEGER" property="publishStatus" />
+    <result column="new_status" jdbcType="INTEGER" property="newStatus" />
+    <result column="recommand_status" jdbcType="INTEGER" property="recommandStatus" />
+    <result column="verify_status" jdbcType="INTEGER" property="verifyStatus" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="sale" jdbcType="INTEGER" property="sale" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="promotion_price" jdbcType="DECIMAL" property="promotionPrice" />
+    <result column="gift_growth" jdbcType="INTEGER" property="giftGrowth" />
+    <result column="gift_point" jdbcType="INTEGER" property="giftPoint" />
+    <result column="use_point_limit" jdbcType="INTEGER" property="usePointLimit" />
+    <result column="sub_title" jdbcType="VARCHAR" property="subTitle" />
+    <result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="low_stock" jdbcType="INTEGER" property="lowStock" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="preview_status" jdbcType="INTEGER" property="previewStatus" />
+    <result column="service_ids" jdbcType="VARCHAR" property="serviceIds" />
+    <result column="keywords" jdbcType="VARCHAR" property="keywords" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="album_pics" jdbcType="VARCHAR" property="albumPics" />
+    <result column="detail_title" jdbcType="VARCHAR" property="detailTitle" />
+    <result column="promotion_start_time" jdbcType="TIMESTAMP" property="promotionStartTime" />
+    <result column="promotion_end_time" jdbcType="TIMESTAMP" property="promotionEndTime" />
+    <result column="promotion_per_limit" jdbcType="INTEGER" property="promotionPerLimit" />
+    <result column="promotion_type" jdbcType="INTEGER" property="promotionType" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+    <result column="product_category_name" jdbcType="VARCHAR" property="productCategoryName" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jxm.prod.model.PmsProduct">
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="detail_desc" jdbcType="LONGVARCHAR" property="detailDesc" />
+    <result column="detail_html" jdbcType="LONGVARCHAR" property="detailHtml" />
+    <result column="detail_mobile_html" jdbcType="LONGVARCHAR" property="detailMobileHtml" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, brand_id, product_category_id, feight_template_id, product_attribute_category_id, 
+    name, pic, product_sn, delete_status, publish_status, new_status, recommand_status, 
+    verify_status, sort, sale, price, promotion_price, gift_growth, gift_point, use_point_limit, 
+    sub_title, original_price, stock, low_stock, unit, weight, preview_status, service_ids, 
+    keywords, note, album_pics, detail_title, promotion_start_time, promotion_end_time, 
+    promotion_per_limit, promotion_type, brand_name, product_category_name
+  </sql>
+  <sql id="Blob_Column_List">
+    description, detail_desc, detail_html, detail_mobile_html
+  </sql>
+
+  <update id="updateByBrandId" parameterType="map">
+    update pms_product
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.brandId != null">
+        brand_id = #{record.brandId,jdbcType=BIGINT},
+      </if>
+      <if test="record.productCategoryId != null">
+        product_category_id = #{record.productCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="record.feightTemplateId != null">
+        feight_template_id = #{record.feightTemplateId,jdbcType=BIGINT},
+      </if>
+      <if test="record.productAttributeCategoryId != null">
+        product_attribute_category_id = #{record.productAttributeCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pic != null">
+        pic = #{record.pic,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productSn != null">
+        product_sn = #{record.productSn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deleteStatus != null">
+        delete_status = #{record.deleteStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.publishStatus != null">
+        publish_status = #{record.publishStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.newStatus != null">
+        new_status = #{record.newStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.recommandStatus != null">
+        recommand_status = #{record.recommandStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.verifyStatus != null">
+        verify_status = #{record.verifyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.sort != null">
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.sale != null">
+        sale = #{record.sale,jdbcType=INTEGER},
+      </if>
+      <if test="record.price != null">
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.promotionPrice != null">
+        promotion_price = #{record.promotionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.giftGrowth != null">
+        gift_growth = #{record.giftGrowth,jdbcType=INTEGER},
+      </if>
+      <if test="record.giftPoint != null">
+        gift_point = #{record.giftPoint,jdbcType=INTEGER},
+      </if>
+      <if test="record.usePointLimit != null">
+        use_point_limit = #{record.usePointLimit,jdbcType=INTEGER},
+      </if>
+      <if test="record.subTitle != null">
+        sub_title = #{record.subTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.originalPrice != null">
+        original_price = #{record.originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.stock != null">
+        stock = #{record.stock,jdbcType=INTEGER},
+      </if>
+      <if test="record.lowStock != null">
+        low_stock = #{record.lowStock,jdbcType=INTEGER},
+      </if>
+      <if test="record.unit != null">
+        unit = #{record.unit,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weight != null">
+        weight = #{record.weight,jdbcType=DECIMAL},
+      </if>
+      <if test="record.previewStatus != null">
+        preview_status = #{record.previewStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceIds != null">
+        service_ids = #{record.serviceIds,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keywords != null">
+        keywords = #{record.keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=VARCHAR},
+      </if>
+      <if test="record.albumPics != null">
+        album_pics = #{record.albumPics,jdbcType=VARCHAR},
+      </if>
+      <if test="record.detailTitle != null">
+        detail_title = #{record.detailTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.promotionStartTime != null">
+        promotion_start_time = #{record.promotionStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.promotionEndTime != null">
+        promotion_end_time = #{record.promotionEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.promotionPerLimit != null">
+        promotion_per_limit = #{record.promotionPerLimit,jdbcType=INTEGER},
+      </if>
+      <if test="record.promotionType != null">
+        promotion_type = #{record.promotionType,jdbcType=INTEGER},
+      </if>
+      <if test="record.brandName != null">
+        brand_name = #{record.brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productCategoryName != null">
+        product_category_name = #{record.productCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.detailDesc != null">
+        detail_desc = #{record.detailDesc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.detailHtml != null">
+        detail_html = #{record.detailHtml,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.detailMobileHtml != null">
+        detail_mobile_html = #{record.detailMobileHtml,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where product_category_id=#{id}
+  </update>
+
+
+  <update id="updateByExampleSelective" parameterType="map">
+    update pms_product
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.brandId != null">
+        brand_id = #{record.brandId,jdbcType=BIGINT},
+      </if>
+      <if test="record.productCategoryId != null">
+        product_category_id = #{record.productCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="record.feightTemplateId != null">
+        feight_template_id = #{record.feightTemplateId,jdbcType=BIGINT},
+      </if>
+      <if test="record.productAttributeCategoryId != null">
+        product_attribute_category_id = #{record.productAttributeCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pic != null">
+        pic = #{record.pic,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productSn != null">
+        product_sn = #{record.productSn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deleteStatus != null">
+        delete_status = #{record.deleteStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.publishStatus != null">
+        publish_status = #{record.publishStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.newStatus != null">
+        new_status = #{record.newStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.recommandStatus != null">
+        recommand_status = #{record.recommandStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.verifyStatus != null">
+        verify_status = #{record.verifyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.sort != null">
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.sale != null">
+        sale = #{record.sale,jdbcType=INTEGER},
+      </if>
+      <if test="record.price != null">
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.promotionPrice != null">
+        promotion_price = #{record.promotionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.giftGrowth != null">
+        gift_growth = #{record.giftGrowth,jdbcType=INTEGER},
+      </if>
+      <if test="record.giftPoint != null">
+        gift_point = #{record.giftPoint,jdbcType=INTEGER},
+      </if>
+      <if test="record.usePointLimit != null">
+        use_point_limit = #{record.usePointLimit,jdbcType=INTEGER},
+      </if>
+      <if test="record.subTitle != null">
+        sub_title = #{record.subTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.originalPrice != null">
+        original_price = #{record.originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.stock != null">
+        stock = #{record.stock,jdbcType=INTEGER},
+      </if>
+      <if test="record.lowStock != null">
+        low_stock = #{record.lowStock,jdbcType=INTEGER},
+      </if>
+      <if test="record.unit != null">
+        unit = #{record.unit,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weight != null">
+        weight = #{record.weight,jdbcType=DECIMAL},
+      </if>
+      <if test="record.previewStatus != null">
+        preview_status = #{record.previewStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceIds != null">
+        service_ids = #{record.serviceIds,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keywords != null">
+        keywords = #{record.keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=VARCHAR},
+      </if>
+      <if test="record.albumPics != null">
+        album_pics = #{record.albumPics,jdbcType=VARCHAR},
+      </if>
+      <if test="record.detailTitle != null">
+        detail_title = #{record.detailTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.promotionStartTime != null">
+        promotion_start_time = #{record.promotionStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.promotionEndTime != null">
+        promotion_end_time = #{record.promotionEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.promotionPerLimit != null">
+        promotion_per_limit = #{record.promotionPerLimit,jdbcType=INTEGER},
+      </if>
+      <if test="record.promotionType != null">
+        promotion_type = #{record.promotionType,jdbcType=INTEGER},
+      </if>
+      <if test="record.brandName != null">
+        brand_name = #{record.brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productCategoryName != null">
+        product_category_name = #{record.productCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.detailDesc != null">
+        detail_desc = #{record.detailDesc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.detailHtml != null">
+        detail_html = #{record.detailHtml,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.detailMobileHtml != null">
+        detail_mobile_html = #{record.detailMobileHtml,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where brand_id=#{id}
+  </update>
+
+</mapper>
