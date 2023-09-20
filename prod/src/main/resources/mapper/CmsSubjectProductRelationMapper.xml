@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.prod.mapper.CmsSubjectProductRelationMapper">
+  <resultMap id="BaseResultMap" type="com.jxm.prod.model.CmsSubjectProductRelation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="subject_id" jdbcType="BIGINT" property="subjectId" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, subject_id, product_id
+  </sql>
+
+  <delete id="deleteByProductId">
+    delete from cms_subject_product_relation
+    where product_id=#{prodId}
+  </delete>
+
+</mapper>

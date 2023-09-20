@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.prod.mapper.PmsProductAttributeValueMapper">
+  <resultMap id="BaseResultMap" type="com.jxm.prod.model.PmsProductAttributeValue">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="product_attribute_id" jdbcType="BIGINT" property="productAttributeId" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, product_id, product_attribute_id, value
+  </sql>
+
+  <delete id="deleteByProductId">
+    delete from pms_product_attribute_value
+    where product_id=#{prodId}
+  </delete>
+</mapper>

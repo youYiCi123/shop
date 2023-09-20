@@ -26,6 +26,13 @@ public class UmsAdmin implements Serializable {
     @ApiModelProperty(value = "昵称")
     private String nickName;
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "部门id")
+    private Long depId;
+
+    @ApiModelProperty(value = "部门")
+    private String depName;
+
     @ApiModelProperty(value = "性别")
     private Integer sex;
 
@@ -44,7 +51,8 @@ public class UmsAdmin implements Serializable {
     @ApiModelProperty(value = "职责")
     private String duty;
 
-
+    @ApiModelProperty(value = "地址")
+    private String address;
 
     public Long getId() {
         return id;
@@ -92,6 +100,22 @@ public class UmsAdmin implements Serializable {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public Long getDepId() {
+        return depId;
+    }
+
+    public void setDepId(Long depId) {
+        this.depId = depId;
+    }
+
+    public String getDepName() {
+        return depName;
+    }
+
+    public void setDepName(String depName) {
+        this.depName = depName;
     }
 
     public String getNote() {
@@ -142,6 +166,14 @@ public class UmsAdmin implements Serializable {
         this.duty = duty;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "UmsAdmin{" +
@@ -151,12 +183,15 @@ public class UmsAdmin implements Serializable {
                 ", icon='" + icon + '\'' +
                 ", email='" + email + '\'' +
                 ", nickName='" + nickName + '\'' +
+                ", depId=" + depId +
+                ", depName='" + depName + '\'' +
                 ", sex=" + sex +
                 ", note='" + note + '\'' +
                 ", createTime=" + createTime +
                 ", loginTime=" + loginTime +
                 ", status=" + status +
                 ", duty='" + duty + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }

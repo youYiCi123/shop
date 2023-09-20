@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.prod.mapper.PmsProductFullReductionMapper">
+  <resultMap id="BaseResultMap" type="com.jxm.prod.model.PmsProductFullReduction">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="full_price" jdbcType="DECIMAL" property="fullPrice" />
+    <result column="reduce_price" jdbcType="DECIMAL" property="reducePrice" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, product_id, full_price, reduce_price
+  </sql>
+
+  <delete id="deleteByProductId">
+    delete from pms_product_full_reduction
+    where product_id=#{id}
+  </delete>
+
+</mapper>

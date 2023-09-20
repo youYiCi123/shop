@@ -13,8 +13,18 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.example</groupId>
             <artifactId>common</artifactId>
+            <exclusions>
+                <exclusion>
+                        <groupId>com.github.pagehelper</groupId>
+                        <artifactId>pagehelper</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--nacos服务注册发现-->
         <dependency>

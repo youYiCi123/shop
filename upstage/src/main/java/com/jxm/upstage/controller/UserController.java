@@ -8,12 +8,14 @@ import com.jxm.common.domain.UserDto;
 import com.jxm.common.service.RedisService;
 import com.jxm.upstage.domin.LoginCodeEnum;
 import com.jxm.upstage.domin.LoginProperties;
+import com.jxm.upstage.dto.DepIdToName;
 import com.jxm.upstage.dto.UmsAdminLoginParam;
 import com.jxm.upstage.dto.UmsAdminParam;
 import com.jxm.upstage.dto.UpdateAdminPasswordParam;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsAdminRoleRelation;
 import com.jxm.upstage.model.UmsRole;
+import com.jxm.upstage.service.DepService;
 import com.jxm.upstage.service.UmsAdminService;
 import com.jxm.upstage.service.UmsRoleService;
 import com.wf.captcha.base.Captcha;
@@ -39,6 +41,9 @@ public class UserController {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private DepService depService;
 
     @Resource
     private LoginProperties loginProperties;
@@ -92,7 +97,7 @@ public class UserController {
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getAdminInfo() throws ParseException {
-            UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
         Map<String, Object> data = new HashMap<>();
         data.put("username", umsAdmin.getUsername());
         data.put("menus", roleService.getMenuList(umsAdmin.getId()));
@@ -109,9 +114,15 @@ public class UserController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<UmsAdmin>> list(@RequestParam(value = "keyword", required = false) String keyword,
+                                                   @RequestParam(value = "depId", required = false) Long depId,
                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        List<UmsAdmin> adminList = adminService.list(keyword, pageSize, pageNum);
+        List<UmsAdmin> adminList = adminService.list(keyword,depId, pageSize, pageNum);
+        List<DepIdToName> depIdToNameList = depService.getDepIdToName();
+        for(UmsAdmin umsAdmin:adminList){
+            Optional<DepIdToName> depIdToName = depIdToNameList.stream().filter(t -> t.getId().equals(umsAdmin.getDepId())).findFirst();
+            depIdToName.ifPresent(t->umsAdmin.setDepName(t.getDepName()));
+        }
         return CommonResult.success(CommonPage.restPage(adminList));
     }
 

@@ -39,7 +39,7 @@ public interface UmsAdminService {
     /**
      * 根据用户名或昵称分页查询用户
      */
-    List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum);
+    List<UmsAdmin> list(String keyword, Long depId,Integer pageSize, Integer pageNum);
 
     /**
      * 根据用户id获取用户

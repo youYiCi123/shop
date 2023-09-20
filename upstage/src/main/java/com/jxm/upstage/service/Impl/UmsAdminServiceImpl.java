@@ -103,9 +103,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     @Override
-    public List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum) {
+    public List<UmsAdmin> list(String keyword,Long depId, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        List<UmsAdmin> umsAdmins = adminMapper.selectByQuery(keyword);
+        List<UmsAdmin> umsAdmins = adminMapper.selectByQuery(keyword,depId);
         return umsAdmins;
     }
 

@@ -14,10 +14,12 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="sex" jdbcType="INTEGER" property="sex" />
     <result column="duty" jdbcType="VARCHAR" property="duty" />
+    <result column="dep_id" jdbcType="BIGINT" property="depId" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, username, password, icon, email, nick_name, note, create_time, login_time, status,sex,duty
+    id, username, password, icon, email, nick_name, note, create_time, login_time, status,sex,duty,dep_id,address
   </sql>
   <insert id="insert" parameterType="com.jxm.upstage.model.UmsAdmin">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -25,12 +27,13 @@
     </selectKey>
     insert into ums_admin (username, password, icon,
     email, nick_name, duty,sex,note,
-    create_time, login_time, status
+    create_time, login_time, status,dep_id,address
     )
     values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},
     #{email,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR},
     #{duty,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},#{note,jdbcType=VARCHAR},
     #{createTime,jdbcType=TIMESTAMP}, #{loginTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
+    ,#{depId,jdbcType=BIGINT},#{address,jdbcType=VARCHAR}
     )
   </insert>
 
@@ -60,11 +63,15 @@
     <include refid="Base_Column_List" />
     from ums_admin
     <where>
+      <if test="depId != null  and depId != ''">
+        dep_id= #{depId,jdbcType=BIGINT}
+      </if>
       <if test="keyword != null  and keyword != ''" >
         and username like concat('%', #{keyword}, '%')
         or nick_name like concat('%', #{keyword}, '%')
       </if>
     </where>
+    order by create_time desc
   </select>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.jxm.upstage.model.UmsAdmin">
@@ -92,7 +99,10 @@
         duty = #{duty,jdbcType=VARCHAR},
       </if>
       <if test="sex != null">
-        sex = #{sex,jdbcType=INTEGER},
+      sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="depId != null">
+        dep_id = #{depId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -134,4 +144,11 @@
       #{userItem.status},#{userItem.duty})
     </foreach>
   </insert>
+
+  <select id="details" parameterType="java.lang.Long" resultType="com.jxm.upstage.dto.DepUser">
+    select nick_name,username,duty
+    from ums_admin
+    where dep_id= #{depId,jdbcType=BIGINT}
+  </select>
+
 </mapper>

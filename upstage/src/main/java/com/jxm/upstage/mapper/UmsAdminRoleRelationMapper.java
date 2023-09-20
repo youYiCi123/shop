@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface UmsAdminRoleRelationMapper {
 
+    int insert(UmsAdminRoleRelation record);
+
     int deleteById(Long adminId);
 
     List<Long> selectById(Long id);

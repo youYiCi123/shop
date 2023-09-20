@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.prod.mapper.CmsPrefrenceAreaMapper">
+  <resultMap id="BaseResultMap" type="com.jxm.prod.model.CmsPrefrenceArea">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sub_title" jdbcType="VARCHAR" property="subTitle" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="show_status" jdbcType="INTEGER" property="showStatus" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jxm.prod.model.CmsPrefrenceArea">
+    <result column="pic" jdbcType="VARBINARY" property="pic" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, sub_title, sort, show_status
+  </sql>
+  <sql id="Blob_Column_List">
+    pic
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_prefrence_area
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from cms_prefrence_area
+    order by sort desc
+  </select>
+
+
+</mapper>
