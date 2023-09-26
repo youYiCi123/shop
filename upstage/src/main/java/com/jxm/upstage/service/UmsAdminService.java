@@ -4,6 +4,7 @@ package com.jxm.upstage.service;
 
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.domain.UserDto;
+import com.jxm.upstage.dto.FileUserBrief;
 import com.jxm.upstage.dto.UmsAdminLoginParam;
 import com.jxm.upstage.dto.UmsAdminParam;
 import com.jxm.upstage.dto.UpdateAdminPasswordParam;
@@ -85,6 +86,11 @@ public interface UmsAdminService {
      * 获取当前登录后台用户
      */
     UmsAdmin getCurrentAdmin() throws ParseException;
+
+    /**
+     * 获取登录用户文件File根信息
+     */
+    FileUserBrief getUserFileBrief()  throws ParseException;
 
     /**
      * 获取用户信息

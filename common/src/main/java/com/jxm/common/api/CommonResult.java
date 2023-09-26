@@ -17,6 +17,9 @@ public class CommonResult<T> {
         this.message = message;
         this.data = data;
     }
+    protected CommonResult(long code) {
+        this.code = code;
+    }
 
     /**
      * 成功返回结果
@@ -35,6 +38,10 @@ public class CommonResult<T> {
      */
     public static <T> CommonResult<T> success(T data, String message) {
         return new CommonResult<T>(ResultCode.SUCCESS.getCode(), message, data);
+    }
+
+    public static <T> CommonResult<T> success() {
+        return new CommonResult<T>(ResultCode.SUCCESS.getCode());
     }
 
     /**

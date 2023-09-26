@@ -10,6 +10,7 @@
         <module>gateway</module>
         <module>common</module>
         <module>auth</module>
+        <module>file</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

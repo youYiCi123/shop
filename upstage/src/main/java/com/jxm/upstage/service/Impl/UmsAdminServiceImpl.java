@@ -1,6 +1,7 @@
 package com.jxm.upstage.service.Impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import cn.hutool.extra.spring.SpringUtil;
@@ -12,11 +13,9 @@ import com.jxm.common.constant.AuthConstant;
 import com.jxm.common.domain.UserDto;
 import com.jxm.common.exception.Asserts;
 import com.jxm.common.service.RedisService;
-import com.jxm.upstage.dto.RoleGroupCount;
-import com.jxm.upstage.dto.UmsAdminLoginParam;
-import com.jxm.upstage.dto.UmsAdminParam;
-import com.jxm.upstage.dto.UpdateAdminPasswordParam;
+import com.jxm.upstage.dto.*;
 import com.jxm.upstage.feign.AuthService;
+import com.jxm.upstage.feign.FileService;
 import com.jxm.upstage.mapper.UmsAdminMapper;
 import com.jxm.upstage.mapper.UmsAdminRoleRelationDao;
 import com.jxm.upstage.mapper.UmsAdminRoleRelationMapper;
@@ -66,6 +65,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private UmsAdminRoleRelationDao adminRoleRelationDao;
@@ -262,6 +264,30 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             getCacheService().setAdmin(admin);
             return admin;
         }
+    }
+
+    @Override
+    public FileUserBrief getUserFileBrief() throws ParseException{
+        UmsAdmin umsAdmin = getCurrentAdmin();
+        CommonResult restResult =fileService.getUserTopFileInfo(umsAdmin.getDepId());
+        if(ResultCode.SUCCESS.getCode()==restResult.getCode()&&restResult.getData()!=null){
+            return assembleRPanUserVO(umsAdmin, (UserFile)restResult.getData());
+        }
+        return assembleRPanUserVO(umsAdmin, null);
+    }
+
+    /**
+     * 拼装用户信息返回实体
+     * @return
+     */
+    private FileUserBrief assembleRPanUserVO(UmsAdmin umsAdmin, UserFile userFile) {
+        FileUserBrief fileUserBrief = new FileUserBrief();
+        fileUserBrief.setUsername(umsAdmin.getUsername());
+        if(ObjectUtil.isNotNull(userFile)) {
+            fileUserBrief.setRootFileId(userFile.getFileId());
+            fileUserBrief.setRootFilename(userFile.getFilename());
+        }
+        return fileUserBrief;
     }
 
     @Override

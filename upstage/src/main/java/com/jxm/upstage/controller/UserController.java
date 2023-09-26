@@ -8,10 +8,7 @@ import com.jxm.common.domain.UserDto;
 import com.jxm.common.service.RedisService;
 import com.jxm.upstage.domin.LoginCodeEnum;
 import com.jxm.upstage.domin.LoginProperties;
-import com.jxm.upstage.dto.DepIdToName;
-import com.jxm.upstage.dto.UmsAdminLoginParam;
-import com.jxm.upstage.dto.UmsAdminParam;
-import com.jxm.upstage.dto.UpdateAdminPasswordParam;
+import com.jxm.upstage.dto.*;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsAdminRoleRelation;
 import com.jxm.upstage.model.UmsRole;
@@ -26,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -91,6 +89,23 @@ public class UserController {
     @ResponseBody
     public CommonResult login(@Validated @RequestBody UmsAdminLoginParam umsAdminLoginParam) {
         return adminService.login(umsAdminLoginParam);
+    }
+
+    @ApiOperation(value = "获取当前登录用户的token信息")
+    @RequestMapping(value = "/getCurrentAdmin", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getCurrentAdmin() throws ParseException {
+        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        Map<String, Object> data = new HashMap<>();
+        data.put("userId", umsAdmin.getId());
+        data.put("depId", umsAdmin.getDepId());
+        return CommonResult.success(data);
+    }
+
+    @GetMapping("/getUserFileBrief")
+    @ResponseBody
+    public CommonResult<FileUserBrief> getUserFileBrief() throws ParseException {
+        return CommonResult.success(adminService.getUserFileBrief());
     }
 
     @ApiOperation(value = "获取当前登录用户信息")
