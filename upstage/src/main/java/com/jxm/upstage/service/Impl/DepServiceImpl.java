@@ -3,6 +3,7 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.github.pagehelper.PageHelper;
 import com.jxm.common.generator.UniqueIdGenerator;
 import com.jxm.upstage.dto.*;
+import com.jxm.upstage.feign.FileService;
 import com.jxm.upstage.mapper.DepMapper;
 import com.jxm.upstage.mapper.UmsAdminMapper;
 import com.jxm.upstage.mapper.UmsAdminRoleRelationMapper;
@@ -32,6 +33,8 @@ public class DepServiceImpl implements DepService {
     @Autowired
     private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
 
+    @Autowired
+    private FileService fileService;
 
     @Override
     public Dep add(DepParam depParam) {
@@ -64,9 +67,13 @@ public class DepServiceImpl implements DepService {
             umsAdminRoleRelation.setRoleId(Long.valueOf(5));
             umsAdminRoleRelation.setAdminId(userId);
             umsAdminRoleRelationMapper.insert(umsAdminRoleRelation);
+            //创建文件根目录  todo
+            fileService.createFolder(0L, dep.getDepName()+"内部文件", userId,depId);
         }
-        //创建文件根目录  todo
-//        iUserFileService.createFolder(CommonConstant.ZERO_LONG, FileConstant.ALL_FILE_CN_STR, emailServiceImpl.getLoginUserId(),depStrId);
+        else{
+            fileService.createFolder(0L, dep.getDepName()+"内部文件", umsAdmins.get(0).getId(),depId);
+        }
+
         return dep;
     }
 

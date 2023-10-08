@@ -23,6 +23,11 @@ public class RPanUserFile implements Serializable {
     private Long userId;
 
     /**
+     * 用户姓名
+     */
+    private String userName;
+
+    /**
      * 父级id
      */
     private Long parentId;
@@ -79,17 +84,6 @@ public class RPanUserFile implements Serializable {
 
     private Long depId;
 
-    public Long getDepId() {
-        return depId;
-    }
-
-    public void setDepId(Long depId) {
-        this.depId = depId;
-    }
-
-    public RPanUserFile() {
-    }
-
     public Long getFileId() {
         return fileId;
     }
@@ -104,6 +98,14 @@ public class RPanUserFile implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getParentId() {
@@ -194,30 +196,12 @@ public class RPanUserFile implements Serializable {
         this.updateTime = updateTime;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RPanUserFile that = (RPanUserFile) o;
-        return Objects.equals(fileId, that.fileId) &&
-                Objects.equals(userId, that.userId) &&
-                Objects.equals(parentId, that.parentId) &&
-                Objects.equals(realFileId, that.realFileId) &&
-                Objects.equals(filename, that.filename) &&
-                Objects.equals(folderFlag, that.folderFlag) &&
-                Objects.equals(fileSizeDesc, that.fileSizeDesc) &&
-                Objects.equals(fileType, that.fileType) &&
-                Objects.equals(delFlag, that.delFlag) &&
-                Objects.equals(createUser, that.createUser) &&
-                Objects.equals(createTime, that.createTime) &&
-                Objects.equals(updateUser, that.updateUser) &&
-                Objects.equals(updateTime, that.updateTime) &&
-                Objects.equals(depId, that.depId);
+    public Long getDepId() {
+        return depId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(fileId, userId, parentId, realFileId, filename, folderFlag, fileSizeDesc, fileType, delFlag, createUser, createTime, updateUser, updateTime, depId);
+    public void setDepId(Long depId) {
+        this.depId = depId;
     }
 
     @Override
@@ -225,6 +209,7 @@ public class RPanUserFile implements Serializable {
         return "RPanUserFile{" +
                 "fileId=" + fileId +
                 ", userId=" + userId +
+                ", userName='" + userName + '\'' +
                 ", parentId=" + parentId +
                 ", realFileId=" + realFileId +
                 ", filename='" + filename + '\'' +
@@ -236,8 +221,7 @@ public class RPanUserFile implements Serializable {
                 ", createTime=" + createTime +
                 ", updateUser=" + updateUser +
                 ", updateTime=" + updateTime +
-                ", depId='" + depId + '\'' +
+                ", depId=" + depId +
                 '}';
     }
-
 }

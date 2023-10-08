@@ -21,7 +21,7 @@ public class FileTypeContext {
     private static List<FileTypeDefiner> fileTypeDefinerList = new ArrayList<>();
 
     static {
-        Set<Class> allSubTypeOfFileTypeDefiner = ReflectUtil.getAllSubTypeOf(FileTypeDefiner.class, "com.example.demo.file.type");
+        Set<Class> allSubTypeOfFileTypeDefiner = ReflectUtil.getAllSubTypeOf(FileTypeDefiner.class, "com.jxm.file.type");
         if (allSubTypeOfFileTypeDefiner != null && !allSubTypeOfFileTypeDefiner.isEmpty()) {
             allSubTypeOfFileTypeDefiner.stream().forEach(subTypeOfFileTypeDefinerClass -> {
                 FileTypeDefiner fileTypeDefiner = (FileTypeDefiner) ReflectUtil.createInstance(subTypeOfFileTypeDefinerClass);

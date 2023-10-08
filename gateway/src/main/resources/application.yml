@@ -30,6 +30,12 @@ spring:
             - Path=/auth-service/**
           filters:
             - StripPrefix=1
+        - id: file-route
+          uri: lb://file-service
+          predicates:
+            - Path=/file-service/**
+          filters:
+            - StripPrefix=1
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -55,6 +61,7 @@ secure:
       - "/upstage-service/admin/login"
       - "/auth-service/rsa/publicKey"
       - "/upstage-service/excel/download"
+      - "/file-service/preview/**"
 
 
 

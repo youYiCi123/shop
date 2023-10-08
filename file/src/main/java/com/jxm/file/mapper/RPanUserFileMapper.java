@@ -37,6 +37,11 @@ public interface RPanUserFileMapper {
                                                                  @Param("parentId") Long parentId,
                                                                  @Param("delFlag") Integer delFlag);
 
+    List<RPanUserFileDisplayVO> selectRPanUserFileVOList(@Param("fileTypeArray") List<Integer> fileTypeArray,
+                                                                 @Param("parentId") Long parentId,
+                                                                 @Param("delFlag") Integer delFlag);
+
+
     List<RPanUserFileVO> selectRPanUserFileVOListByUserIdAndFileTypeAndParentIdAndDelFlag(@Param("userId") Long userId,
                                                                                           @Param("fileTypeArray") List<Integer> fileTypeArray,
                                                                                           @Param("parentId") Long parentId,
@@ -50,7 +55,7 @@ public interface RPanUserFileMapper {
 
     int deleteBatch(@Param("idList") List<Long> idList, @Param("userId") Long userId, @Param("depId") Long depId);
 
-    List<RPanUserFile> selectFolderListByUserId(@Param("depId") Long depId);
+    List<RPanUserFile> selectFolderListByUserId(@Param("rootFileId") Long rootFileId);
 
     List<RPanUserFile> selectListByFileIdList(@Param("idList") List<Long> idList);
 

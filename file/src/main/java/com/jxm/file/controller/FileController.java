@@ -1,7 +1,10 @@
 package com.jxm.file.controller;
 
+import cn.hutool.json.JSONUtil;
+import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.service.RedisService;
+import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.RPanUserFileMapper;
@@ -53,10 +56,25 @@ public class FileController {
             value = "获取文件列表",
             notes = "该接口提供了获取文件列表的功能"
     )
-    @GetMapping("files")
-    public CommonResult<List<RPanUserFileDisplayVO>> list(@NotNull(message = "父id不能为空") @RequestParam(value = "parentId", required = false) Long parentId,
-                                                          @RequestParam(name = "fileTypes", required = false, defaultValue = "-1") String fileTypes) throws ParseException {
-        return CommonResult.success(iUserFileService.list(parentId, fileTypes, getLoginDepId()));
+    @RequestMapping(value = "/filesForTable", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<RPanUserFileDisplayVO>> filesForTable(@RequestParam(value = "parentId", required = false) Long parentId,
+                                                                            @RequestParam(name = "fileTypes", required = false, defaultValue = "-1") String fileTypes,
+                                                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                                          ) throws ParseException {
+        List<RPanUserFileDisplayVO> list = iUserFileService.filesForTable(parentId, fileTypes, getLoginDepId(), pageNum, pageSize);
+        return CommonResult.success(CommonPage.restPage(list));
+    }
+
+    @RequestMapping(value = "/files", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<RPanUserFileDisplayVO>> list(@RequestParam(value = "pageType", required = false) Long pageType,
+                                                          @RequestParam(value = "parentId", required = false) Long parentId,
+                                                          @RequestParam(name = "fileTypes", required = false, defaultValue = "-1") String fileTypes
+    ) throws ParseException {
+        List<RPanUserFileDisplayVO> list = iUserFileService.list(pageType,parentId, fileTypes, getLoginDepId());
+        return CommonResult.success(list);
     }
 
     @ApiOperation(
@@ -65,7 +83,14 @@ public class FileController {
     )
     @PostMapping("file/folder")
     public CommonResult createFolder(@Validated @RequestBody CreateFolderPO createFolderPO) throws ParseException {
-        iUserFileService.createFolder(createFolderPO.getParentId(), createFolderPO.getFolderName(), getLoginUserId(),getLoginDepId());
+        iUserFileService.createFolder(createFolderPO.isPageType(),createFolderPO.getParentId(), createFolderPO.getFolderName(), getLoginUser());
+        return CommonResult.success();
+    }
+
+    @PostMapping("file/createDepRootFolder")
+    public CommonResult createDepRootFolder(@RequestParam("parentId") Long parentId,@RequestParam("folderName")  String folderName,
+                                            @RequestParam("userId")  Long userId,@RequestParam("depId") Long depId) {
+        iUserFileService.createDepRootFolder(parentId,folderName,userId,depId);
         return CommonResult.success();
     }
 
@@ -76,8 +101,7 @@ public class FileController {
     @PutMapping("file")
     public CommonResult updateFilename(@Validated @RequestBody UpdateFileNamePO updateFileNamePO) throws ParseException {
         Object loginUser = getLoginUser();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)loginUser;
-        iUserFileService.updateFilename(updateFileNamePO.getFileId(), updateFileNamePO.getNewFilename(), map);
+        iUserFileService.updateFilename(updateFileNamePO.getFileId(), updateFileNamePO.getNewFilename(), loginUser);
         return CommonResult.success();
     }
 
@@ -88,8 +112,7 @@ public class FileController {
     @DeleteMapping("file")
     public CommonResult delete(@Validated @RequestBody DeletePO deletePO) throws ParseException {
         Object loginUser = getLoginUser();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)loginUser;
-        iUserFileService.delete(deletePO.getFileIds(), map);
+        iUserFileService.delete(deletePO.getFileIds(), loginUser);
         return CommonResult.success();
     }
 
@@ -100,8 +123,7 @@ public class FileController {
     @PostMapping("file/upload")
     public CommonResult upload(@Validated FileUploadPO fileUploadPO) throws ParseException {
         Object loginUser = getLoginUser();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)loginUser;
-        iUserFileService.upload(fileUploadPO.getFile(), fileUploadPO.getParentId(), map, fileUploadPO.getIdentifier(), fileUploadPO.getTotalSize(), fileUploadPO.getFilename());
+        iUserFileService.upload(fileUploadPO.getFile(), fileUploadPO.getParentId(), loginUser, fileUploadPO.getIdentifier(), fileUploadPO.getTotalSize(), fileUploadPO.getFilename());
         return CommonResult.success();
     }
 
@@ -132,8 +154,7 @@ public class FileController {
     @PostMapping("file/merge")
     public CommonResult mergeChunks(@Validated @RequestBody FileChunkMergePO fileChunkMergePO) throws ParseException {
         Object loginUser = getLoginUser();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)loginUser;
-        iUserFileService.mergeChunks(fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), map);
+        iUserFileService.mergeChunks(fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), loginUser);
         return CommonResult.success();
     }
 
@@ -144,8 +165,7 @@ public class FileController {
     @PostMapping("file/sec-upload")
     public CommonResult secUpload(@Validated @RequestBody FileSecUploadPO fileSecUploadPO) throws ParseException {
         Object loginUser = getLoginUser();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)loginUser;
-        if (iUserFileService.secUpload(fileSecUploadPO.getParentId(), fileSecUploadPO.getFilename(), fileSecUploadPO.getIdentifier(), map)) {
+        if (iUserFileService.secUpload(fileSecUploadPO.getParentId(), fileSecUploadPO.getFilename(), fileSecUploadPO.getIdentifier(), loginUser)) {
             return CommonResult.success();
         }
         return CommonResult.failed("文件唯一标识不存在，请执行物理上传");
@@ -166,17 +186,17 @@ public class FileController {
     }
 
     private Long getLoginDepId() throws ParseException{
-        Object data = upstageService.getCurrentAdmin().getData();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)data;
-        long depId = map.get("depId").longValue();
-        return depId;
+        CommonResult restResult = upstageService.getCurrentAdmin();
+        String jsonStr = JSONUtil.toJsonStr(restResult.getData());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        return userDepDto.getDepId();
     }
 
     private Long getLoginUserId() throws ParseException{
-        Object data = upstageService.getCurrentAdmin().getData();
-        HashMap<String, Integer> map = (HashMap<String, Integer>)data;
-        long userId = map.get("userId").longValue();
-        return userId;
+        CommonResult restResult = upstageService.getCurrentAdmin();
+        String jsonStr = JSONUtil.toJsonStr(restResult.getData());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        return userDepDto.getUserId();
     }
 
 
@@ -185,8 +205,8 @@ public class FileController {
             notes = "该接口提供了获取文件夹树的功能"
     )
     @GetMapping("file/folder/tree")
-    public CommonResult<List<FolderTreeNodeVO>> getFolderTree() throws ParseException {
-        return CommonResult.success(iUserFileService.getFolderTree(getLoginDepId()));
+    public CommonResult<List<FolderTreeNodeVO>> getFolderTree(@RequestParam("fileRootId") Long fileRootId)  throws ParseException{
+        return CommonResult.success(iUserFileService.getFolderTree(fileRootId, getLoginDepId()));
     }
 
 
@@ -215,7 +235,7 @@ public class FileController {
             notes = "该接口提供了获取用户File根信息的功能"
     )
     @GetMapping("file/getUserTopFileInfo")
-    public CommonResult getUserTopFileInfo(Long depId){
+    public CommonResult getUserTopFileInfo(@RequestParam Long depId){
         return CommonResult.success( rPanUserFileMapper.selectTopFolderByUserId(depId));
     }
     /**

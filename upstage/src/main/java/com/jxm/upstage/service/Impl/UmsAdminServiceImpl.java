@@ -271,7 +271,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         UmsAdmin umsAdmin = getCurrentAdmin();
         CommonResult restResult =fileService.getUserTopFileInfo(umsAdmin.getDepId());
         if(ResultCode.SUCCESS.getCode()==restResult.getCode()&&restResult.getData()!=null){
-            return assembleRPanUserVO(umsAdmin, (UserFile)restResult.getData());
+            String jsonStr = JSONUtil.toJsonStr(restResult.getData());
+            UserFile userFile = JSONUtil.toBean(jsonStr, UserFile.class);
+            return assembleRPanUserVO(umsAdmin, userFile);
         }
         return assembleRPanUserVO(umsAdmin, null);
     }

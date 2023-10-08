@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.jxm.file.entity.RPanUserFile">
         <id column="file_id" jdbcType="BIGINT" property="fileId" />
         <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
         <result column="parent_id" jdbcType="BIGINT" property="parentId" />
         <result column="real_file_id" jdbcType="BIGINT" property="realFileId" />
         <result column="filename" jdbcType="VARCHAR" property="filename" />
@@ -18,7 +19,7 @@
         <result column="dep_id" jdbcType="VARCHAR" property="depId" />
     </resultMap>
     <sql id="Base_Column_List">
-        file_id, user_id, parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag, create_user, create_time, update_user, update_time,dep_id
+        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag, create_user, create_time, update_user, update_time,dep_id
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -50,6 +51,9 @@
             </if>
             <if test="userId != null">
                 user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
             </if>
             <if test="parentId != null">
                 parent_id,
@@ -94,6 +98,9 @@
             </if>
             <if test="userId != null">
                 #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=BIGINT},
             </if>
             <if test="parentId != null">
                 #{parentId,jdbcType=BIGINT},
@@ -232,11 +239,9 @@
         a1.file_type AS fileType,
         a1.create_time AS createTime,
         a1.update_time AS updateTime,
-        b1.nick_name AS creatName
+        a1.user_name AS creatName
         FROM
         r_pan_user_file a1
-        left join ums_admin b1
-        on a1.create_user=b1.id
         WHERE
         a1.dep_id=#{depId}
         <if test="parentId != null and parentId != -1">
@@ -249,6 +254,32 @@
             </foreach>
         </if>
        AND a1.del_flag = #{delFlag}
+    </select>
+
+    <select id="selectRPanUserFileVOList" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
+        SELECT
+        a1.file_id AS fileId,
+        a1.parent_id AS parentId,
+        a1.filename AS filename,
+        a1.folder_flag AS folderFlag,
+        a1.file_size_desc AS fileSizeDesc,
+        a1.file_type AS fileType,
+        a1.create_time AS createTime,
+        a1.update_time AS updateTime,
+        a1.user_name AS creatName
+        FROM
+        r_pan_user_file a1
+        WHERE
+        <if test="parentId != null and parentId != -1">
+             a1.parent_id = #{parentId}
+        </if>
+        <if test="fileTypeArray != null">
+            AND a1.file_type IN
+            <foreach collection="fileTypeArray" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        AND a1.del_flag = #{delFlag}
     </select>
 
     <select id="selectByFileIdAndUserId" resultMap="BaseResultMap">
@@ -295,7 +326,7 @@
         FROM
             r_pan_user_file
         WHERE
-            dep_id = #{depId}
+            dep_id = #{rootFileId}
             AND del_flag = 0
             AND folder_flag = 1
     </select>
@@ -368,12 +399,9 @@
             a1.file_size_desc AS fileSizeDesc,
             a1.file_type AS fileType,
             a1.create_time AS createTime,
-            a1.update_time AS updateTime,
-            b1.nick_name As creatName
+            a1.update_time AS updateTime
         FROM
             r_pan_user_file a1
-            left join ums_admin b1
-	    on a1.create_user=b1.id
         WHERE
             file_id = #{fileId}
             AND user_id = #{userId}
@@ -392,12 +420,9 @@
     <select id="getTheNumberOfFileTypes" resultType="com.jxm.file.dto.DashboardUserFileParam">
         SELECT
        a1.file_type As fileType,
-       a1.create_user As userId,
-       b1.nick_name AS userName
+       a1.create_user As userId
         FROM
         r_pan_user_file a1
-        left join
-        ums_admin b1 on a1.create_user=b1.id
         WHERE
         a1.dep_id=#{depId}
         AND a1.del_flag = 0

@@ -98,6 +98,7 @@ public class UserController {
         UmsAdmin umsAdmin = adminService.getCurrentAdmin();
         Map<String, Object> data = new HashMap<>();
         data.put("userId", umsAdmin.getId());
+        data.put("nickName", umsAdmin.getNickName());
         data.put("depId", umsAdmin.getDepId());
         return CommonResult.success(data);
     }

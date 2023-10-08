@@ -16,19 +16,23 @@ import java.util.List;
  */
 public interface IUserFileService {
 
-    List<RPanUserFileDisplayVO> list(Long parentId, String fileTypes, Long depId);
+    List<RPanUserFileDisplayVO> filesForTable(Long parentId, String fileTypes, Long depId,Integer pageNum,Integer pageSize);
 
-    List<RPanUserFileDisplayVO> list(Long parentId, String fileTypes, Long depId, Integer delFlag);
+    List<RPanUserFileDisplayVO> list( Long pageType,Long parentId, String fileTypes, Long depId);
+
+    List<RPanUserFileDisplayVO> filesForTable(Long parentId, String fileTypes, Long depId, Integer delFlag,Integer pageNum,Integer pageSize);
 
     List<RPanUserFileVO> list(String fileIds);
 
-    void createFolder(Long parentId, String folderName, Long userId, Long depId);
+    void createFolder(Boolean isPageType,Long parentId, String folderName, Object loginUser);
 
-    void updateFilename(Long fileId, String newFilename, HashMap<String, Integer> map);
+    void createDepRootFolder(Long parentId, String folderName, Long userId,Long depId);
 
-    void delete(String fileIds, HashMap<String, Integer> map);
+    void updateFilename(Long fileId, String newFilename, Object loginUser);
 
-    void upload(MultipartFile file, Long parentId, HashMap<String, Integer> map, String identifier, Long totalSize, String filename);
+    void delete(String fileIds, Object loginUser);
+
+    void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename);
 
     FileChunkUploadVO uploadWithChunk(MultipartFile file, Long userId, String identifier, Integer totalChunks, Integer chunkNumber, Long totalSize, String filename);
 
@@ -36,7 +40,7 @@ public interface IUserFileService {
 
     void download(Long fileId, HttpServletResponse response);
 
-    List<FolderTreeNodeVO> getFolderTree(Long depId);
+    List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId);
 
     void transfer(String fileIds, Long targetParentId, Long depId);
 
@@ -62,11 +66,11 @@ public interface IUserFileService {
 
     boolean checkAllUpFileAvailable(List<Long> fileIds);
 
-    boolean secUpload(Long parentId, String filename, String md5, HashMap<String, Integer> map);
+    boolean secUpload(Long parentId, String filename, String md5,Object loginUser);
 
     CheckFileChunkUploadVO checkUploadWithChunk(Long userId, String identifier);
 
-    void mergeChunks(String filename, String identifier, Long parentId, Long totalSize, HashMap<String, Integer> map);
+    void mergeChunks(String filename, String identifier, Long parentId, Long totalSize, Object loginUser);
 
     /**
      * 获取登录用户所属部门的文件类型数量信息

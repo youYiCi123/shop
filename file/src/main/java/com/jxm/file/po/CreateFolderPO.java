@@ -31,8 +31,8 @@ public class CreateFolderPO implements Serializable {
     @NotBlank(message = "文件夹名称不能为空")
     private String folderName;
 
-    public CreateFolderPO() {
-    }
+    @ApiModelProperty(value = "页面类型", required = true)
+    private boolean pageType;
 
     public Long getParentId() {
         return parentId;
@@ -50,18 +50,12 @@ public class CreateFolderPO implements Serializable {
         this.folderName = folderName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CreateFolderPO that = (CreateFolderPO) o;
-        return Objects.equals(parentId, that.parentId) &&
-                Objects.equals(folderName, that.folderName);
+    public boolean isPageType() {
+        return pageType;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(parentId, folderName);
+    public void setPageType(boolean pageType) {
+        this.pageType = pageType;
     }
 
     @Override
@@ -69,7 +63,7 @@ public class CreateFolderPO implements Serializable {
         return "CreateFolderPO{" +
                 "parentId=" + parentId +
                 ", folderName='" + folderName + '\'' +
+                ", pageType=" + pageType +
                 '}';
     }
-
 }

@@ -1,5 +1,7 @@
 package com.jxm.file.service.Impl;
 
+import cn.hutool.json.JSONUtil;
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import com.jxm.common.api.ResultCode;
 import com.jxm.common.exception.Asserts;
@@ -8,6 +10,7 @@ import com.jxm.file.bo.FilePositionBO;
 import com.jxm.file.constant.CommonConstant;
 import com.jxm.file.constant.FileConstant;
 import com.jxm.file.dto.DashboardUserFileParam;
+import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.entity.RPanFile;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.mapper.RPanUserFileMapper;
@@ -15,6 +18,7 @@ import com.jxm.file.service.IFileService;
 import com.jxm.file.service.IUserFileService;
 import com.jxm.file.service.IUserSearchHistoryService;
 import com.jxm.file.storage.StorageManager;
+import com.jxm.file.type.FileTypeDefiner;
 import com.jxm.file.type.context.FileTypeContext;
 import com.jxm.file.util.FileUtil;
 import com.jxm.file.util.HttpUtil;
@@ -71,8 +75,8 @@ public class UserFileServiceImpl implements IUserFileService {
      * @return
      */
     @Override
-    public List<RPanUserFileDisplayVO> list(Long parentId, String fileTypes, Long depId) {
-        return list(parentId, fileTypes, depId, FileConstant.DelFlagEnum.NO.getCode());
+    public List<RPanUserFileDisplayVO> filesForTable(Long parentId, String fileTypes, Long depId,Integer pageNum,Integer pageSize) {
+        return filesForTable(parentId, fileTypes, depId, FileConstant.DelFlagEnum.NO.getCode(),pageNum,pageSize);
     }
 
     /**
@@ -85,7 +89,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @return
      */
     @Override
-    public List<RPanUserFileDisplayVO> list(Long parentId, String fileTypes, Long depId, Integer delFlag) {
+    public List<RPanUserFileDisplayVO> filesForTable(Long parentId, String fileTypes, Long depId, Integer delFlag,Integer pageNum,Integer pageSize) {
         List<Integer> fileTypeArray = null;
         if (Objects.equals(CommonConstant.ZERO_LONG, parentId)) {
             return Lists.newArrayList();
@@ -93,7 +97,46 @@ public class UserFileServiceImpl implements IUserFileService {
         if (!Objects.equals(fileTypes, FileConstant.ALL_FILE_TYPE)) {
             fileTypeArray = StringListUtil.string2IntegerList(fileTypes);
         }
+        PageHelper.startPage(pageNum, pageSize);
         return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, fileTypeArray, parentId, delFlag);
+    }
+
+
+    /**
+     * 获取文件列表
+     *
+     * @param parentId
+     * @param fileTypes
+     * @param depId
+     * @return
+     */
+    @Override
+    public List<RPanUserFileDisplayVO> list( Long pageType,Long parentId, String fileTypes, Long depId) {
+        return list(pageType,parentId, fileTypes, depId, FileConstant.DelFlagEnum.NO.getCode());
+    }
+
+    /**
+     * 获取文件列表
+     *
+     * @param parentId
+     * @param fileTypes
+     * @param depId
+     * @param delFlag
+     * @return
+     */
+    public List<RPanUserFileDisplayVO> list(Long pageType,Long parentId, String fileTypes, Long depId, Integer delFlag) {
+        List<Integer> fileTypeArray = null;
+        if (Objects.equals(CommonConstant.ZERO_LONG, parentId)) {
+            return Lists.newArrayList();
+        }
+        if (!Objects.equals(fileTypes, FileConstant.ALL_FILE_TYPE)) {
+            fileTypeArray = StringListUtil.string2IntegerList(fileTypes);
+        }
+        if(Objects.equals(1L, pageType)){
+            return rPanUserFileMapper.selectRPanUserFileVOList(fileTypeArray, parentId, delFlag);
+        }else{
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, fileTypeArray, parentId, delFlag);
+        }
     }
 
     /**
@@ -109,35 +152,40 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 创建文件夹
-     *
-     * @param parentId
-     * @param folderName
-     * @param userId
      */
     @Override
-    public void createFolder(Long parentId, String folderName, Long userId, Long depId) {
-        saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userId, null,depId);
+    public void createFolder(Boolean isPageType,Long parentId, String folderName, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        if(isPageType){
+            saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userDepDto.getUserId(),userDepDto.getNickName() ,null,userDepDto.getDepId());
+        }else{
+            saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userDepDto.getUserId(),userDepDto.getNickName() ,null,1L);
+        }
+
     }
+
+    @Override
+    public void createDepRootFolder(Long parentId, String folderName, Long userId, Long depId) {
+        saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userId,"" ,null,depId);
+    }
+
     /**
      * 文件重命名
-     *
-     * @param fileId
-     * @param newFilename
-     * @param map
      */
     @Override
-    public void updateFilename(Long fileId, String newFilename, HashMap<String, Integer> map) {
-        long userId = map.get("userId").longValue();
-        long depId = map.get("depId").longValue();
-        RPanUserFile originalUserFileInfo = getRPanUserFileByFileIdAndUserId(fileId, depId);
+    public void updateFilename(Long fileId, String newFilename, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        RPanUserFile originalUserFileInfo = getRPanUserFileByFileIdAndUserId(fileId, userDepDto.getDepId());
         if (Objects.equals(originalUserFileInfo.getFilename(), newFilename)) {
             Asserts.fail("请使用一个新名称");
         }
-        if (rPanUserFileMapper.selectCountByUserIdAndFilenameAndParentId(depId, newFilename, originalUserFileInfo.getParentId()) > CommonConstant.ZERO_INT) {
+        if (rPanUserFileMapper.selectCountByUserIdAndFilenameAndParentId(userDepDto.getDepId(), newFilename, originalUserFileInfo.getParentId()) > CommonConstant.ZERO_INT) {
             Asserts.fail("名称已被占用");
         }
         originalUserFileInfo.setFilename(newFilename);
-        originalUserFileInfo.setUpdateUser(userId);
+        originalUserFileInfo.setUpdateUser(userDepDto.getUserId());
         originalUserFileInfo.setUpdateTime(new Date());
         if (rPanUserFileMapper.updateByPrimaryKeySelective(originalUserFileInfo) != CommonConstant.ONE_INT) {
             Asserts.fail("文件重命名失败");
@@ -146,16 +194,13 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 删除文件(批量)
-     *
-     * @param fileIds
-     * @param map
      */
     @Override
-    public void delete(String fileIds, HashMap<String, Integer> map) {
-        long userId = map.get("userId").longValue();
-        long depId = map.get("depId").longValue();
+    public void delete(String fileIds, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         List<Long> idList = StringListUtil.string2LongList(fileIds);
-        if (rPanUserFileMapper.deleteBatch(idList,userId,depId) != idList.size()) {
+        if (rPanUserFileMapper.deleteBatch(idList,userDepDto.getUserId(),userDepDto.getDepId()) != idList.size()) {
             Asserts.fail("删除失败");
         }
     }
@@ -169,11 +214,11 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param totalSize
      */
     @Override
-    public void upload(MultipartFile file, Long parentId, HashMap<String, Integer> map, String identifier, Long totalSize, String filename) {
-        long userId = map.get("userId").longValue();
-        long depId = map.get("depId").longValue();
-        RPanFile rPanFile = uploadRealFile(file, depId, identifier, totalSize, FileUtil.getFileSuffix(filename));
-        saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userId, rPanFile.getFileSizeDesc(),depId);
+    public void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        RPanFile rPanFile = uploadRealFile(file, userDepDto.getDepId(), identifier, totalSize, FileUtil.getFileSuffix(filename));
+        saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),userDepDto.getDepId());
     }
 
     /**
@@ -233,13 +278,15 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 获取文件夹树
-     *
-     * @param depId
-     * @return
      */
     @Override
-    public List<FolderTreeNodeVO> getFolderTree(Long depId) {
-        List<RPanUserFile> folderList = rPanUserFileMapper.selectFolderListByUserId(depId);
+    public List<FolderTreeNodeVO> getFolderTree(Long fileRootId,Long depId) {
+        List<RPanUserFile> folderList = new ArrayList<>();
+        if(fileRootId!=1L){//部门文件
+            folderList = rPanUserFileMapper.selectFolderListByUserId(depId);
+        }else{
+            folderList = rPanUserFileMapper.selectFolderListByUserId(1L);
+        }
         return assembleFolderTree(folderList);
     }
 
@@ -352,9 +399,9 @@ public class UserFileServiceImpl implements IUserFileService {
     @Override
     public void preview(Long fileId, HttpServletResponse response, Long depId) {
         //改为部门id和fileId之间的关系
-        if (checkIsFolder(fileId, depId)) {
-            Asserts.fail("不能预览文件夹");
-        }
+//        if (checkIsFolder(fileId, depId)) {
+//            Asserts.fail("不能预览文件夹");
+//        }
         RPanUserFile rPanUserFile = rPanUserFileMapper.selectByPrimaryKey(fileId);
         RPanFile fileDetail = iFileService.getFileDetail(rPanUserFile.getRealFileId());
         preview(fileDetail.getRealPath(), response, fileDetail.getFilePreviewContentType());
@@ -482,14 +529,13 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param parentId
      * @param filename
      * @param identifier
-     * @param map
      * @return
      */
 //    todo  selectByIdentifier从哪插入的数据？
     @Override
-    public boolean secUpload(Long parentId, String filename, String identifier, HashMap<String, Integer> map) {
-        long userId = map.get("userId").longValue();
-        long depId = map.get("depId").longValue();
+    public boolean secUpload(Long parentId, String filename, String identifier, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         List<RPanFile> rPanFileList = iFileService.selectByIdentifier(identifier);
         if (CollectionUtils.isEmpty(rPanFileList)) {
             return false;
@@ -500,9 +546,10 @@ public class UserFileServiceImpl implements IUserFileService {
                 FileConstant.FolderFlagEnum.NO,
                 FileTypeContext.getFileTypeCode(filename),
                 rPanFile.getFileId(),
-                userId,
+                userDepDto.getUserId(),
+                userDepDto.getNickName(),
                 rPanFile.getFileSizeDesc(),
-                depId);
+                userDepDto.getDepId());
         return true;
     }
 
@@ -528,14 +575,13 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param identifier
      * @param parentId
      * @param totalSize
-     * @param map
      */
     @Override
-    public void mergeChunks(String filename, String identifier, Long parentId, Long totalSize, HashMap<String, Integer> map) {
-        long userId = map.get("userId").longValue();
-        long depId = map.get("depId").longValue();
-        RPanFile rPanFile = iFileService.mergeChunks(identifier, totalSize, userId, filename);
-        saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userId, rPanFile.getFileSizeDesc(),depId);
+    public void mergeChunks(String filename, String identifier, Long parentId, Long totalSize, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        RPanFile rPanFile = iFileService.mergeChunks(identifier, totalSize, userDepDto.getUserId(), filename);
+        saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),userDepDto.getDepId());
     }
 
 //    @Override todo
@@ -563,9 +609,10 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param fileSizeDesc
      * @return
      */
-    private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc) {
+    private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, String nickName,Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc) {
         RPanUserFile rPanUserFile = new RPanUserFile();
         rPanUserFile.setUserId(userId);
+        rPanUserFile.setUserName(nickName);
         rPanUserFile.setParentId(parentId);
         rPanUserFile.setFileId(new UniqueIdGenerator(1,1).nextId());
         rPanUserFile.setFilename(filename);
@@ -610,8 +657,8 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param userId
      * @param fileSizeDesc
      */
-    private void saveUserFile(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId, String fileSizeDesc, Long depId) {
-        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, depId,filename, folderFlag, fileType, realFileId, fileSizeDesc)) != CommonConstant.ONE_INT) {
+    private void saveUserFile(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId,String nickName, String fileSizeDesc, Long depId) {
+        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId,nickName, depId,filename, folderFlag, fileType, realFileId, fileSizeDesc)) != CommonConstant.ONE_INT) {
             Asserts.fail("保存文件信息失败");
         }
     }

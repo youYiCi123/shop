@@ -1,6 +1,7 @@
 package com.jxm.file.feign;
 
 import com.jxm.common.api.CommonResult;
+import com.jxm.file.config.FeignRequestInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 /**
  * 认证服务远程调用
  */
-@FeignClient("upstage-service")
+@FeignClient(value ="upstage-service",configuration = FeignRequestInterceptor.class)
 public interface UpstageService {
 
     @GetMapping(value = "/admin/getCurrentAdmin")
