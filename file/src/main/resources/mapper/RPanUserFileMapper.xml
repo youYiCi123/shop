@@ -2,28 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jxm.file.mapper.RPanUserFileMapper">
     <resultMap id="BaseResultMap" type="com.jxm.file.entity.RPanUserFile">
-        <id column="file_id" jdbcType="BIGINT" property="fileId" />
-        <result column="user_id" jdbcType="BIGINT" property="userId" />
-        <result column="user_name" jdbcType="VARCHAR" property="userName" />
-        <result column="parent_id" jdbcType="BIGINT" property="parentId" />
-        <result column="real_file_id" jdbcType="BIGINT" property="realFileId" />
-        <result column="filename" jdbcType="VARCHAR" property="filename" />
-        <result column="folder_flag" jdbcType="BIT" property="folderFlag" />
-        <result column="file_size_desc" jdbcType="VARCHAR" property="fileSizeDesc" />
-        <result column="file_type" jdbcType="BIT" property="fileType" />
-        <result column="del_flag" jdbcType="BIT" property="delFlag" />
-        <result column="create_user" jdbcType="BIGINT" property="createUser" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="update_user" jdbcType="BIGINT" property="updateUser" />
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-        <result column="dep_id" jdbcType="VARCHAR" property="depId" />
+        <id column="file_id" jdbcType="BIGINT" property="fileId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="real_file_id" jdbcType="BIGINT" property="realFileId"/>
+        <result column="filename" jdbcType="VARCHAR" property="filename"/>
+        <result column="pass_flag" jdbcType="BIT" property="passFlag"/>
+        <result column="folder_flag" jdbcType="BIT" property="folderFlag"/>
+        <result column="file_size_desc" jdbcType="VARCHAR" property="fileSizeDesc"/>
+        <result column="file_type" jdbcType="BIT" property="fileType"/>
+        <result column="del_flag" jdbcType="BIT" property="delFlag"/>
+        <result column="create_user" jdbcType="BIGINT" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="dep_id" jdbcType="VARCHAR" property="depId"/>
     </resultMap>
     <sql id="Base_Column_List">
         file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag, create_user, create_time, update_user, update_time,dep_id
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from r_pan_user_file
         where file_id = #{fileId,jdbcType=BIGINT}
     </select>
@@ -200,9 +201,30 @@
         where file_id = #{fileId,jdbcType=BIGINT}
     </update>
 
+    <delete id="deleteBatchReal" parameterType="java.lang.Long">
+        delete from r_pan_user_file
+        where
+        file_id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="passeBatch" parameterType="java.lang.Long">
+        update  r_pan_user_file
+        set pass_flag=1
+        where
+        file_id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
     <!--===================================================================自定义===================================================================-->
 
-    <select id="selectRPanUserFileVOListByUserIdAndFileTypeAndParentIdAndDelFlag" resultType="com.jxm.file.vo.RPanUserFileVO">
+    <select id="selectRPanUserFileVOListByUserIdAndFileTypeAndParentIdAndDelFlag"
+            resultType="com.jxm.file.vo.RPanUserFileVO">
         SELECT
         a1.file_id AS fileId,
         a1.parent_id AS parentId,
@@ -217,7 +239,7 @@
         WHERE
         a1.user_id=#{userId}
         <if test="parentId != null and parentId != -1">
-            AND  a1.parent_id = #{parentId}
+            AND a1.parent_id = #{parentId}
         </if>
         <if test="fileTypeArray != null">
             AND a1.file_type IN
@@ -228,6 +250,36 @@
         AND a1.del_flag = #{delFlag}
     </select>
 
+    <select id="selectRPanUserFileVOListBykeyword" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
+        SELECT
+        a1.file_id AS fileId,
+        a1.parent_id AS parentId,
+        a1.filename AS filename,
+        a1.folder_flag AS folderFlag,
+        a1.file_size_desc AS fileSizeDesc,
+        a1.file_type AS fileType,
+        a1.create_time AS createTime,
+        a1.update_time AS updateTime,
+        a1.user_name AS creatName
+        FROM
+        r_pan_user_file a1
+        <where>
+            a1.pass_flag =0
+            <if test="depId != null  and depId != ''">
+             and   a1.dep_id = #{depId,jdbcType=BIGINT}
+            </if>
+            <if test="keyword != null  and keyword != ''">
+                and a1.filename like concat('%', #{keyword}, '%')
+            </if>
+            <if test="delFlag != null  and delFlag != ''">
+                AND a1.del_flag = #{delFlag}
+            </if>
+            <if test="fileType != null  and fileType != ''">
+                and a1.file_type=#{fileType}
+            </if>
+        </where>
+        order by a1.update_time desc
+    </select>
 
     <select id="selectRPanUserFileVOListByUserId" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
         SELECT
@@ -244,8 +296,9 @@
         r_pan_user_file a1
         WHERE
         a1.dep_id=#{depId}
+        and a1.pass_flag=1
         <if test="parentId != null and parentId != -1">
-            AND  a1.parent_id = #{parentId}
+            AND a1.parent_id = #{parentId}
         </if>
         <if test="fileTypeArray != null">
             AND a1.file_type IN
@@ -253,7 +306,7 @@
                 #{item}
             </foreach>
         </if>
-       AND a1.del_flag = #{delFlag}
+        AND a1.del_flag = #{delFlag}
     </select>
 
     <select id="selectRPanUserFileVOList" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
@@ -270,8 +323,9 @@
         FROM
         r_pan_user_file a1
         WHERE
+        a1.pass_flag=1
         <if test="parentId != null and parentId != -1">
-             a1.parent_id = #{parentId}
+          AND a1.parent_id = #{parentId}
         </if>
         <if test="fileTypeArray != null">
             AND a1.file_type IN
@@ -282,15 +336,14 @@
         AND a1.del_flag = #{delFlag}
     </select>
 
-    <select id="selectByFileIdAndUserId" resultMap="BaseResultMap">
+    <select id="selectByFileId" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            dep_id = #{depId}
-            AND file_id = #{fileId}
-            AND del_flag = 0
+        file_id = #{fileId}
+        AND del_flag = 0
     </select>
 
     <select id="selectCountByUserIdAndFilenameAndParentId" resultType="int">
@@ -305,46 +358,51 @@
             AND filename = #{filename}
     </select>
 
-    <update id="deleteBatch">
-        UPDATE
-            r_pan_user_file
-        SET
-            del_flag = 1,
-            update_user = #{userId},
-            update_time = NOW()
-        WHERE
-            file_id IN
-            <foreach collection="idList" open="(" close=")" item="item" separator=",">
-                #{item}
-            </foreach>
-            AND dep_id = #{depId}
+    <delete id="deleteBatch">
+        DELETE FROM r_pan_user_file WHERE  file_id IN
+        <foreach collection="idList" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+    delete from r_pan_user_file
+    where file_id = #{id,jdbcType=BIGINT}
+  </delete>
+
+    <update id="passFileById" parameterType="java.lang.Long">
+        update r_pan_user_file
+        set pass_flag=1
+        where file_id = #{fileId,jdbcType=BIGINT}
     </update>
 
     <select id="selectFolderListByUserId" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            dep_id = #{rootFileId}
-            AND del_flag = 0
-            AND folder_flag = 1
+        dep_id = #{rootFileId}
+        AND del_flag = 0
+        AND folder_flag = 1
+        AND pass_flag=1
     </select>
 
     <select id="selectListByFileIdList" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            file_id IN
-            <foreach collection="idList" open="(" close=")" item="item" separator=",">
-                #{item}
-            </foreach>
+        file_id IN
+        <foreach collection="idList" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
     </select>
 
     <insert id="insertBatch" parameterType="list">
-        INSERT INTO r_pan_user_file (user_id, parent_id, file_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag, create_user, create_time, update_user, update_time)
+        INSERT INTO r_pan_user_file (user_id, parent_id, file_id, real_file_id, filename, folder_flag, file_size_desc,
+        file_type, del_flag, create_user, create_time, update_user, update_time,dep_id)
         VALUES
         <foreach collection="recordList" item="item" separator=",">
             (
@@ -360,34 +418,36 @@
             #{item.createUser},
             #{item.createTime},
             #{item.updateUser},
-            #{item.updateTime}
+            #{item.updateTime},
+            #{item.depId}
             )
         </foreach>
 
     </insert>
 
-    <select id="selectRPanUserFileVOListByUserIdAndFilenameAndFileTypes" resultType="com.jxm.file.vo.RPanUserFileSearchVO">
+    <select id="selectRPanUserFileVOListByUserIdAndFilenameAndFileTypes"
+            resultType="com.jxm.file.vo.RPanUserFileSearchVO">
         SELECT
-            file_id AS fileId,
-            parent_id AS parentId,
-            filename AS filename,
-            folder_flag AS folderFlag,
-            file_size_desc AS fileSizeDesc,
-            file_type AS fileType,
-            create_time AS createTime,
-            update_time AS updateTime
+        file_id AS fileId,
+        parent_id AS parentId,
+        filename AS filename,
+        folder_flag AS folderFlag,
+        file_size_desc AS fileSizeDesc,
+        file_type AS fileType,
+        create_time AS createTime,
+        update_time AS updateTime
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            user_id = #{userId}
-            AND del_flag = 0
-            AND filename LIKE CONCAT('%', #{keyword}, '%')
-            <if test="fileTypeArray != null">
-                AND file_type IN
-                <foreach collection="fileTypeArray" open="(" close=")" item="item" separator=",">
-                    #{item}
-                </foreach>
-            </if>
+        user_id = #{userId}
+        AND del_flag = 0
+        AND filename LIKE CONCAT('%', #{keyword}, '%')
+        <if test="fileTypeArray != null">
+            AND file_type IN
+            <foreach collection="fileTypeArray" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
     </select>
 
     <select id="selectRPanUserFileVOByFileIdAndUserId" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
@@ -410,11 +470,11 @@
 
     <select id="selectAllListByParentId" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            parent_id = #{parentId}
+        parent_id = #{parentId}
     </select>
 
     <select id="getTheNumberOfFileTypes" resultType="com.jxm.file.dto.DashboardUserFileParam">
@@ -431,12 +491,12 @@
 
     <select id="selectAvailableListByParentId" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            parent_id = #{parentId}
-            AND del_flag = 0
+        parent_id = #{parentId}
+        AND del_flag = 0
     </select>
 
     <select id="selectAvailableRPanUserFileVOListByParentId" resultType="com.jxm.file.vo.RPanUserFileVO">
@@ -458,17 +518,17 @@
 
     <update id="updateUserFileDelFlagByFileIdListAndUserId">
         UPDATE
-            r_pan_user_file
+        r_pan_user_file
         SET
-            del_flag = 0,
-            update_user = #{userId},
-            update_time = NOW()
+        del_flag = 0,
+        update_user = #{userId},
+        update_time = NOW()
         WHERE
-            dep_id = #{depId}
-            AND file_id IN
-            <foreach collection="fileIdList" open="(" close=")" item="item" separator=",">
-                #{item}
-            </foreach>
+        dep_id = #{depId}
+        AND file_id IN
+        <foreach collection="fileIdList" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
     </update>
 
     <delete id="physicalDeleteBatch">
@@ -489,33 +549,33 @@
 
     <select id="selectRPanUserFileVOListByFileIdList" resultType="com.jxm.file.vo.RPanUserFileVO">
         SELECT
-            file_id AS fileId,
-            parent_id AS parentId,
-            filename AS filename,
-            folder_flag AS folderFlag,
-            file_size_desc AS fileSizeDesc,
-            file_type AS fileType,
-            create_time AS createTime,
-            update_time AS updateTime
+        file_id AS fileId,
+        parent_id AS parentId,
+        filename AS filename,
+        folder_flag AS folderFlag,
+        file_size_desc AS fileSizeDesc,
+        file_type AS fileType,
+        create_time AS createTime,
+        update_time AS updateTime
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            del_flag = 0
-            AND file_id IN
-            <foreach collection="fileIdList" item="item" separator="," open="(" close=")">
-                #{item}
-            </foreach>
+        del_flag = 0
+        AND file_id IN
+        <foreach collection="fileIdList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
     </select>
-<!--todo-->
+    <!--todo-->
     <select id="selectTopFolderByUserId" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE dep_id = #{depId}
-            AND del_flag = 0
-            AND parent_id = 0
-            AND folder_flag = 1
+        AND del_flag = 0
+        AND parent_id = 0
+        AND folder_flag = 1
     </select>
 
     <select id="selectAvailableFileIdListByParentId" resultType="java.lang.Long">
@@ -530,12 +590,12 @@
 
     <select id="selectFilePositionBOListByFileIds" resultType="com.jxm.file.bo.FilePositionBO">
         SELECT
-            file_id AS fileId,
-            filename AS filename
+        file_id AS fileId,
+        filename AS filename
         FROM
-            r_pan_user_file
+        r_pan_user_file
         WHERE
-            del_flag = 0
+        del_flag = 0
         AND file_id IN
         <foreach collection="fileIdList" item="item" separator="," open="(" close=")">
             #{item}

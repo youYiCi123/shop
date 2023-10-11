@@ -62,6 +62,7 @@ secure:
       - "/auth-service/rsa/publicKey"
       - "/upstage-service/excel/download"
       - "/file-service/preview/**"
+      - "/file-service/file/download"
 
 
 

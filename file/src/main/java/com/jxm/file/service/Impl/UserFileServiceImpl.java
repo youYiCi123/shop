@@ -68,39 +68,24 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 获取文件列表
-     *
-     * @param parentId
-     * @param fileTypes
-     * @param depId
-     * @return
      */
     @Override
-    public List<RPanUserFileDisplayVO> filesForTable(Long parentId, String fileTypes, Long depId,Integer pageNum,Integer pageSize) {
-        return filesForTable(parentId, fileTypes, depId, FileConstant.DelFlagEnum.NO.getCode(),pageNum,pageSize);
-    }
-
-    /**
-     * 获取文件列表
-     *
-     * @param parentId
-     * @param fileTypes
-     * @param depId
-     * @param delFlag
-     * @return
-     */
-    @Override
-    public List<RPanUserFileDisplayVO> filesForTable(Long parentId, String fileTypes, Long depId, Integer delFlag,Integer pageNum,Integer pageSize) {
-        List<Integer> fileTypeArray = null;
-        if (Objects.equals(CommonConstant.ZERO_LONG, parentId)) {
-            return Lists.newArrayList();
+    public List<RPanUserFileDisplayVO> filesForTable(Long pageType,String keyword,Integer fileType,Integer pageNum,Integer pageSize,Long depId) {
+        List<RPanUserFileDisplayVO> rPanUserFileDisplayVOS =new ArrayList<>();
+                PageHelper.startPage(pageNum, pageSize);
+        if(Objects.equals(1L, pageType)){
+             rPanUserFileDisplayVOS = rPanUserFileMapper.selectRPanUserFileVOListBykeyword(1L, keyword, fileType,FileConstant.DelFlagEnum.NO.getCode());
+        }else{
+            rPanUserFileDisplayVOS = rPanUserFileMapper.selectRPanUserFileVOListBykeyword(depId,keyword,fileType,FileConstant.DelFlagEnum.NO.getCode());
         }
-        if (!Objects.equals(fileTypes, FileConstant.ALL_FILE_TYPE)) {
-            fileTypeArray = StringListUtil.string2IntegerList(fileTypes);
+        if (CollectionUtils.isNotEmpty(rPanUserFileDisplayVOS)) {
+            List<Long> parentIdList = rPanUserFileDisplayVOS.stream().map(RPanUserFileDisplayVO::getParentId).collect(Collectors.toList());
+            List<FilePositionBO> filePositionBOList = rPanUserFileMapper.selectFilePositionBOListByFileIds(parentIdList);
+            final Map<Long, String> filePositionMap = filePositionBOList.stream().collect(Collectors.toMap(FilePositionBO::getFileId, FilePositionBO::getFilename));
+            rPanUserFileDisplayVOS.stream().forEach(rPanUserFileSearchVO -> rPanUserFileSearchVO.setParentFilename(filePositionMap.get(rPanUserFileSearchVO.getParentId())));
         }
-        PageHelper.startPage(pageNum, pageSize);
-        return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, fileTypeArray, parentId, delFlag);
+        return rPanUserFileDisplayVOS;
     }
-
 
     /**
      * 获取文件列表
@@ -177,7 +162,7 @@ public class UserFileServiceImpl implements IUserFileService {
     public void updateFilename(Long fileId, String newFilename, Object loginUser) {
         String jsonStr = JSONUtil.toJsonStr(loginUser);
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
-        RPanUserFile originalUserFileInfo = getRPanUserFileByFileIdAndUserId(fileId, userDepDto.getDepId());
+        RPanUserFile originalUserFileInfo = getRPanUserFileByFileIdAndUserId(fileId);
         if (Objects.equals(originalUserFileInfo.getFilename(), newFilename)) {
             Asserts.fail("请使用一个新名称");
         }
@@ -196,13 +181,31 @@ public class UserFileServiceImpl implements IUserFileService {
      * 删除文件(批量)
      */
     @Override
-    public void delete(String fileIds, Object loginUser) {
-        String jsonStr = JSONUtil.toJsonStr(loginUser);
-        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+    public void delete(String fileIds) {
         List<Long> idList = StringListUtil.string2LongList(fileIds);
-        if (rPanUserFileMapper.deleteBatch(idList,userDepDto.getUserId(),userDepDto.getDepId()) != idList.size()) {
+        if (rPanUserFileMapper.deleteBatch(idList) != idList.size()) {
             Asserts.fail("删除失败");
         }
+    }
+
+    @Override
+    public int deleteBatch(List<Long> idList) {
+        return rPanUserFileMapper.deleteBatchReal(idList);
+    }
+
+    @Override
+    public int passeBatch(List<Long> idList) {
+        return rPanUserFileMapper.passeBatch(idList);
+    }
+
+    @Override
+    public int deleteFile(Long id) {
+        return rPanUserFileMapper.deleteById(id);
+    }
+
+    @Override
+    public int passFile(Long id) {
+        return rPanUserFileMapper.passFileById(id);
     }
 
     /**
@@ -248,26 +251,14 @@ public class UserFileServiceImpl implements IUserFileService {
      *
      * @param fileId
      * @param response
-     * @param userId
-     */
-    @Override
-    public void download(Long fileId, HttpServletResponse response, Long userId) {
-        try {
-            getRPanUserFileByFileIdAndUserId(fileId, userId);
-        } catch (Exception e) {
-            Asserts.fail("您没有下载权限");
-        }
-        download(fileId, response);
-    }
-
-    /**
-     * 文件下载
-     *
-     * @param fileId
-     * @param response
      */
     @Override
     public void download(Long fileId, HttpServletResponse response) {
+        try {
+            getRPanUserFileByFileIdAndUserId(fileId);
+        } catch (Exception e) {
+            Asserts.fail("您没有下载权限");
+        }
         if (checkIsFolder(fileId)) {
             Asserts.fail("不能选择文件夹下载");
         }
@@ -315,17 +306,23 @@ public class UserFileServiceImpl implements IUserFileService {
      *
      * @param fileIds
      * @param targetParentId
-     * @param depId
+     * @param loginUser
      */
     @Override
-    public void copy(String fileIds, Long targetParentId, Long depId) {
-        if (!checkIsFolder(targetParentId, depId)) {
+    public void copy(Integer pageType,String fileIds, Long targetParentId, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        if (!checkIsFolder(targetParentId)) {
             Asserts.fail("请选择要复制到的文件夹");
         }
         if (!checkTargetParentIdAvailable(targetParentId, fileIds)) {
             Asserts.fail("要复制的文件中包含选中的目标文件夹,请重新选择");
         }
-        doCopyUserFiles(fileIds, targetParentId, depId);
+        if(pageType==1){//1企业
+            doCopyUserFiles(fileIds, targetParentId, 1L,userDepDto.getUserId());
+        }else{//2部门
+            doCopyUserFiles(fileIds, targetParentId, userDepDto.getDepId(),userDepDto.getUserId());
+        }
     }
 
     /**
@@ -533,12 +530,16 @@ public class UserFileServiceImpl implements IUserFileService {
      */
 //    todo  selectByIdentifier从哪插入的数据？
     @Override
-    public boolean secUpload(Long parentId, String filename, String identifier, Object loginUser) {
+    public boolean secUpload(Integer pageType,Long parentId, String filename, String identifier, Object loginUser) {
         String jsonStr = JSONUtil.toJsonStr(loginUser);
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         List<RPanFile> rPanFileList = iFileService.selectByIdentifier(identifier);
         if (CollectionUtils.isEmpty(rPanFileList)) {
             return false;
+        }
+        Long depId=1L;
+        if(pageType!=1){
+            depId=userDepDto.getDepId();
         }
         RPanFile rPanFile = rPanFileList.get(CommonConstant.ZERO_INT);
         saveUserFile(parentId,
@@ -549,7 +550,7 @@ public class UserFileServiceImpl implements IUserFileService {
                 userDepDto.getUserId(),
                 userDepDto.getNickName(),
                 rPanFile.getFileSizeDesc(),
-                userDepDto.getDepId());
+                depId);
         return true;
     }
 
@@ -577,23 +578,16 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param totalSize
      */
     @Override
-    public void mergeChunks(String filename, String identifier, Long parentId, Long totalSize, Object loginUser) {
+    public void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, Object loginUser) {
         String jsonStr = JSONUtil.toJsonStr(loginUser);
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         RPanFile rPanFile = iFileService.mergeChunks(identifier, totalSize, userDepDto.getUserId(), filename);
-        saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),userDepDto.getDepId());
+        if(pageType==1){//企业
+            saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),1L);
+        }else{//部门
+            saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),userDepDto.getDepId());
+        }
     }
-
-//    @Override todo
-//    public List<DashboardUserFileParam> getTheNumberOfFileTypes() {
-//        //获取部门信息
-//        String loginDepId = emailServiceImpl.getLoginDepId();
-//        List<DashboardUserFileParam> theNumberOfFileTypes = rPanUserFileMapper.getTheNumberOfFileTypes(loginDepId);
-//        if(theNumberOfFileTypes==null){
-//            theNumberOfFileTypes= Collections.emptyList();
-//        }
-//        return theNumberOfFileTypes;
-//    }
 
     /******************************************************私有****************************************************/
 
@@ -734,7 +728,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param targetParentId
      * @param userId
      */
-    private void complementToBeCopiedFileInfoList(final List<RPanUserFile> toBeCopiedFileInfoList, final Long targetParentId, final Long userId) {
+    private void complementToBeCopiedFileInfoList(final List<RPanUserFile> toBeCopiedFileInfoList, final Long targetParentId, final Long depId,final Long userId) {
         final List<RPanUserFile> allChildUserFileList = Lists.newArrayList();
         toBeCopiedFileInfoList.stream().forEach(rPanUserFile -> {
             Long fileId = rPanUserFile.getFileId(),
@@ -746,9 +740,10 @@ public class UserFileServiceImpl implements IUserFileService {
             rPanUserFile.setCreateTime(new Date());
             rPanUserFile.setUpdateUser(userId);
             rPanUserFile.setUpdateTime(new Date());
+            rPanUserFile.setDepId(depId);
             handleDuplicateFileName(rPanUserFile);
             if (checkIsFolder(rPanUserFile)) {
-                assembleAllChildUserFile(allChildUserFileList, fileId, newFileId, userId);
+                assembleAllChildUserFile(allChildUserFileList, fileId, newFileId, depId,userId);
             }
         });
         toBeCopiedFileInfoList.addAll(allChildUserFileList);
@@ -889,7 +884,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @return
      */
     private boolean checkIsFolder(Long fileId, Long depId) {
-        return checkIsFolder(rPanUserFileMapper.selectByFileIdAndUserId(fileId, depId));
+        return checkIsFolder(rPanUserFileMapper.selectByFileId(fileId));
     }
 
     /**
@@ -927,7 +922,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param userId
      * @return
      */
-    private void assembleAllChildUserFile(final List<RPanUserFile> allChildUserFileList, Long parentUserFileId, Long newParentUserFileId, Long userId) {
+    private void assembleAllChildUserFile(final List<RPanUserFile> allChildUserFileList, Long parentUserFileId, Long newParentUserFileId, Long depId,Long userId) {
         List<RPanUserFile> childUserFileList = rPanUserFileMapper.selectAvailableListByParentId(parentUserFileId);
         if (CollectionUtils.isEmpty(childUserFileList)) {
             return;
@@ -942,9 +937,10 @@ public class UserFileServiceImpl implements IUserFileService {
             childUserFile.setCreateTime(new Date());
             childUserFile.setUpdateUser(userId);
             childUserFile.setUpdateTime(new Date());
+            childUserFile.setDepId(depId);
             allChildUserFileList.add(childUserFile);
             if (checkIsFolder(childUserFile)) {
-                assembleAllChildUserFile(allChildUserFileList, fileId, newFileId, userId);
+                assembleAllChildUserFile(allChildUserFileList, fileId, newFileId,depId,userId);
             }
         });
     }
@@ -1025,10 +1021,10 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param depId
      * @return
      */
-    private void doCopyUserFiles(String fileIds, Long targetParentId, Long depId) {
+    private void doCopyUserFiles(String fileIds, Long targetParentId, Long depId,Long userId) {
         // 查询所有要被复制的文件信息
         List<RPanUserFile> toBeCopiedFileInfoList = rPanUserFileMapper.selectListByFileIdList(StringListUtil.string2LongList(fileIds));
-        complementToBeCopiedFileInfoList(toBeCopiedFileInfoList, targetParentId, depId);
+        complementToBeCopiedFileInfoList(toBeCopiedFileInfoList, targetParentId, depId,userId);
         // 批量新增文件信息
         if (rPanUserFileMapper.insertBatch(toBeCopiedFileInfoList) != toBeCopiedFileInfoList.size()) {
             Asserts.fail("文件复制失败");
@@ -1055,21 +1051,14 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 根据用户id和文件id查询对应的文件信息
-     *
-     * @param fileId
-     * @param depId
-     * @return
      */
-    private RPanUserFile getRPanUserFileByFileIdAndUserId(Long fileId, Long depId) {
+    private RPanUserFile getRPanUserFileByFileIdAndUserId(Long fileId) {
         RPanUserFile originalUserFileInfo = rPanUserFileMapper.selectByPrimaryKey(fileId);
         if (Objects.isNull(originalUserFileInfo)) {
-            Asserts.fail("该用户没有此文件");
-        }
-        if (!Objects.equals(originalUserFileInfo.getDepId(), depId)) {
-            Asserts.fail("该部门没有此文件");
+            Asserts.fail("此文件已不存在");
         }
         if (Objects.equals(FileConstant.DelFlagEnum.YES.getCode(), originalUserFileInfo.getDelFlag())) {
-            Asserts.fail("该部门没有此文件");
+            Asserts.fail("此文件已不存在");
         }
         return originalUserFileInfo;
     }

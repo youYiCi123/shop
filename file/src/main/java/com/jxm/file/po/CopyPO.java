@@ -16,7 +16,10 @@ import java.util.Objects;
 public class CopyPO implements Serializable {
 
     private static final long serialVersionUID = 1647689436377006254L;
+//      private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "页面类型", required = true)
+    private Integer pageType;
     /**
      * 要复制的文件ID，多个用__,__隔开
      */
@@ -50,24 +53,34 @@ public class CopyPO implements Serializable {
         this.targetParentId = targetParentId;
     }
 
+    public Integer getPageType() {
+        return pageType;
+    }
+
+    public void setPageType(Integer pageType) {
+        this.pageType = pageType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CopyPO copyPO = (CopyPO) o;
-        return Objects.equals(fileIds, copyPO.fileIds) &&
+        return Objects.equals(pageType, copyPO.pageType) &&
+                Objects.equals(fileIds, copyPO.fileIds) &&
                 Objects.equals(targetParentId, copyPO.targetParentId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileIds, targetParentId);
+        return Objects.hash(pageType, fileIds, targetParentId);
     }
 
     @Override
     public String toString() {
         return "CopyPO{" +
-                "fileIds='" + fileIds + '\'' +
+                "pageType=" + pageType +
+                ", fileIds='" + fileIds + '\'' +
                 ", targetParentId=" + targetParentId +
                 '}';
     }

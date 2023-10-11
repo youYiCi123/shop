@@ -29,6 +29,10 @@ public class FileChunkMergePO implements Serializable {
     @NotNull(message = "父id不能为空")
     private Long parentId;
 
+    @ApiModelProperty(value = "页面类型", required = true)
+    @NotNull(message = "所在页面类型")
+    private Integer pageType;
+
     public FileChunkMergePO() {
     }
 
@@ -64,6 +68,14 @@ public class FileChunkMergePO implements Serializable {
         this.parentId = parentId;
     }
 
+    public Integer getPageType() {
+        return pageType;
+    }
+
+    public void setPageType(Integer pageType) {
+        this.pageType = pageType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,12 +84,13 @@ public class FileChunkMergePO implements Serializable {
         return Objects.equals(filename, that.filename) &&
                 Objects.equals(identifier, that.identifier) &&
                 Objects.equals(totalSize, that.totalSize) &&
-                Objects.equals(parentId, that.parentId);
+                Objects.equals(parentId, that.parentId) &&
+                Objects.equals(pageType, that.pageType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filename, identifier, totalSize, parentId);
+        return Objects.hash(filename, identifier, totalSize, parentId, pageType);
     }
 
     @Override
@@ -87,7 +100,7 @@ public class FileChunkMergePO implements Serializable {
                 ", identifier='" + identifier + '\'' +
                 ", totalSize=" + totalSize +
                 ", parentId=" + parentId +
+                ", pageType=" + pageType +
                 '}';
     }
-
 }

@@ -43,6 +43,11 @@ public class RPanUserFile implements Serializable {
     private String filename;
 
     /**
+     * 是否通过审核
+     */
+    private Integer passFlag;
+
+    /**
      * 文件夹标识 0 否 1 是
      */
     private Integer folderFlag;
@@ -132,6 +137,14 @@ public class RPanUserFile implements Serializable {
         this.filename = filename;
     }
 
+    public Integer getPassFlag() {
+        return passFlag;
+    }
+
+    public void setPassFlag(Integer passFlag) {
+        this.passFlag = passFlag;
+    }
+
     public Integer getFolderFlag() {
         return folderFlag;
     }
@@ -213,6 +226,7 @@ public class RPanUserFile implements Serializable {
                 ", parentId=" + parentId +
                 ", realFileId=" + realFileId +
                 ", filename='" + filename + '\'' +
+                ", passFlag=" + passFlag +
                 ", folderFlag=" + folderFlag +
                 ", fileSizeDesc='" + fileSizeDesc + '\'' +
                 ", fileType=" + fileType +

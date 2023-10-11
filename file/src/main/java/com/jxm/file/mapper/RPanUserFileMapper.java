@@ -32,14 +32,19 @@ public interface RPanUserFileMapper {
 
     int updateByPrimaryKey(RPanUserFile record);
 
+    List<RPanUserFileDisplayVO> selectRPanUserFileVOListBykeyword(@Param("depId") Long depId,
+                                                                  @Param("keyword") String keyword,
+                                                                  @Param("fileType") Integer fileType,
+                                                                  @Param("delFlag") Integer delFlag);
+
     List<RPanUserFileDisplayVO> selectRPanUserFileVOListByUserId(@Param("depId") Long depId,
                                                                  @Param("fileTypeArray") List<Integer> fileTypeArray,
                                                                  @Param("parentId") Long parentId,
                                                                  @Param("delFlag") Integer delFlag);
 
     List<RPanUserFileDisplayVO> selectRPanUserFileVOList(@Param("fileTypeArray") List<Integer> fileTypeArray,
-                                                                 @Param("parentId") Long parentId,
-                                                                 @Param("delFlag") Integer delFlag);
+                                                         @Param("parentId") Long parentId,
+                                                         @Param("delFlag") Integer delFlag);
 
 
     List<RPanUserFileVO> selectRPanUserFileVOListByUserIdAndFileTypeAndParentIdAndDelFlag(@Param("userId") Long userId,
@@ -47,13 +52,21 @@ public interface RPanUserFileMapper {
                                                                                           @Param("parentId") Long parentId,
                                                                                           @Param("delFlag") Integer delFlag);
 
-    RPanUserFile selectByFileIdAndUserId(@Param("fileId") Long fileId, @Param("depId") Long depId);
+    RPanUserFile selectByFileId(@Param("fileId") Long fileId);
 
     int selectCountByUserIdAndFilenameAndParentId(@Param("depId") Long depId,
                                                   @Param("filename") String filename,
                                                   @Param("parentId") Long parentId);
 
-    int deleteBatch(@Param("idList") List<Long> idList, @Param("userId") Long userId, @Param("depId") Long depId);
+    int deleteBatch(@Param("idList") List<Long> idList);
+
+    int deleteBatchReal(@Param("idList") List<Long> idList);
+
+    int passeBatch(@Param("idList") List<Long> idList);
+
+    int deleteById(Long id);
+
+    int passFileById(Long id);
 
     List<RPanUserFile> selectFolderListByUserId(@Param("rootFileId") Long rootFileId);
 

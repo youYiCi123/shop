@@ -25,6 +25,10 @@ public class FileSecUploadPO implements Serializable {
     @NotNull(message = "父id不能为空")
     private Long parentId;
 
+    @ApiModelProperty(value = "页面类型", required = true)
+    @NotNull(message = "所在页面类型")
+    private Integer pageType;
+
     public FileSecUploadPO() {
     }
 
@@ -52,6 +56,14 @@ public class FileSecUploadPO implements Serializable {
         this.parentId = parentId;
     }
 
+    public Integer getPageType() {
+        return pageType;
+    }
+
+    public void setPageType(Integer pageType) {
+        this.pageType = pageType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,12 +71,13 @@ public class FileSecUploadPO implements Serializable {
         FileSecUploadPO that = (FileSecUploadPO) o;
         return Objects.equals(filename, that.filename) &&
                 Objects.equals(identifier, that.identifier) &&
-                Objects.equals(parentId, that.parentId);
+                Objects.equals(parentId, that.parentId) &&
+                Objects.equals(pageType, that.pageType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filename, identifier, parentId);
+        return Objects.hash(filename, identifier, parentId, pageType);
     }
 
     @Override
@@ -73,7 +86,7 @@ public class FileSecUploadPO implements Serializable {
                 "filename='" + filename + '\'' +
                 ", identifier='" + identifier + '\'' +
                 ", parentId=" + parentId +
+                ", pageType=" + pageType +
                 '}';
     }
-
 }

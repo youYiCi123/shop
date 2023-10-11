@@ -12,7 +12,7 @@ public interface UmsRoleMapper {
 
     int updateByPrimaryKey(UmsRole record);
 
-    int deleteByIds(@Param("ids") List<Long> ids);
+    int deleteById(@Param("id") Long id);
 
     List<UmsRole> selectAllRole();
 

@@ -43,11 +43,11 @@ public class RoleController {
         return CommonResult.failed();
     }
 
-    @ApiOperation("批量删除角色")
+    @ApiOperation("删除角色")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult delete(@RequestParam("ids") List<Long> ids) {
-        int count = roleService.delete(ids);
+    public CommonResult delete(@RequestParam("id") Long id) {
+        int count = roleService.delete(id);
         if (count > 0) {
             return CommonResult.success(count);
         }

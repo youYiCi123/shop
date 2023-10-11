@@ -52,8 +52,8 @@ public class UmsRoleServiceImpl implements UmsRoleService {
     }
 
     @Override
-    public int delete(List<Long> ids) {
-        int count = roleMapper.deleteByIds(ids);
+    public int delete(Long id) {
+        int count = roleMapper.deleteById(id);
         resourceService.initResourceRolesMap();
         return count;
     }

@@ -26,7 +26,7 @@ public interface UmsRoleService {
     /**
      * 批量删除角色
      */
-    int delete(List<Long> ids);
+    int delete(Long id);
     /**
      * 获取所有角色列表
      */
