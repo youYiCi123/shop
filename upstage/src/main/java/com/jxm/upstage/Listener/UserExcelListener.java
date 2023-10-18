@@ -43,6 +43,7 @@ public class UserExcelListener extends AnalysisEventListener<ExcelUser> {
 
     @Override
     public void invoke(ExcelUser data, AnalysisContext context) {
+        if(data.getNickName()!=null&&data.getPhoneNumber()!=null)
         linkUserList.add(data);
         if (linkUserList.size() % SIZE == 0) {
             exportExcelHandleService.saveUserInfo(linkUserList);

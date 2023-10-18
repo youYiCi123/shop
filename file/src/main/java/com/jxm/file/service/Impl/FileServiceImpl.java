@@ -85,14 +85,6 @@ public class FileServiceImpl implements IFileService {
 
     /**
      * 保存分片文件
-     *
-     * @param file
-     * @param userId
-     * @param identifier
-     * @param totalChunks
-     * @param chunkNumber
-     * @param totalSize
-     * @param filename
      * @return 是否全部上传完成
      */
     @Override
@@ -304,14 +296,6 @@ public class FileServiceImpl implements IFileService {
 
     /**
      * 上传分片文件
-     *
-     * @param file
-     * @param identifier
-     * @param totalChunks
-     * @param chunkNumber
-     * @param totalSize
-     * @param suffix
-     * @param userId
      * @return 文件存储路径
      */
     private String uploadFileWithChunk(MultipartFile file, String identifier, Integer totalChunks, Integer chunkNumber, Long totalSize, String suffix, Long userId) {

@@ -347,9 +347,8 @@ public class FileController {
     )
     @GetMapping("preview")
     public void preview(@NotNull(message = "文件id不能为空") @RequestParam(value = "fileId", required = false) Long fileId,
-                        HttpServletResponse response) throws ParseException {
-        Long depId = getLoginDepId();
-        iUserFileService.preview(fileId, response, depId);
+                        HttpServletResponse response){
+        iUserFileService.preview(fileId, response);
     }
 
     @GetMapping("image/{fileName}")

@@ -117,10 +117,14 @@ public class UserFileServiceImpl implements IUserFileService {
         if (!Objects.equals(fileTypes, FileConstant.ALL_FILE_TYPE)) {
             fileTypeArray = StringListUtil.string2IntegerList(fileTypes);
         }
-        if(Objects.equals(1L, pageType)){
-            return rPanUserFileMapper.selectRPanUserFileVOList(fileTypeArray, parentId, delFlag);
-        }else{
-            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, fileTypeArray, parentId, delFlag);
+        if(Objects.equals(1L, pageType)){//企业文件预览
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(1L,1,fileTypeArray, parentId, delFlag);
+        }else if(Objects.equals(2L, pageType)){//部门文件预览
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId,1, fileTypeArray, parentId, delFlag);
+        }else if(Objects.equals(3L, pageType)){//企业文件审核
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(1L, 0,fileTypeArray, parentId, delFlag);
+        }else{//部门文件审核
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, 0,fileTypeArray, parentId, delFlag);
         }
     }
 
@@ -390,11 +394,10 @@ public class UserFileServiceImpl implements IUserFileService {
      * 预览单个文件
      *
      * @param fileId
-     * @param depId
      * @param response
      */
     @Override
-    public void preview(Long fileId, HttpServletResponse response, Long depId) {
+    public void preview(Long fileId, HttpServletResponse response) {
         //改为部门id和fileId之间的关系
 //        if (checkIsFolder(fileId, depId)) {
 //            Asserts.fail("不能预览文件夹");

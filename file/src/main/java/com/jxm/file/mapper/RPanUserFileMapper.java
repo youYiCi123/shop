@@ -38,13 +38,10 @@ public interface RPanUserFileMapper {
                                                                   @Param("delFlag") Integer delFlag);
 
     List<RPanUserFileDisplayVO> selectRPanUserFileVOListByUserId(@Param("depId") Long depId,
+                                                                 @Param("passFlag") Integer passFlag,
                                                                  @Param("fileTypeArray") List<Integer> fileTypeArray,
                                                                  @Param("parentId") Long parentId,
                                                                  @Param("delFlag") Integer delFlag);
-
-    List<RPanUserFileDisplayVO> selectRPanUserFileVOList(@Param("fileTypeArray") List<Integer> fileTypeArray,
-                                                         @Param("parentId") Long parentId,
-                                                         @Param("delFlag") Integer delFlag);
 
 
     List<RPanUserFileVO> selectRPanUserFileVOListByUserIdAndFileTypeAndParentIdAndDelFlag(@Param("userId") Long userId,

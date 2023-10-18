@@ -296,36 +296,11 @@
         r_pan_user_file a1
         WHERE
         a1.dep_id=#{depId}
-        and a1.pass_flag=1
+        <if test="passFlag != null and passFlag != -1">
+            and a1.pass_flag=#{passFlag}
+        </if>
         <if test="parentId != null and parentId != -1">
             AND a1.parent_id = #{parentId}
-        </if>
-        <if test="fileTypeArray != null">
-            AND a1.file_type IN
-            <foreach collection="fileTypeArray" open="(" close=")" item="item" separator=",">
-                #{item}
-            </foreach>
-        </if>
-        AND a1.del_flag = #{delFlag}
-    </select>
-
-    <select id="selectRPanUserFileVOList" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
-        SELECT
-        a1.file_id AS fileId,
-        a1.parent_id AS parentId,
-        a1.filename AS filename,
-        a1.folder_flag AS folderFlag,
-        a1.file_size_desc AS fileSizeDesc,
-        a1.file_type AS fileType,
-        a1.create_time AS createTime,
-        a1.update_time AS updateTime,
-        a1.user_name AS creatName
-        FROM
-        r_pan_user_file a1
-        WHERE
-        a1.pass_flag=1
-        <if test="parentId != null and parentId != -1">
-          AND a1.parent_id = #{parentId}
         </if>
         <if test="fileTypeArray != null">
             AND a1.file_type IN
