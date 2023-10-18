@@ -1,5 +1,6 @@
 package com.jxm.file.util;
 
+import com.jxm.file.type.context.FileTypeContext;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -122,17 +123,33 @@ public class FileUtil {
     }
 
     /**
-     * 获取输入流写入输出流
-     *
-     * @param fileInputStream
-     * @param outputStream
-     * @param size
-     * @throws IOException
+     * 获取输入流写入输出流  并附上水印
      */
-    public static void writeFileToStream(FileInputStream fileInputStream, OutputStream outputStream, Long size) throws IOException {
+    public static void writeFileToStream(FileInputStream fileInputStream, OutputStream outputStream, Long size,String fileName,String waterMark) throws IOException {
         FileChannel fileChannel = null;
         WritableByteChannel writableByteChannel = null;
         try {
+            if(!waterMark.equals("")){
+                //添加水印
+                Integer fileTypeCode = FileTypeContext.getFileTypeCode(fileName);
+                //1 普通文件 2 压缩文件 3 excel 4 word 5 pdf 6 txt 7 图片 8 音频 9 视频 10 ppt 11 源码文件 12 csv
+                switch (fileTypeCode){
+                    case 4:    //word添加水印
+                        WaterMarkUtils.setWordWaterMark(fileInputStream,outputStream,waterMark);
+                        break;
+                    case 5:    //pdf添加水印
+                        WaterMarkUtils.setPdfWatermark(fileInputStream,outputStream,waterMark);
+                        break;
+                    case 7:    //图片添加水印
+                        WaterMarkUtils.setPictureWatermark(fileInputStream,outputStream,waterMark);
+                        break;
+                    case 10:    //PPT添加水印
+                        WaterMarkUtils.setPPTWaterMark(fileInputStream,outputStream,waterMark);
+                        break;
+                    default:
+                        break;
+                }
+            }
             fileChannel = fileInputStream.getChannel();
             writableByteChannel = Channels.newChannel(outputStream);
             fileChannel.transferTo(ZERO_LONG, size, writableByteChannel);

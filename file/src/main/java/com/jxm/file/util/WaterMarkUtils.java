@@ -118,6 +118,37 @@ public class WaterMarkUtils {
         }
     }
 
+
+    public static void setPictureWatermark(FileInputStream fileInputStream, OutputStream outputStream, String markStr) {
+        try {
+            Image srcImg = ImageIO.read(fileInputStream);
+            int srcImgWidth = srcImg.getWidth(null);
+            int srcImgHeight = srcImg.getHeight(null);
+            // 加水印
+            BufferedImage bufImg = new BufferedImage(srcImgWidth, srcImgHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = bufImg.createGraphics();
+            g.drawImage(srcImg, 0, 0, srcImgWidth, srcImgHeight, null);
+            Font font = new Font("宋体", Font.BOLD, srcImgHeight / 6);
+            //根据图片的背景设置水印颜色
+            g.setColor(Color.black);
+            //设置旋转角度
+            g.rotate(Math.toRadians(-45), (double) bufImg.getWidth() / 2, (double) bufImg.getHeight() / 2);
+            //设置水印透明度
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.2F));
+
+            g.setFont(font);
+            int x = (srcImgWidth - getWatermarkLength(markStr, g)) / 2;
+            int y = srcImgHeight / 2;
+            g.drawString(markStr, x, y);
+            g.dispose();
+            // 输出图片
+            ImageIO.write(bufImg, "jpg", outputStream);
+        }catch (Exception e) {
+            log.error("setPictureWatermark fail", e);
+            throw new RuntimeException("setPictureWatermark fail");
+        }
+    }
+
     /**
      * 图片添加水印
      *
@@ -170,12 +201,35 @@ public class WaterMarkUtils {
         }
     }
 
+
     /**
      * word文字水印
-     *
-     * @param inputPath
-     * @param outPath
-     * @param markStr
+     */
+    public static void setWordWaterMark(FileInputStream fileInputStream, OutputStream outputStream, String markStr) {
+        XWPFDocument doc = null;
+        try {
+            doc = new XWPFDocument(fileInputStream);
+        } catch (FileNotFoundException var24) {
+            throw new RuntimeException("源文件不存在");
+        } catch (IOException var25) {
+            throw new RuntimeException("读取源文件IO异常");
+        } catch (Exception var26) {
+            throw new RuntimeException("不支持的文档格式");
+        }
+        makeFullWaterMarkByWordArt(doc, markStr, fontColor, fontSize, styleRotation);
+        // 设置文档只读
+        doc.enforceReadonlyProtection();
+        try {
+            doc.write(outputStream);
+        } catch (FileNotFoundException var21) {
+            throw new RuntimeException("创建输出文件失败");
+        } catch (Exception var22) {
+            throw new RuntimeException("添加文档水印失败");
+        }
+    }
+
+    /**
+     * word文字水印  打印输出
      */
     public static void setWordWaterMark(String inputPath, String outPath, String markStr) {
         // 读取原始文件
@@ -190,9 +244,6 @@ public class WaterMarkUtils {
         } catch (Exception var26) {
             throw new RuntimeException("不支持的文档格式");
         }
-        // 使用自带工具类完成水印填充
-//        XWPFHeaderFooterPolicy headerFooterPolicy = doc.getHeaderFooterPolicy();
-//        headerFooterPolicy.createWatermark(markStr);
 
         makeFullWaterMarkByWordArt(doc, markStr, fontColor, fontSize, styleRotation);
         // 设置文档只读
@@ -228,10 +279,77 @@ public class WaterMarkUtils {
 
     /**
      * pdf设置文字水印
-     *
-     * @param inputPath
-     * @param outPath
-     * @param markStr
+     */
+    public static void setPdfWatermark(FileInputStream fileInputStream, OutputStream outputStream, String markStr) {
+        PdfStamper stamper = null;
+        int total = 0;
+        PdfContentByte content;
+        Rectangle pageSizeWithRotation = null;
+        BaseFont base = null;
+        PdfReader reader = null;
+        try {
+            reader = new PdfReader(fileInputStream);
+            //解决PdfReader not opened with owner password
+            Field f = PdfReader.class.getDeclaredField("ownerPasswordUsed");
+            f.setAccessible(true);
+            f.set(reader, Boolean.TRUE);
+            stamper = new PdfStamper(reader, outputStream);
+            total = reader.getNumberOfPages() + 1;
+            base = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.EMBEDDED);
+        } catch (IOException e) {
+            log.error("setPdfWatermark fail:", e);
+            throw new RuntimeException("setPdfWatermark fail");
+        } catch (DocumentException e) {
+            log.error("setPdfWatermark fail:", e);
+            throw new RuntimeException("setPdfWatermark fail");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        // 获取水印文字的高度和宽度
+        int textH = 0, textW = 0;
+        JLabel label = new JLabel();
+        label.setText(markStr);
+        FontMetrics metrics = label.getFontMetrics(label.getFont());
+        textH = metrics.getHeight();
+        textW = metrics.stringWidth(label.getText());
+        PdfGState gs = new PdfGState();
+        for (int i = 1; i < total; i++) {
+            //在内容上方加水印
+            content = stamper.getOverContent(i);
+            gs.setFillOpacity(alpha);
+            content.saveState();
+            content.setGState(gs);
+            content.beginText();
+//            content.setRGBColorFill(0, 0, 0);
+            content.setFontAndSize(base, 20);
+            // 获取每一页的高度、宽度
+            pageSizeWithRotation = reader.getPageSizeWithRotation(i);
+            float pageHeight = pageSizeWithRotation.getHeight();
+            float pageWidth = pageSizeWithRotation.getWidth();
+
+            // 根据纸张大小多次添加， 水印文字成30度角倾斜
+            for (int height = -5 + textH; height < pageHeight; height = height + YMOVE) {
+                for (int width = -5 + textW; width < pageWidth + textW; width = width + XMOVE) {
+                    content.showTextAligned(Element.ALIGN_LEFT, markStr, width - textW, height - textH, 30);
+                }
+            }
+            content.endText();
+        }
+        try {
+            stamper.close();
+            reader.close();
+        } catch (IOException e) {
+            log.error("setPdfWatermark fail:", e);
+            throw new RuntimeException("setPdfWatermark fail");
+        } catch (DocumentException e) {
+            log.error("setPdfWatermark fail:", e);
+            throw new RuntimeException("setPdfWatermark fail");
+        }
+    }
+    /**
+     * pdf设置文字水印
      */
     public static void setPdfWatermark(String inputPath, String outPath, String markStr) {
         File file = new File(outPath);
@@ -320,13 +438,53 @@ public class WaterMarkUtils {
         }
     }
 
+
     /**
      * PPT设置水印
-     *
-     * @param path
-     * @param targetpath
-     * @param markStr
-     * @throws IOException
+     */
+    public static void setPPTWaterMark(FileInputStream fileInputStream, OutputStream outputStream, String markStr) {
+        XMLSlideShow slideShow;
+        try {
+            slideShow = new XMLSlideShow(fileInputStream);
+        } catch (IOException e) {
+            log.error("setPPTWaterMark fail:", e);
+            throw new RuntimeException("setPPTWaterMark fail:获取PPT文件失败");
+        }
+        ByteArrayOutputStream os = null;
+        try {
+            //获取水印
+            os = getImage(markStr);
+            PictureData pictureData1 = slideShow.addPicture(os.toByteArray(), PictureData.PictureType.PNG);
+            for (XSLFSlide slide : slideShow.getSlides()) {
+                XSLFPictureShape pictureShape = slide.createPicture(pictureData1);
+//                pictureShape.setAnchor(new java.awt.Rectangle(250, 0, 500, 500));
+                pictureShape.setAnchor(pictureShape.getAnchor());
+            }
+            slideShow.write(outputStream);
+        } catch (IOException e) {
+            log.error("setPPTWaterMark fail:" + e);
+            throw new RuntimeException("setPPTWaterMark fail：生成ppt文件失败");
+        }
+        finally {
+            if (slideShow != null) {
+                try {
+                    slideShow.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * PPT设置水印
      */
     public static void setPPTWaterMark(String path, String targetpath, String markStr) {
         XMLSlideShow slideShow;

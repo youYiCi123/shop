@@ -252,12 +252,9 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 文件下载
-     *
-     * @param fileId
-     * @param response
      */
     @Override
-    public void download(Long fileId, HttpServletResponse response) {
+    public void download(Long fileId,String waterMark, HttpServletResponse response) {
         try {
             getRPanUserFileByFileIdAndUserId(fileId);
         } catch (Exception e) {
@@ -268,7 +265,7 @@ public class UserFileServiceImpl implements IUserFileService {
         }
         RPanUserFile rPanUserFile = rPanUserFileMapper.selectByPrimaryKey(fileId);
         RPanFile rPanFile = iFileService.getFileDetail(rPanUserFile.getRealFileId());
-        doDownload(rPanFile.getRealPath(), response, rPanUserFile.getFilename());
+        doDownload(rPanFile.getRealPath(), response, rPanUserFile.getFilename(),waterMark);
     }
 
     /**
@@ -709,19 +706,15 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 执行下载文件
-     *
-     * @param filePath
-     * @param response
-     * @param filename
      */
-    private void doDownload(String filePath, HttpServletResponse response, String filename) {
+    private void doDownload(String filePath, HttpServletResponse response, String filename,String waterMark) {
         addCommonResponseHeader(response, FileConstant.APPLICATION_OCTET_STREAM_STR);
         try {
             response.setHeader(FileConstant.CONTENT_DISPOSITION_STR, FileConstant.CONTENT_DISPOSITION_VALUE_PREFIX_STR + new String(filename.getBytes(FileConstant.GB2312_STR), FileConstant.IOS_8859_1_STR));
         } catch (UnsupportedEncodingException e) {
             log.error("下载文件失败", e);
         }
-        read2OutputStream(filePath, response);
+        read2OutputStream(filePath,waterMark, response);
     }
 
     /**
@@ -754,13 +747,10 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 文件预览
-     *
-     * @param filePath
-     * @param response
      */
     private void preview(String filePath, HttpServletResponse response, String filePreviewContentType) {
         addCommonResponseHeader(response, filePreviewContentType);
-        read2OutputStream(filePath, response);
+        read2OutputStream(filePath, "",response);
     }
 
     /**
@@ -780,13 +770,10 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 文件写入响应实体
-     *
-     * @param filePath
-     * @param response
      */
-    private void read2OutputStream(String filePath, HttpServletResponse response) {
+    private void read2OutputStream(String filePath,String waterMark,HttpServletResponse response) {
         try {
-            storageManager.read2OutputStream(filePath, response.getOutputStream());
+            storageManager.read2OutputStream(filePath, waterMark,response.getOutputStream());
         } catch (Exception e) {
             log.error("文件写入响应实体失败", e);
         }

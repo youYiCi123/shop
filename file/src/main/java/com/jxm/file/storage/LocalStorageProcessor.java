@@ -4,6 +4,7 @@ package com.jxm.file.storage;
 import com.jxm.file.cache.Cache;
 import com.jxm.file.config.LocalCache;
 import com.jxm.file.storage.exception.StorageParamException;
+import com.jxm.file.type.context.FileTypeContext;
 import com.jxm.file.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,15 +68,12 @@ public class LocalStorageProcessor extends AbstractStorageProcessor {
 
     /**
      * 读取文件为输入流
-     *
-     * @param filePath     文件路径
-     * @param outputStream 输出流
-     * @throws IOException
      */
     @Override
-    public void read2OutputStream(String filePath, OutputStream outputStream) throws IOException {
+    public void read2OutputStream(String filePath, String waterMark,OutputStream outputStream) throws IOException {
         File file = new File(filePath);
-        FileUtil.writeFileToStream(new FileInputStream(file), outputStream, file.length());
+        String fileName = FileUtil.getFilename(filePath);
+        FileUtil.writeFileToStream(new FileInputStream(file), outputStream, file.length(),fileName,waterMark);
     }
 
     /**

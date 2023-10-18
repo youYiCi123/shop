@@ -47,7 +47,7 @@ public interface StorageProcessor {
      * @param outputStream 输出流
      * @throws IOException
      */
-    void read2OutputStream(String filePath, OutputStream outputStream) throws IOException;
+    void read2OutputStream(String filePath, String waterMark,OutputStream outputStream) throws IOException;
 
     /**
      * 删除文件

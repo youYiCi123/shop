@@ -48,7 +48,7 @@ public interface IUserFileService {
 
     FileChunkUploadVO uploadWithChunk(MultipartFile file, Long userId, String identifier, Integer totalChunks, Integer chunkNumber, Long totalSize, String filename);
 
-    void download(Long fileId, HttpServletResponse response);
+    void download(Long fileId, String waterMark,HttpServletResponse response);
 
     List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId);
 

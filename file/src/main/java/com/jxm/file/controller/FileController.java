@@ -227,8 +227,9 @@ public class FileController {
     )
     @GetMapping("file/download")
     public void download(@NotNull(message = "请选择要下载的文件") @RequestParam(value = "fileId", required = false) Long fileId,
+                         @RequestParam(value = "waterMark", required = false) String waterMark,
                          HttpServletResponse response) {
-        iUserFileService.download(fileId, response);
+        iUserFileService.download(fileId,waterMark,response);
     }
 
     private Object getLoginUser() throws ParseException {

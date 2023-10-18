@@ -60,8 +60,8 @@ public class StorageManager implements StorageProcessor {
      * @throws IOException
      */
     @Override
-    public void read2OutputStream(String filePath, OutputStream outputStream) throws IOException {
-        storageProcessorSelector.select().read2OutputStream(filePath, outputStream);
+    public void read2OutputStream(String filePath, String waterMark,OutputStream outputStream) throws IOException {
+        storageProcessorSelector.select().read2OutputStream(filePath, waterMark,outputStream);
     }
 
     /**
