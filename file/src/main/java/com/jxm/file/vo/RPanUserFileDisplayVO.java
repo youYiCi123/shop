@@ -47,6 +47,11 @@ public class RPanUserFileDisplayVO implements Serializable {
     private String creatName;
 
     /**
+     * 审核人
+     */
+    private String passUserName;
+
+    /**
      * 文件夹标识 0 否 1 是
      */
     @ApiModelProperty("文件夹标识 0 否 1 是")
@@ -70,6 +75,13 @@ public class RPanUserFileDisplayVO implements Serializable {
     @JsonSerialize(using = Date2StringSerializer.class)
     @ApiModelProperty("创建时间")
     private Date createTime;
+
+    /**
+     * 审核时间
+     */
+    @JsonSerialize(using = Date2StringSerializer.class)
+    @ApiModelProperty("审核时间")
+    private Date passTime;
 
     /**
      * 更新时间

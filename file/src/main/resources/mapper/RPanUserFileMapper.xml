@@ -14,7 +14,10 @@
         <result column="file_type" jdbcType="BIT" property="fileType"/>
         <result column="del_flag" jdbcType="BIT" property="delFlag"/>
         <result column="create_user" jdbcType="BIGINT" property="createUser"/>
+        <result column="pass_user_id" jdbcType="BIGINT" property="passUserId"/>
+        <result column="pass_user_name" jdbcType="VARCHAR" property="passUserName"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="pass_time" jdbcType="TIMESTAMP" property="passTime"/>
         <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="dep_id" jdbcType="VARCHAR" property="depId"/>
@@ -290,8 +293,10 @@
         a1.file_size_desc AS fileSizeDesc,
         a1.file_type AS fileType,
         a1.create_time AS createTime,
+        a1.pass_time AS passTime,
         a1.update_time AS updateTime,
-        a1.user_name AS creatName
+        a1.user_name AS creatName,
+        a1.pass_user_name AS passUserName
         FROM
         r_pan_user_file a1
         WHERE
@@ -345,10 +350,14 @@
     where file_id = #{id,jdbcType=BIGINT}
   </delete>
 
-    <update id="passFileById" parameterType="java.lang.Long">
+    <update id="passFileById">
         update r_pan_user_file
-        set pass_flag=1
-        where file_id = #{fileId,jdbcType=BIGINT}
+        SET
+        pass_flag=1,
+        pass_user_id = #{passUserId},
+        pass_user_name = #{passUserName},
+        pass_time = NOW()
+        where file_id = #{id,jdbcType=BIGINT}
     </update>
 
     <select id="selectFolderListByUserId" resultMap="BaseResultMap">

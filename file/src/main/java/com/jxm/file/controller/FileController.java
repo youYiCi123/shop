@@ -157,8 +157,9 @@ public class FileController {
     @ApiOperation(value = "审核")
     @RequestMapping(value = "/file/passFile/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult passFile(@PathVariable("id") Long id) {
-        int count = iUserFileService.passFile(id);
+    public CommonResult passFile(@PathVariable("id") Long id) throws ParseException {
+        Object loginUser = getLoginUser();
+        int count = iUserFileService.passFile(id,loginUser);
         if (count == 1) {
             return CommonResult.success(null);
         } else {

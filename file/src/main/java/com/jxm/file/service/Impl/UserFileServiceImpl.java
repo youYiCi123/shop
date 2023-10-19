@@ -208,8 +208,10 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
-    public int passFile(Long id) {
-        return rPanUserFileMapper.passFileById(id);
+    public int passFile(Long id,Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        return rPanUserFileMapper.passFileById(id,userDepDto.getUserId(),userDepDto.getNickName());
     }
 
     /**

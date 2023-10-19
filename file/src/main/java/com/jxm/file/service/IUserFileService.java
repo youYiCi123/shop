@@ -42,7 +42,7 @@ public interface IUserFileService {
 
     int deleteFile(Long id);
 
-    int passFile(Long id);
+    int passFile(Long id,Object loginUser);
 
     void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename);
 

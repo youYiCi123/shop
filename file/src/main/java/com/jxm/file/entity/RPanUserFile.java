@@ -89,6 +89,21 @@ public class RPanUserFile implements Serializable {
 
     private Long depId;
 
+    /**
+     * 审核人id
+     */
+    private Long passUserId;
+
+    /**
+     * 审核人姓名
+     */
+    private String passUserName;
+
+    /**
+     * 审核时间
+     */
+    private Date passTime;
+
     public Long getFileId() {
         return fileId;
     }
@@ -217,6 +232,30 @@ public class RPanUserFile implements Serializable {
         this.depId = depId;
     }
 
+    public Long getPassUserId() {
+        return passUserId;
+    }
+
+    public void setPassUserId(Long passUserId) {
+        this.passUserId = passUserId;
+    }
+
+    public String getPassUserName() {
+        return passUserName;
+    }
+
+    public void setPassUserName(String passUserName) {
+        this.passUserName = passUserName;
+    }
+
+    public Date getPassTime() {
+        return passTime;
+    }
+
+    public void setPassTime(Date passTime) {
+        this.passTime = passTime;
+    }
+
     @Override
     public String toString() {
         return "RPanUserFile{" +
@@ -236,6 +275,9 @@ public class RPanUserFile implements Serializable {
                 ", updateUser=" + updateUser +
                 ", updateTime=" + updateTime +
                 ", depId=" + depId +
+                ", passUserId=" + passUserId +
+                ", passUserName='" + passUserName + '\'' +
+                ", passTime=" + passTime +
                 '}';
     }
 }
