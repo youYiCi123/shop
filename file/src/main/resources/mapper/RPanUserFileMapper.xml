@@ -360,6 +360,15 @@
         where file_id = #{id,jdbcType=BIGINT}
     </update>
 
+    <select id="getUserByFileId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT
+        a1.user_id
+        FROM
+        r_pan_user_file a1
+        WHERE
+        a1.file_id=#{fileId}
+    </select>
+
     <select id="selectFolderListByUserId" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>

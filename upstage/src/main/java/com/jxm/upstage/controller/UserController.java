@@ -99,6 +99,7 @@ public class UserController {
         Map<String, Object> data = new HashMap<>();
         data.put("userId", umsAdmin.getId());
         data.put("nickName", umsAdmin.getNickName());
+        data.put("icon", umsAdmin.getIcon());
         data.put("depId", umsAdmin.getDepId());
         return CommonResult.success(data);
     }

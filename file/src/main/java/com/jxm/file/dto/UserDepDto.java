@@ -11,4 +11,5 @@ public class UserDepDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
     private String nickName;
+    private String icon;
 }

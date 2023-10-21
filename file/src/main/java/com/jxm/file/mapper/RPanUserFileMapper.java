@@ -63,6 +63,8 @@ public interface RPanUserFileMapper {
 
     int deleteById(Long id);
 
+    Long getUserByFileId(@Param("fileId") Long fileId);
+
     int passFileById(@Param("id") Long id,@Param("passUserId") Long passUserId,@Param("passUserName") String passUserName);
 
     List<RPanUserFile> selectFolderListByUserId(@Param("rootFileId") Long rootFileId);
