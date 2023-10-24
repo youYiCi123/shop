@@ -27,6 +27,8 @@ public interface IUserFileService {
 
     void createDepRootFolder(Long parentId, String folderName, Long userId,Long depId);
 
+    void saveSet(Long fileId, Integer isWaterMater, Long loginUserId);
+
     void updateFilename(Long fileId, String newFilename, Object loginUser);
 
     void delete(String fileIds);

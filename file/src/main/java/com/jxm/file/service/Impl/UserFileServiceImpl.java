@@ -159,6 +159,17 @@ public class UserFileServiceImpl implements IUserFileService {
         saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userId,"" ,null,depId);
     }
 
+    @Override
+    public void saveSet(Long fileId, Integer isWaterMater, Long loginUserId) {
+        RPanUserFile originalUserFileInfo = getRPanUserFileByFileIdAndUserId(fileId);
+        originalUserFileInfo.setWaterMaterFlag(isWaterMater);
+        originalUserFileInfo.setUpdateUser(loginUserId);
+        originalUserFileInfo.setUpdateTime(new Date());
+        if (rPanUserFileMapper.updateByPrimaryKeySelective(originalUserFileInfo) != CommonConstant.ONE_INT) {
+            Asserts.fail("文件设置失败");
+        }
+    }
+
     /**
      * 文件重命名
      */
@@ -1047,7 +1058,7 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     /**
-     * 根据用户id和文件id查询对应的文件信息
+     * 根据文件id查询对应的文件信息
      */
     private RPanUserFile getRPanUserFileByFileIdAndUserId(Long fileId) {
         RPanUserFile originalUserFileInfo = rPanUserFileMapper.selectByPrimaryKey(fileId);

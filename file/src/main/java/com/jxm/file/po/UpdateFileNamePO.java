@@ -10,7 +10,6 @@ import java.util.Objects;
 
 /**
  * 更新文件名PO
- * Created by RubinChu on 2021/1/22 下午 4:11
  */
 @ApiModel(value = "更新文件名PO")
 public class UpdateFileNamePO implements Serializable {

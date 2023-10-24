@@ -10,6 +10,7 @@
         <result column="filename" jdbcType="VARCHAR" property="filename"/>
         <result column="pass_flag" jdbcType="BIT" property="passFlag"/>
         <result column="folder_flag" jdbcType="BIT" property="folderFlag"/>
+        <result column="water_mater_flag" jdbcType="BIT" property="waterMaterFlag"/>
         <result column="file_size_desc" jdbcType="VARCHAR" property="fileSizeDesc"/>
         <result column="file_type" jdbcType="BIT" property="fileType"/>
         <result column="del_flag" jdbcType="BIT" property="delFlag"/>
@@ -162,6 +163,9 @@
             <if test="folderFlag != null">
                 folder_flag = #{folderFlag,jdbcType=BIT},
             </if>
+            <if test="waterMaterFlag != null">
+                water_mater_flag = #{waterMaterFlag,jdbcType=BIT},
+            </if>
             <if test="fileSizeDesc != null">
                 file_size_desc = #{fileSizeDesc,jdbcType=VARCHAR},
             </if>
@@ -290,6 +294,7 @@
         a1.parent_id AS parentId,
         a1.filename AS filename,
         a1.folder_flag AS folderFlag,
+        a1.water_mater_flag AS waterMaterFlag,
         a1.file_size_desc AS fileSizeDesc,
         a1.file_type AS fileType,
         a1.create_time AS createTime,

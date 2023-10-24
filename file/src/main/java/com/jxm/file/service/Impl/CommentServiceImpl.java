@@ -33,9 +33,9 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public List<PageComment> getPageCommentList(Integer page,Long jumpId, Long parentCommentId,Integer pageSize,Integer pageNum) {
+	public List<PageComment> getPageCommentList(Integer page,Long jumpId, Long parentCommentId,String loginUserName,Integer pageSize,Integer pageNum) {
 //		PageHelper.startPage(pageNum, pageSize);
-		List<PageComment> comments = getPageCommentListByPageAndParentCommentId(page,jumpId, parentCommentId);
+		List<PageComment> comments = getPageCommentListByPageAndParentCommentId(page,jumpId, parentCommentId,loginUserName);
 		for (PageComment c : comments) {
 			List<PageComment> tmpComments = new ArrayList<>();
 			getReplyComments(tmpComments, c.getReplyComments());
@@ -70,10 +70,15 @@ public class CommentServiceImpl implements CommentService {
 		}
 	}
 
-	private List<PageComment> getPageCommentListByPageAndParentCommentId(Integer page,Long jumpId, Long parentCommentId) {
+	private List<PageComment> getPageCommentListByPageAndParentCommentId(Integer page,Long jumpId, Long parentCommentId,String loginUserName) {
 		List<PageComment> comments = commentMapper.getPageCommentListByPageAndParentCommentId(page,jumpId, parentCommentId);
 		for (PageComment c : comments) {
-			List<PageComment> replyComments = getPageCommentListByPageAndParentCommentId(page,jumpId, c.getId());
+			if(c.getNickname().equals(loginUserName)){
+				c.setMimeComment(true);
+			}else{
+				c.setMimeComment(false);
+			}
+			List<PageComment> replyComments = getPageCommentListByPageAndParentCommentId(page,jumpId, c.getId(),loginUserName);
 			c.setReplyComments(replyComments);
 		}
 		return comments;
@@ -105,14 +110,13 @@ public class CommentServiceImpl implements CommentService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void deleteCommentById(Long commentId) {
+	public int deleteCommentById(Long commentId) {
 		List<Comment> comments = getAllReplyComments(commentId);
 		for (Comment c : comments) {
 			delete(c);
 		}
-		if (commentMapper.deleteCommentById(commentId) != 1) {
-			throw new RuntimeException("评论删除失败");
-		}
+		return commentMapper.deleteCommentById(commentId);
+
 	}
 
 	@Transactional(rollbackFor = Exception.class)

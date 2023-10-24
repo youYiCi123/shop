@@ -57,6 +57,8 @@ public class RPanUserFileDisplayVO implements Serializable {
     @ApiModelProperty("文件夹标识 0 否 1 是")
     private Integer folderFlag;
 
+    @ApiModelProperty("下载时添加水印，0不需要，1需要")
+    private Integer waterMaterFlag;
     /**
      * 文件大小
      */

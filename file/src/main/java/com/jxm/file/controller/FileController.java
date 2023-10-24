@@ -98,10 +98,22 @@ public class FileController {
     }
 
     @ApiOperation(
+            value = "文件基础设置",
+            notes = "该接口提供了文件基础设置的功能"
+    )
+    @PostMapping("/file/saveSet")
+    public CommonResult saveSet(@Validated @RequestBody BasicSetFilePO basicSetFilePO) throws ParseException {
+        Long loginUserId = getLoginUserId();
+        iUserFileService.saveSet(basicSetFilePO.getFileId(), basicSetFilePO.getIsWaterMater(), loginUserId);
+        return CommonResult.success();
+    }
+
+
+    @ApiOperation(
             value = "文件重命名",
             notes = "该接口提供了文件重命名的功能"
     )
-    @PutMapping("file")
+    @PostMapping("/file/updateFilename")
     public CommonResult updateFilename(@Validated @RequestBody UpdateFileNamePO updateFileNamePO) throws ParseException {
         Object loginUser = getLoginUser();
         iUserFileService.updateFilename(updateFileNamePO.getFileId(), updateFileNamePO.getNewFilename(), loginUser);
@@ -112,7 +124,7 @@ public class FileController {
             value = "删除文件(批量)",
             notes = "该接口提供了删除文件(批量)的功能"
     )
-    @DeleteMapping("file")
+    @PostMapping("/file/delete")
     public CommonResult delete(@Validated @RequestBody DeletePO deletePO){
         iUserFileService.delete(deletePO.getFileIds());
         return CommonResult.success();

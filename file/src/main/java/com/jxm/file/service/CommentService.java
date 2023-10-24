@@ -8,7 +8,7 @@ import java.util.List;
 public interface CommentService {
 	List<Comment> getListByPageAndParentCommentId(Integer page, Long blogId, Long parentCommentId);
 
-	List<PageComment> getPageCommentList(Integer page,Long articleId, Long parentCommentId,Integer pageSize,Integer pageNum);
+	List<PageComment> getPageCommentList(Integer page,Long articleId, Long parentCommentId,String loginUserName,Integer pageSize,Integer pageNum);
 
 	Comment getCommentById(Long id);
 
@@ -16,7 +16,7 @@ public interface CommentService {
 
 	void updateCommentNoticeById(Long commentId, Boolean notice);
 
-	void deleteCommentById(Long commentId);
+	int deleteCommentById(Long commentId);
 
 	void deleteCommentsByBlogId(Long blogId);
 

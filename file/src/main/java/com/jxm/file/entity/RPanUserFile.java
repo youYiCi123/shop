@@ -53,6 +53,11 @@ public class RPanUserFile implements Serializable {
     private Integer folderFlag;
 
     /**
+     * 添加水印标识 0 否 1 是
+     */
+    private Integer waterMaterFlag;
+
+    /**
      * 文件大小显示文案
      */
     private String fileSizeDesc;
@@ -168,6 +173,14 @@ public class RPanUserFile implements Serializable {
         this.folderFlag = folderFlag;
     }
 
+    public Integer getWaterMaterFlag() {
+        return waterMaterFlag;
+    }
+
+    public void setWaterMaterFlag(Integer waterMaterFlag) {
+        this.waterMaterFlag = waterMaterFlag;
+    }
+
     public String getFileSizeDesc() {
         return fileSizeDesc;
     }
@@ -267,6 +280,7 @@ public class RPanUserFile implements Serializable {
                 ", filename='" + filename + '\'' +
                 ", passFlag=" + passFlag +
                 ", folderFlag=" + folderFlag +
+                ", waterMaterFlag=" + waterMaterFlag +
                 ", fileSizeDesc='" + fileSizeDesc + '\'' +
                 ", fileType=" + fileType +
                 ", delFlag=" + delFlag +
