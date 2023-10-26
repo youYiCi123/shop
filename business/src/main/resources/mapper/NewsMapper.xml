@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.NewsMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.NewsPostParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="theme" jdbcType="VARCHAR" property="theme"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="created_admin_id" jdbcType="INTEGER" property="createdAdminId"/>
+        <result column="news_type" jdbcType="BIGINT" property="newsType"/>
+        <result column="created_admin_name" jdbcType="VARCHAR" property="createdAdminName"/>
+        <result column="view_count" jdbcType="INTEGER" property="viewCount"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, theme,created_time,news_type,created_admin_id,created_admin_name,view_count
+    </sql>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from news_brief where id=#{newsId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteBatchTrain" parameterType="java.lang.Long">
+        delete from news_brief
+        where
+        id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getNewsByDateAndKeyword" resultType="com.jxm.business.model.NewsPostParam">
+        select id, theme,created_time,created_admin_id,created_admin_name from news_brief
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                theme like concat('%', #{keyword}, '%')
+            </if>
+            <if test="startDate!=null and startDate!='' and endDate!=null and endDate!=''">
+                and created_time between #{startDate} and #{endDate}
+            </if>
+            <if test="newsType!=0 and newsType!=''">
+                and news_type =#{newsType,jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
+
+    <select id="getNewsToHome" resultType="com.jxm.business.model.NewsShowHomeParam">
+        select id, theme,created_time,news_type from news_brief
+    </select>
+
+    <insert id="add" parameterType="com.jxm.business.model.NewsPostParam">
+        insert into news_brief
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="theme != null">
+                theme,
+            </if>
+            <if test="newsType != null">
+                news_type,
+            </if>
+            <if test="createdAdminId != null">
+                created_admin_id,
+            </if>
+            <if test="createdAdminName != null">
+                created_admin_name,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="theme != null">
+                #{theme,jdbcType=VARCHAR},
+            </if>
+            <if test="newsType != null">
+                #{newsType,jdbcType=INTEGER},
+            </if>
+            <if test="createdAdminId != null">
+                #{createdAdminId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAdminName != null">
+                #{createdAdminName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.jxm.business.model.NewsPostParam">
+        update news_brief
+        <set>
+            <if test="theme != null">
+                theme = #{theme,jdbcType=VARCHAR},
+            </if>
+            <if test="newsType != null">
+                news_type = #{newsType,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="setViewCount" parameterType="java.lang.Long">
+        update news_brief
+            set view_count=view_count+1
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+</mapper>

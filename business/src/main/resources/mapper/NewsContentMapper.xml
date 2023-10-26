@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.NewsContentMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.NewsParam">
+        <id column="news_id" jdbcType="BIGINT" property="id"/>
+        <result column="theme" jdbcType="VARCHAR" property="theme"/>
+        <result column="news_type" jdbcType="BIT" property="newsType"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        news_id,theme,news_type,content
+    </sql>
+
+    <select id="queryNewsContent" resultType="com.jxm.business.model.NewsParam">
+        select
+        nc.*,nb.news_type
+        from
+        news_content nc
+        LEFT JOIN news_brief nb ON nc.news_id=nb.id
+        where news_id=#{id}
+    </select>
+    
+    <select id="queryNewsPreContent" resultType="com.jxm.business.model.NewsHomeDetail">
+        select
+        nb.id,nb.created_time,nb.view_count,nb.news_type,nc.theme,nc.content
+        from
+        news_content nc
+        LEFT JOIN news_brief nb ON nc.news_id=nb.id
+        where news_id=#{id}
+    </select>
+
+    <insert id="addContent" parameterType="com.jxm.business.model.NewsParam">
+        insert into news_content (news_id,theme,content)
+        values (#{newsId,jdbcType=INTEGER},#{theme,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateContent" parameterType="com.jxm.business.model.NewsParam">
+    update news_content
+    <set>
+        <if test="theme != null">
+            theme = #{theme,jdbcType=VARCHAR},
+        </if>
+        <if test="content != null">
+            content=#{content,jdbcType=VARCHAR},
+        </if>
+    </set>
+    where news_id = #{newsId,jdbcType=BIGINT}
+</update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from news_content where news_id=#{newsId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteBatchNews" parameterType="java.lang.Long">
+        delete from news_content
+        where
+        news_id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

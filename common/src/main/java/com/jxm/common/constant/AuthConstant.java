@@ -40,6 +40,11 @@ public interface AuthConstant {
      * 文件接口路径匹配
      */
     String FILE_URL_PATTERN = "/file-service/**";
+
+    /**
+     * 业务接口路径匹配
+     */
+    String BUSINESS_URL_PATTERN = "/business-service/**";
     /**
      * Redis缓存权限规则key
      */

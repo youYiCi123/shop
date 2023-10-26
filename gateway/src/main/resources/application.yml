@@ -36,6 +36,12 @@ spring:
             - Path=/file-service/**
           filters:
             - StripPrefix=1
+        - id: business-route
+          uri: lb://business-service
+          predicates:
+            - Path=/business-service/**
+          filters:
+            - StripPrefix=1
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848

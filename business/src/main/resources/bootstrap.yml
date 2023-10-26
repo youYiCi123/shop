@@ -1,7 +1,7 @@
 #nacos一定需要在这个文件中配置信息
 spring:
   application:
-    name: order-service #应用名称 nacos会将该作为服务名称
+    name: business-service #应用名称 nacos会将该作为服务名称
   cloud:
     nacos:
       server-addr: localhost:8848
