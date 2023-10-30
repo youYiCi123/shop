@@ -19,33 +19,43 @@
         LEFT JOIN news_brief nb ON nc.news_id=nb.id
         where news_id=#{id}
     </select>
-    
+
+    <select id="getNewsTopToHome" resultType="com.jxm.business.model.NewsHomeDetail">
+        select nc.theme,nc.content,nb.created_time,nb.news_type
+        from  news_content nc,(select
+        id,news_type,created_time
+        from
+        news_brief
+        order by created_time desc limit 1) nb
+        where nb.id=nc.news_id
+    </select>
+
     <select id="queryNewsPreContent" resultType="com.jxm.business.model.NewsHomeDetail">
         select
         nb.id,nb.created_time,nb.view_count,nb.news_type,nc.theme,nc.content
         from
         news_content nc
         LEFT JOIN news_brief nb ON nc.news_id=nb.id
-        where news_id=#{id}
+        where nc.news_id=#{id}
     </select>
 
     <insert id="addContent" parameterType="com.jxm.business.model.NewsParam">
         insert into news_content (news_id,theme,content)
-        values (#{newsId,jdbcType=INTEGER},#{theme,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR})
+        values (#{id,jdbcType=INTEGER},#{theme,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR})
     </insert>
 
     <update id="updateContent" parameterType="com.jxm.business.model.NewsParam">
-    update news_content
-    <set>
-        <if test="theme != null">
-            theme = #{theme,jdbcType=VARCHAR},
-        </if>
-        <if test="content != null">
-            content=#{content,jdbcType=VARCHAR},
-        </if>
-    </set>
-    where news_id = #{newsId,jdbcType=BIGINT}
-</update>
+        update news_content
+        <set>
+            <if test="theme != null">
+                theme = #{theme,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content=#{content,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where news_id = #{id,jdbcType=BIGINT}
+    </update>
 
     <delete id="delete" parameterType="java.lang.Long">
         delete from news_content where news_id=#{newsId,jdbcType=INTEGER}

@@ -65,6 +65,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public NewsHomeDetail getNewsTopToHome() {
+        return newsContentMapper.getNewsTopToHome();
+    }
+
+    @Override
     public NewsHomeDetail queryNewsPreContent(Long id) {
         NewsHomeDetail newsPreDetail = newsContentMapper.queryNewsPreContent(id);
         if(newsPreDetail!=null){

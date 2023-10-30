@@ -41,10 +41,11 @@
                 and news_type =#{newsType,jdbcType=BIGINT}
             </if>
         </where>
+        order by created_time desc
     </select>
 
     <select id="getNewsToHome" resultType="com.jxm.business.model.NewsShowHomeParam">
-        select id, theme,created_time,news_type from news_brief
+        select id, theme,created_time,news_type from news_brief order by created_time desc limit 10
     </select>
 
     <insert id="add" parameterType="com.jxm.business.model.NewsPostParam">

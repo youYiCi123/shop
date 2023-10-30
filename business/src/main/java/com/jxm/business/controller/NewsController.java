@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -27,14 +29,15 @@ public class NewsController {
     /**
      * 首页上展示
      */
-    @RequestMapping(value = "/getNewsToHome", method = RequestMethod.GET)
+    @RequestMapping(value = "/getDashboard", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getNewsToHome(@RequestParam(defaultValue = "1") Integer pageNum,
-                                         @RequestParam(defaultValue = "10") Integer pageSize) {
-        String orderBy = "created_time desc";
-        PageHelper.startPage(pageNum, pageSize, orderBy);
+    public CommonResult getDashboard() {
+        Map<String, Object> map = new HashMap<>(16);
         List<NewsShowHomeParam> NewsShowList=newsService.getNewsToHome();
-        return CommonResult.success(CommonPage.restPage(NewsShowList),"请求成功");
+        NewsHomeDetail newsTopToHome = newsService.getNewsTopToHome();
+        map.put("NewsShowList", NewsShowList);
+        map.put("newsTopToHome", newsTopToHome);
+        return CommonResult.success(map, "获取成功");
     }
 
 
@@ -54,8 +57,7 @@ public class NewsController {
             startDate = date[0];
             endDate = date[1];
         }
-        String orderBy = "created_time desc";
-        PageHelper.startPage(pageNum, pageSize, orderBy);
+        PageHelper.startPage(pageNum, pageSize);
         List<NewsPostParam> NewsBrieflyList=newsService.getNewsByDateAndKeyword(startDate, endDate,keyword,newsType);
         return CommonResult.success(CommonPage.restPage(NewsBrieflyList),"请求成功");
     }

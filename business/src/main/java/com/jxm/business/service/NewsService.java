@@ -21,6 +21,8 @@ public interface NewsService {
 
     NewsParam queryNewsContent(Long id);
 
+    NewsHomeDetail getNewsTopToHome();
+
     NewsHomeDetail queryNewsPreContent(Long id);
 
     int addContent(NewsParam newsParam) throws ParseException;
