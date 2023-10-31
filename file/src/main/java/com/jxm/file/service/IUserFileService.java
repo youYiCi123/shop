@@ -87,9 +87,8 @@ public interface IUserFileService {
     void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, Object loginUser);
 
     /**
-     * 获取登录用户所属部门的文件类型数量信息
-     * @return
+     * 获取企业文件类型数量信息
      */
-//    List<DashboardUserFileParam> getTheNumberOfFileTypes();
+    List<DashboardUserFileParam> getTheNumberOfFileTypes();
 
 }

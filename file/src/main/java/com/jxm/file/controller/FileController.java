@@ -303,6 +303,15 @@ public class FileController {
         return CommonResult.success(rPanUserFileMapper.selectTopFolderByUserId(depId));
     }
 
+    @ApiOperation(
+            value = "提供首页展示文件类型数量",
+            notes = "该接口提供首页展示文件类型数量的功能"
+    )
+    @GetMapping("file/getTheNumberOfFileTypes")
+    public CommonResult getTheNumberOfFileTypes() {
+        return CommonResult.success(iUserFileService.getTheNumberOfFileTypes());
+    }
+
     /**
      * 通过文件名搜索文件列表
      *

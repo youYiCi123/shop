@@ -478,12 +478,13 @@
     <select id="getTheNumberOfFileTypes" resultType="com.jxm.file.dto.DashboardUserFileParam">
         SELECT
        a1.file_type As fileType,
-       a1.create_user As userId
+       a1.filename As fileName
         FROM
         r_pan_user_file a1
         WHERE
-        a1.dep_id=#{depId}
+        a1.dep_id=1
         AND a1.del_flag = 0
+        And a1.pass_flag=1
         AND a1.folder_flag=0
     </select>
 

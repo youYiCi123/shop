@@ -18,7 +18,7 @@ import java.util.List;
 @Repository(value = "rPanUserFileMapper")
 public interface RPanUserFileMapper {
 
-    List<DashboardUserFileParam> getTheNumberOfFileTypes(Long depId);
+    List<DashboardUserFileParam> getTheNumberOfFileTypes();
 
     int deleteByPrimaryKey(Long fileId);
 

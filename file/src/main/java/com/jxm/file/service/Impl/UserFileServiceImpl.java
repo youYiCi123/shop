@@ -607,6 +607,15 @@ public class UserFileServiceImpl implements IUserFileService {
         }
     }
 
+    @Override
+    public List<DashboardUserFileParam> getTheNumberOfFileTypes() {
+        List<DashboardUserFileParam> theNumberOfFileTypes = rPanUserFileMapper.getTheNumberOfFileTypes();
+        if(theNumberOfFileTypes==null){
+            theNumberOfFileTypes=Collections.emptyList();
+        }
+        return theNumberOfFileTypes;
+    }
+
     /******************************************************私有****************************************************/
 
     /**

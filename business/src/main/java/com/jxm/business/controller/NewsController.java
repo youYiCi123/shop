@@ -1,6 +1,12 @@
 package com.jxm.business.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.github.pagehelper.PageHelper;
+import com.jxm.business.dto.DashboardFileTypeParam;
+import com.jxm.business.dto.DashboardUserFileParam;
+import com.jxm.business.dto.depUserRelation;
+import com.jxm.business.feign.FileService;
+import com.jxm.business.feign.UpstageService;
 import com.jxm.business.model.NewsHomeDetail;
 import com.jxm.business.model.NewsParam;
 import com.jxm.business.model.NewsPostParam;
@@ -13,10 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -25,6 +28,12 @@ public class NewsController {
 
     @Autowired
     private NewsService newsService;
+
+    @Autowired
+    private UpstageService upstageService;
+
+    @Autowired
+    private FileService fileService;
 
     /**
      * 首页上展示
@@ -35,6 +44,20 @@ public class NewsController {
         Map<String, Object> map = new HashMap<>(16);
         List<NewsShowHomeParam> NewsShowList=newsService.getNewsToHome();
         NewsHomeDetail newsTopToHome = newsService.getNewsTopToHome();
+        List<depUserRelation> depUserRelationList= upstageService.selectUserRelation().getData();
+        String jsonStr = JSONUtil.toJsonStr(fileService.getTheNumberOfFileTypes().getData());
+        List<DashboardUserFileParam> dashboardUserFileParams = JSONUtil.toList(jsonStr, DashboardUserFileParam.class);
+        //获取登录用户所属部门的文件类型数量信息
+        Map<Integer, Long> FileTypeNums = dashboardUserFileParams.stream().collect(Collectors.groupingBy(DashboardUserFileParam::getFileType, Collectors.counting()));
+        List<DashboardFileTypeParam> dashboardFileTypeParams=new ArrayList<>();
+        for (Map.Entry<Integer, Long>  fileTypeNums : FileTypeNums.entrySet()) {
+            DashboardFileTypeParam dashboardFileTypeParam = new DashboardFileTypeParam();
+            dashboardFileTypeParam.setFileType(fileTypeNums.getKey());
+            dashboardFileTypeParam.setNums(fileTypeNums.getValue().intValue());
+            dashboardFileTypeParams.add(dashboardFileTypeParam);
+        }
+        map.put("depUserRelationList", depUserRelationList);
+        map.put("fileTypeNums", dashboardFileTypeParams);
         map.put("NewsShowList", NewsShowList);
         map.put("newsTopToHome", newsTopToHome);
         return CommonResult.success(map, "获取成功");

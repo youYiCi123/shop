@@ -1,4 +1,4 @@
-package com.jxm.file.dto;
+package com.jxm.business.dto;
 
 
 import lombok.Data;

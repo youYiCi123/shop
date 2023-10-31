@@ -29,7 +29,7 @@
     </delete>
 
     <select id="getNewsByDateAndKeyword" resultType="com.jxm.business.model.NewsPostParam">
-        select id, theme,created_time,created_admin_id,created_admin_name from news_brief
+        select id, theme,created_time,news_type,created_admin_id,created_admin_name from news_brief
         <where>
             <if test="keyword!=null and keyword!=''">
                 theme like concat('%', #{keyword}, '%')
