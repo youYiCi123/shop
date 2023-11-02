@@ -47,8 +47,15 @@
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  select
+  <include refid="Base_Column_List" />
+  from ums_admin
+  where id = #{id,jdbcType=BIGINT}
+</select>
+
+  <select id="getUmsAdminConcat" parameterType="java.lang.Long" resultType="com.jxm.upstage.dto.UmsAdminConcat">
     select
-    <include refid="Base_Column_List" />
+    id,nick_name,email,username
     from ums_admin
     where id = #{id,jdbcType=BIGINT}
   </select>

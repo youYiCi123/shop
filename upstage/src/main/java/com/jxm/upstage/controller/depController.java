@@ -110,7 +110,6 @@ public class depController {
     }
 
 
-    //查询所有部门和人员信息级联关系
     @ApiOperation("查询所有部门人员级联信息")
     @RequestMapping(value = "/selectUserRelation", method = RequestMethod.GET)
     @ResponseBody

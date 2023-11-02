@@ -15,7 +15,7 @@ public class depUserRelation {
 
     private String depName;
 
-    List<UmsAdmin> userRelationList;
+    List<UmsAdminConcat> userRelationList;
 
 }
 

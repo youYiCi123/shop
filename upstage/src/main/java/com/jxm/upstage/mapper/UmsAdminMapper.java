@@ -3,6 +3,7 @@ package com.jxm.upstage.mapper;
 
 
 import com.jxm.upstage.dto.DepUser;
+import com.jxm.upstage.dto.UmsAdminConcat;
 import com.jxm.upstage.model.UmsAdmin;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,6 +22,8 @@ public interface UmsAdminMapper {
     List<UmsAdmin> selectAdminByUsername(String username);
 
     UmsAdmin selectByPrimaryKey(Long id);
+
+    UmsAdminConcat getUmsAdminConcat(Long id);
 
     int updateByPrimaryKeySelective(UmsAdmin record);
 

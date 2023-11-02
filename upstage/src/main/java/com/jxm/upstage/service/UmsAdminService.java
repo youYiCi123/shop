@@ -4,10 +4,7 @@ package com.jxm.upstage.service;
 
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.domain.UserDto;
-import com.jxm.upstage.dto.FileUserBrief;
-import com.jxm.upstage.dto.UmsAdminLoginParam;
-import com.jxm.upstage.dto.UmsAdminParam;
-import com.jxm.upstage.dto.UpdateAdminPasswordParam;
+import com.jxm.upstage.dto.*;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.model.UmsRole;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +44,7 @@ public interface UmsAdminService {
      */
     UmsAdmin getItem(Long id);
 
+    UmsAdminConcat getUmsAdminConcat(Long id);
     /**
      * 修改密码
      */
