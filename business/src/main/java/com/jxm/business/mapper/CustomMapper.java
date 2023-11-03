@@ -3,6 +3,7 @@ package com.jxm.business.mapper;
 import com.jxm.business.dto.CustomSalesParam;
 import com.jxm.business.model.CustomParam;
 import com.jxm.business.model.CustomPostParam;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +20,8 @@ public interface CustomMapper {
     int delete(Long customId);
 
     int deleteBatchCustom(List<Long> idList);
+
+    List<String> getAllCustom();
+
+    int saveBatch(@Param("list") List<CustomPostParam> list);
 }

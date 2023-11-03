@@ -159,6 +159,14 @@ public class UserController {
         return CommonResult.success(umsAdmin);
     }
 
+    @ApiOperation("获取所有用户联系信息")
+    @RequestMapping(value = "/getUmsAdminConcatList", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<UmsAdminConcat>> getUmsAdminConcatList() {
+        List<UmsAdminConcat> umsAdminConcatList = adminService.getUmsAdminConcatList();
+        return CommonResult.success(umsAdminConcatList);
+    }
+
     @ApiOperation("修改指定用户密码")
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody

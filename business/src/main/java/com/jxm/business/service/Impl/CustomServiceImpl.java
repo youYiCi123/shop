@@ -6,11 +6,9 @@ import com.jxm.business.dto.UmsAdminConcat;
 import com.jxm.business.feign.UpstageService;
 import com.jxm.business.mapper.CustomMapper;
 import com.jxm.business.mapper.CustomSaleMapper;
-import com.jxm.business.mapper.NewsMapper;
 import com.jxm.business.model.CustomParam;
 import com.jxm.business.model.CustomPostParam;
 import com.jxm.business.model.CustomSaleParam;
-import com.jxm.business.model.NewsPostParam;
 import com.jxm.business.service.CustomService;
 import com.jxm.common.generator.UniqueIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +65,8 @@ public class CustomServiceImpl implements CustomService {
             customSaleParam.setId(uniqueId.nextId());
             customSaleParam.setSalesPersonId(customSalesParam.getSalesPersonId());
             customSaleParam.setSalesPersonName(umsAdminConcat.getNickName());
+            customSaleParam.setSalesPersonEmail(umsAdminConcat.getEmail());
+            customSaleParam.setSalesPersonPhone(umsAdminConcat.getUsername());
             customSaleParam.setCustomId(customId);
            return customSaleMapper.addCustomSales(customSaleParam);
         }
@@ -96,6 +96,8 @@ public class CustomServiceImpl implements CustomService {
             CustomSaleParam customSaleParam = new CustomSaleParam();
             customSaleParam.setSalesPersonId(customSalesParam.getSalesPersonId());
             customSaleParam.setSalesPersonName(umsAdminConcat.getNickName());
+            customSaleParam.setSalesPersonEmail(umsAdminConcat.getEmail());
+            customSaleParam.setSalesPersonPhone(umsAdminConcat.getUsername());
             customSaleParam.setCustomId(customSalesParam.getId());
             return customSaleMapper.updateCustomSale(customSaleParam);
         }
@@ -118,5 +120,20 @@ public class CustomServiceImpl implements CustomService {
             return customSaleMapper.deleteBatchCustom(idList);
         }
         return -1;
+    }
+
+    @Override
+    public List<String> getAllCustom() {
+        return customMapper.getAllCustom();
+    }
+
+    @Override
+    public int saveCustomBatch(List<CustomPostParam> customPostParamList) {
+        return customMapper.saveBatch(customPostParamList);
+    }
+
+    @Override
+    public int saveCustomSaleBatch(List<CustomSaleParam> customSaleParams) {
+        return customSaleMapper.saveBatch(customSaleParams);
     }
 }

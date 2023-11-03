@@ -13,4 +13,6 @@ public class CustomSaleParam {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long salesPersonId;
     private String salesPersonName;
+    private String salesPersonEmail;
+    private String salesPersonPhone;
 }

@@ -138,4 +138,23 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="getAllCustom" resultType="java.lang.String">
+    select custom_name
+    from custom_info
+  </select>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into custom_info (
+        id, custom_name,credit_code,address,legal_person,business_time_type,business_time,license_time,contact_name,contact_phone)
+        values
+        <foreach collection="list" item="customItem" index="index" separator=",">
+            (#{customItem.id},#{customItem.customName},
+            #{customItem.creditCode},#{customItem.address},
+            #{customItem.legalPerson},#{customItem.businessTimeType},#{customItem.businessTime,jdbcType=TIMESTAMP},
+            #{customItem.licenseTime,jdbcType=TIMESTAMP},
+            #{customItem.contactName},
+            #{customItem.contactPhone})
+        </foreach>
+    </insert>
 </mapper>

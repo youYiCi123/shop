@@ -69,6 +69,7 @@ secure:
       - "/upstage-service/excel/download"
       - "/file-service/preview/**"
       - "/file-service/file/download"
+      - "/business-service/excel/download/**"
 
 
 

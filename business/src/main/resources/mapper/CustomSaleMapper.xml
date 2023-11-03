@@ -6,10 +6,12 @@
         <result column="custom_id" jdbcType="BIGINT" property="customId"/>
         <result column="sales_person_id" jdbcType="BIGINT" property="salesPersonId"/>
         <result column="sales_person_name" jdbcType="VARCHAR" property="salesPersonName"/>
+        <result column="sales_person_email" jdbcType="VARCHAR" property="salesPersonEmail"/>
+        <result column="sales_person_phone" jdbcType="VARCHAR" property="salesPersonPhone"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, custom_id,sales_person_id,sales_person_name
+        id, custom_id,sales_person_id,sales_person_name,sales_person_email,sales_person_phone
     </sql>
 
     <insert id="addCustomSales" parameterType="com.jxm.business.model.CustomSaleParam">
@@ -27,6 +29,12 @@
             <if test="salesPersonName != null">
                 sales_person_name,
             </if>
+            <if test="salesPersonEmail != null">
+                sales_person_email,
+            </if>
+            <if test="salesPersonPhone != null">
+                sales_person_phone,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -41,6 +49,12 @@
             <if test="salesPersonName != null">
                 #{salesPersonName,jdbcType=VARCHAR},
             </if>
+            <if test="salesPersonEmail != null">
+                #{salesPersonEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="salesPersonPhone != null">
+                #{salesPersonPhone,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -52,6 +66,12 @@
             </if>
             <if test="salesPersonName != null">
                 sales_person_name=#{salesPersonName,jdbcType=VARCHAR},
+            </if>
+            <if test="salesPersonEmail != null">
+                sales_person_email=#{salesPersonEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="salesPersonPhone != null">
+                sales_person_phone=#{salesPersonPhone,jdbcType=VARCHAR},
             </if>
         </set>
         where custom_id = #{customId,jdbcType=BIGINT}
@@ -70,4 +90,14 @@
         </foreach>
     </delete>
 
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into custom_sale (id, custom_id,sales_person_id,sales_person_name,sales_person_email,sales_person_phone)
+        values
+        <foreach collection="list" item="customSaleItem" index="index" separator=",">
+            (#{customSaleItem.id},#{customSaleItem.customId},
+            #{customSaleItem.salesPersonId},#{customSaleItem.salesPersonName},
+            #{customSaleItem.salesPersonEmail},#{customSaleItem.salesPersonPhone})
+        </foreach>
+    </insert>
+    
 </mapper>

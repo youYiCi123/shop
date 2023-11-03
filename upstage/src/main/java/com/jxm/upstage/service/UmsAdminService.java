@@ -45,6 +45,8 @@ public interface UmsAdminService {
     UmsAdmin getItem(Long id);
 
     UmsAdminConcat getUmsAdminConcat(Long id);
+
+    List<UmsAdminConcat> getUmsAdminConcatList();
     /**
      * 修改密码
      */

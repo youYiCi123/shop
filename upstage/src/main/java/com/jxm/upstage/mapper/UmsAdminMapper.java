@@ -25,6 +25,8 @@ public interface UmsAdminMapper {
 
     UmsAdminConcat getUmsAdminConcat(Long id);
 
+    List<UmsAdminConcat> getUmsAdminConcatList();
+
     int updateByPrimaryKeySelective(UmsAdmin record);
 
     List<String> getAllUserPhone();

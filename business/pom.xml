@@ -11,6 +11,9 @@
 
     <artifactId>business</artifactId>
 
+    <properties>
+        <easyexcel.version>2.2.3</easyexcel.version>
+    </properties>
     <dependencies>
         <!--使用SpringMVC的接口-->
         <dependency>
@@ -76,6 +79,11 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>${easyexcel.version}</version>
         </dependency>
     </dependencies>
 </project>

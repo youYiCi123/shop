@@ -122,6 +122,11 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     @Override
+    public List<UmsAdminConcat> getUmsAdminConcatList() {
+        return adminMapper.getUmsAdminConcatList();
+    }
+
+    @Override
     public int updatePassword(UpdateAdminPasswordParam param) {
         if(StrUtil.isEmpty(param.getUsername())
                 ||StrUtil.isEmpty(param.getOldPassword())

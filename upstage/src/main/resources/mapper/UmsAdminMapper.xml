@@ -60,6 +60,13 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
+
+  <select id="getUmsAdminConcatList" resultType="com.jxm.upstage.dto.UmsAdminConcat">
+    select
+    id,nick_name,email,username
+    from ums_admin
+  </select>
+
   <select id="getAllUserPhone" resultType="java.lang.String">
     select username
     from ums_admin
