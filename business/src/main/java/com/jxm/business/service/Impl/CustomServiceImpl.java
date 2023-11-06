@@ -35,6 +35,11 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
+    public List<CustomParam> getCustomByNearDeadline() {
+        return customMapper.getCustomByNearDeadline();
+    }
+
+    @Override
     public CustomParam queryCustomContent(Long id) {
         return customMapper.queryCustomContent(id);
     }

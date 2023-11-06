@@ -14,6 +14,8 @@
         <result column="contact_phone" jdbcType="VARCHAR" property="contactPhone"/>
         <result column="sales_person_id" jdbcType="BIGINT" property="salesPersonId"/>
         <result column="sales_person_name" jdbcType="VARCHAR" property="salesPersonName"/>
+        <result column="sales_person_phone" jdbcType="VARCHAR" property="salesPersonPhone"/>
+        <result column="sales_person_email" jdbcType="VARCHAR" property="salesPersonEmail"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -21,7 +23,8 @@
     </sql>
 
     <select id="getCustomBySearch" resultMap="BaseResultMap">
-        select ci.*,cs.sales_person_id,cs.sales_person_name from custom_info ci
+        select ci.*,cs.sales_person_id,cs.sales_person_name,cs.sales_person_phone,cs.sales_person_email
+        from custom_info ci
         left join custom_sale cs on ci.id = cs.custom_id
         <where>
             <if test="keyword!=null and keyword!=''">
@@ -33,6 +36,13 @@
             </if>
         </where>
         order by ci.license_time asc
+    </select>
+
+    <select id="getCustomByNearDeadline" resultMap="BaseResultMap">
+        select ci.*,cs.sales_person_id,cs.sales_person_name,cs.sales_person_phone,cs.sales_person_email
+        from custom_info ci
+        left join custom_sale cs on ci.id = cs.custom_id
+        where DATEDIFF(license_time,NOW())=3
     </select>
 
     <select id="queryCustomContent" resultMap="BaseResultMap">

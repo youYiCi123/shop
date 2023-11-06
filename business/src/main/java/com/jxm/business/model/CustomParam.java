@@ -22,4 +22,6 @@ public class CustomParam {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long salesPersonId;//业务员id
     private String salesPersonName;//业务员姓名
+    private String salesPersonPhone;//业务员手机号
+    private String salesPersonEmail;//业务员邮件
 }

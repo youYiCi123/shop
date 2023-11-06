@@ -1,19 +1,13 @@
 package com.jxm.business.controller;
 
-import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.CustomSalesParam;
 import com.jxm.business.model.CustomParam;
-import com.jxm.business.model.CustomPostParam;
-import com.jxm.business.model.NewsParam;
-import com.jxm.business.model.NewsPostParam;
 import com.jxm.business.service.CustomService;
-import com.jxm.business.service.NewsService;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;

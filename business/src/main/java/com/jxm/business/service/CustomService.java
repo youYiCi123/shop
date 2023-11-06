@@ -12,6 +12,8 @@ public interface CustomService {
 
     List<CustomParam> getCustomBySearch(Integer pageNum, Integer pageSize, String keyword,Long salesPersonId);
 
+    List<CustomParam> getCustomByNearDeadline();
+
     CustomParam queryCustomContent(Long id);
 
     int addCustom(CustomSalesParam customSalesParam);

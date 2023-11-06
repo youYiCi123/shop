@@ -11,6 +11,8 @@ public interface CustomMapper {
 
     List<CustomParam> getCustomBySearch(String keyword,Long salesPersonId);
 
+    List<CustomParam> getCustomByNearDeadline();
+
     CustomParam queryCustomContent(Long id);
 
     int addCustom(CustomPostParam customPostParam);
