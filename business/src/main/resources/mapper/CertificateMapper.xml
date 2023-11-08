@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.CertificateMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.CertificateParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="certificate_name" jdbcType="VARCHAR" property="certificateName"/>
+        <result column="norms" jdbcType="VARCHAR" property="norms"/>
+        <result column="category" jdbcType="BIGINT" property="category"/>
+        <result column="register_number" jdbcType="VARCHAR" property="registerNumber"/>
+        <result column="approval_time" jdbcType="TIMESTAMP" property="approvalTime"/>
+        <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+        <result column="last_declare_time" jdbcType="TIMESTAMP" property="lastDeclareTime"/>
+        <result column="risk_evaluate_time" jdbcType="TIMESTAMP" property="riskEvaluateTime"/>
+        <result column="first_register_time" jdbcType="TIMESTAMP" property="firstRegisterTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, certificate_name,norms,category,register_number,approval_time,effective_time,last_declare_time,risk_evaluate_time,first_register_time
+    </sql>
+
+    <select id="getListBySearch"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from certificate
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                certificate_name like concat('%', #{keyword}, '%')
+            </if>
+            <if test="lastDeclareStartDate!=null and lastDeclareStartDate!='' and lastDeclareEndDate!=null and lastDeclareEndDate!=''">
+                and last_declare_time between #{lastDeclareStartDate} and #{lastDeclareEndDate}
+            </if>
+            <if test="firstRegisterStartDate!=null and firstRegisterStartDate!='' and firstRegisterEndDate!=null and firstRegisterEndDate!=''">
+                and first_register_time between #{firstRegisterStartDate} and #{firstRegisterEndDate}
+            </if>
+            <if test="category!=0 and category!=''">
+                and category =#{category,jdbcType=BIGINT}
+            </if>
+        </where>
+        order by last_declare_time asc
+    </select>
+
+    <select id="queryContent" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        certificate
+        where id=#{id}
+    </select>
+
+    <insert id="add" parameterType="com.jxm.business.model.CertificateParam">
+        insert into certificate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="certificateName != null">
+                certificate_name,
+            </if>
+            <if test="norms != null">
+                norms,
+            </if>
+            <if test="category != null">
+                category,
+            </if>
+            <if test="registerNumber != null">
+                register_number,
+            </if>
+            <if test="approvalTime != null">
+                approval_time,
+            </if>
+            <if test="effectiveTime != null">
+                effective_time,
+            </if>
+            <if test="lastDeclareTime != null">
+                last_declare_time,
+            </if>
+            <if test="riskEvaluateTime != null">
+                risk_evaluate_time,
+            </if>
+            <if test="firstRegisterTime != null">
+                first_register_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="certificateName != null">
+                #{certificateName,jdbcType=VARCHAR},
+            </if>
+            <if test="norms != null">
+                #{norms,jdbcType=VARCHAR},
+            </if>
+            <if test="category != null">
+                #{category,jdbcType=BIGINT},
+            </if>
+            <if test="registerNumber != null">
+                #{registerNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="approvalTime != null">
+                #{approvalTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="effectiveTime != null">
+                #{effectiveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastDeclareTime != null">
+                #{lastDeclareTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="riskEvaluateTime != null">
+                #{riskEvaluateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="firstRegisterTime != null">
+                #{firstRegisterTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.jxm.business.model.CertificateParam">
+        update certificate
+        set certificate_name = #{certificateName,jdbcType=VARCHAR},
+        norms=#{norms,jdbcType=VARCHAR},
+        category = #{category,jdbcType=BIGINT},
+        register_number=#{registerNumber,jdbcType=VARCHAR},
+        approval_time = #{approvalTime,jdbcType=TIMESTAMP},
+        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+        last_declare_time=#{lastDeclareTime,jdbcType=TIMESTAMP},
+        risk_evaluate_time = #{riskEvaluateTime,jdbcType=TIMESTAMP},
+        first_register_time=#{firstRegisterTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from certificate where id=#{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteBatch" parameterType="java.lang.Long">
+        delete from certificate
+        where
+        id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into certificate (
+        id, certificate_name,norms,category,register_number,approval_time,effective_time,last_declare_time,risk_evaluate_time,first_register_time)
+        values
+        <foreach collection="list" item="certificateItem" index="index" separator=",">
+            (#{certificateItem.id},
+            #{certificateItem.certificateName},
+            #{certificateItem.norms},
+            #{certificateItem.category},
+            #{certificateItem.registerNumber},
+            #{certificateItem.approvalTime,jdbcType=TIMESTAMP},
+            #{certificateItem.effectiveTime,jdbcType=TIMESTAMP},
+            #{certificateItem.lastDeclareTime,jdbcType=TIMESTAMP},
+            #{certificateItem.riskEvaluateTime,jdbcType=TIMESTAMP},
+            #{certificateItem.firstRegisterTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+</mapper>

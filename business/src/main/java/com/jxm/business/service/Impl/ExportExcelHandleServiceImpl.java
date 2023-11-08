@@ -1,11 +1,13 @@
 package com.jxm.business.service.Impl;
 
-import cn.hutool.crypto.digest.BCrypt;
+import com.jxm.business.dto.ExcelCertificate;
 import com.jxm.business.dto.ExcelCustom;
 import com.jxm.business.dto.UmsAdminConcat;
 import com.jxm.business.feign.UpstageService;
+import com.jxm.business.model.CertificateParam;
 import com.jxm.business.model.CustomPostParam;
 import com.jxm.business.model.CustomSaleParam;
+import com.jxm.business.service.CertificateService;
 import com.jxm.business.service.CustomService;
 import com.jxm.business.service.ExportExcelHandleService;
 import com.jxm.common.generator.UniqueIdGenerator;
@@ -27,6 +29,9 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
 
     @Autowired
     private CustomService customService;
+
+    @Autowired
+    private CertificateService certificateService;
 
     @Autowired
     private UpstageService upstageService;
@@ -110,7 +115,82 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
             request.getSession().setAttribute("success", successCount);
             request.getSession().setAttribute("fail", failCount);
         } catch (Exception e) {
-            log.error("保存人员数据失败:", e);
+            log.error("保存客户数据失败:", e);
+        }
+    }
+
+    @Override
+    public void saveCertificateInfo(List<ExcelCertificate> certificateModels) {
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        //总条件、失败条数
+        Integer totalCount = certificateModels.size(), successCount = 0, failCount = 0;
+
+        List<CertificateParam> addCertificateInfoList = new ArrayList<>();
+        try {
+            //校验excel数据是否重复
+            long samePhoneCount = certificateModels.stream().map(ExcelCertificate::getCertificateName).filter(Objects::nonNull).distinct().count();
+            if (samePhoneCount != totalCount) {
+                failCount = totalCount;
+                request.getSession().setAttribute("success", 0);
+                request.getSession().setAttribute("fail", failCount);
+                return;
+            }
+            
+            //判断证书是否已经存在
+            List<String> allCertificate = customService.getAllCustom();
+            UniqueIdGenerator idGenerator = new UniqueIdGenerator(1, 1);
+            boolean addFlag = false;
+            for (ExcelCertificate certificateModel : certificateModels) {
+                if (allCertificate.size() == 0) {
+                    addFlag = true;
+                } else {
+                    Optional<String> subOptional = allCertificate.stream().filter(Objects::nonNull).filter(t -> t.equals(certificateModel.getCertificateName())).findFirst();
+                    if (!subOptional.isPresent()) {
+                        addFlag = true;
+                    }
+                }
+                if (addFlag) {
+                    CertificateParam certificatePostParam = new CertificateParam();
+                    long customId = idGenerator.nextId();
+                    certificatePostParam.setId(customId);
+                    certificatePostParam.setCertificateName(certificateModel.getCertificateName());
+                    certificatePostParam.setNorms(certificateModel.getNorms());
+                    certificatePostParam.setRegisterNumber(certificateModel.getRegisterNumber());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date approvalTime = sdf.parse(certificateModel.getApprovalTime());
+                    certificatePostParam.setApprovalTime(approvalTime);
+                    Date effectiveTime = sdf.parse(certificateModel.getEffectiveTime());
+                    certificatePostParam.setEffectiveTime(effectiveTime);
+                    Date firstRegisterTime = sdf.parse(certificateModel.getFirstRegisterTime());
+                    certificatePostParam.setFirstRegisterTime(firstRegisterTime);
+                    Date lastDeclareTime = sdf.parse(certificateModel.getLastDeclareTime());
+                    certificatePostParam.setLastDeclareTime(lastDeclareTime);
+                    Date riskEvaluateTime = sdf.parse(certificateModel.getRiskEvaluateTime());
+                    certificatePostParam.setRiskEvaluateTime(riskEvaluateTime);
+                    switch (certificateModel.getCategory()) {
+                        case "I类":
+                            certificatePostParam.setCategory(1);
+                            break;
+                        case "II类":
+                            certificatePostParam.setCategory(2);
+                            break;
+                        case "III类":
+                            certificatePostParam.setCategory(3);
+                            break;
+                    }
+
+                    addCertificateInfoList.add(certificatePostParam);
+                    successCount++;
+                }
+            }
+            if (addCertificateInfoList.size() != 0)
+                certificateService.saveCertificateBatch(addCertificateInfoList);
+            failCount = totalCount - successCount;
+            request.getSession().setAttribute("success", successCount);
+            request.getSession().setAttribute("fail", failCount);
+        } catch (Exception e) {
+            log.error("保存证书数据失败:", e);
         }
     }
 }

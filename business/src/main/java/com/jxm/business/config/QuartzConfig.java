@@ -21,7 +21,7 @@ public class QuartzConfig {
     //配置触发器
     @Bean
     public Trigger uploadTaskTrigger() {
-        //每天的14点20分执行
+        //每天的上午9点30分执行
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 30 9 * * ?");
         return TriggerBuilder.newTrigger().forJob(customTaskDetail())
                 .withIdentity("CustomTask")

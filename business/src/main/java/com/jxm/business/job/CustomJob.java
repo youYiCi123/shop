@@ -4,6 +4,7 @@ import com.jxm.business.dto.EmailVo;
 import com.jxm.business.model.CustomParam;
 import com.jxm.business.service.CustomService;
 import com.jxm.business.service.EmailService;
+import com.jxm.business.service.SmsService;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class CustomJob extends QuartzJobBean {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private SmsService smsService;
 
     @Autowired
     private CustomService customService;
@@ -33,6 +37,7 @@ public class CustomJob extends QuartzJobBean {
             emailVo.setContent("你所负责的客户（" + t.getCustomName() + "）的许可证到期时间为" + sdf.format(t.getLicenseTime()));
             //后期使用消息中间件
             emailService.send(emailVo,emailService.find());
+            smsService.send(t.getSalesPersonPhone(),t.getCustomName(),sdf.format(t.getLicenseTime()));
         });
     }
 }
