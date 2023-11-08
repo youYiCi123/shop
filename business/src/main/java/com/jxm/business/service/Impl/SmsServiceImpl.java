@@ -27,7 +27,7 @@ public class SmsServiceImpl implements SmsService {
     private static final String DOMAIN = "dysmsapi.aliyuncs.com";
 
     @Override
-    public Boolean send(String phone, String customName, String licenseTime) {
+    public Boolean send(String phone, String customName, String licenseTime, String residueTime) {
         try {
             IClientProfile profile = DefaultProfile.getProfile(REGION_ID,smsConfig.getAccessKeyId(),smsConfig.getAccessKeySecret());
 
@@ -49,7 +49,9 @@ public class SmsServiceImpl implements SmsService {
             /*  例如签名内容为：tianYiMsg
              *你所负责的客户${customName},许可证到期时间为${time},即将在90天后过期,请及时联系该客户
              */
-            request.setTemplateParam("{\"customName\":\"" + customName + "\",\"time\":\"" + licenseTime + "\"}");
+            request.setTemplateParam("{\"customName\":\"" + customName + "\"," +
+                    "\"time\":\"" + licenseTime + "\"," +
+                    "\"residueTime\":\"" + residueTime + "\"}");
 
             SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
             if ((sendSmsResponse.getCode() != null) && (sendSmsResponse.getCode().equals("OK"))) {

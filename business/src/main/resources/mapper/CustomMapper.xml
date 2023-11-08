@@ -42,7 +42,7 @@
         select ci.*,cs.sales_person_id,cs.sales_person_name,cs.sales_person_phone,cs.sales_person_email
         from custom_info ci
         left join custom_sale cs on ci.id = cs.custom_id
-        where DATEDIFF(license_time,NOW())=3
+        where DATEDIFF(license_time,NOW())=2
     </select>
 
     <select id="queryCustomContent" resultMap="BaseResultMap">

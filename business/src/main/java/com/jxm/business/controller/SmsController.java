@@ -20,8 +20,9 @@ public class SmsController {
     @ResponseBody
     public CommonResult<Object> sendSms(@RequestParam(value = "phone") String phone,
                                         @RequestParam(value = "customName", required = false) String customName,
-                                        @RequestParam(value = "licenseTime", required = false) String licenseTime){
-        Boolean sendBoolean = smsService.send(phone, customName, licenseTime);
+                                        @RequestParam(value = "licenseTime", required = false) String licenseTime,
+                                        @RequestParam(value = "residueTime", required = false) String residueTime){
+        Boolean sendBoolean = smsService.send(phone, customName, licenseTime,residueTime);
         if(sendBoolean){
             return CommonResult.success();
         }

@@ -90,7 +90,7 @@ public class FileController {
         return CommonResult.success();
     }
 
-    @PostMapping("file/createDepRootFolder")
+    @PostMapping("file/folder/createDepRootFolder")
     public CommonResult createDepRootFolder(@RequestParam("parentId") Long parentId, @RequestParam("folderName") String folderName,
                                             @RequestParam("userId") Long userId, @RequestParam("depId") Long depId) {
         iUserFileService.createDepRootFolder(parentId, folderName, userId, depId);
@@ -131,7 +131,7 @@ public class FileController {
     }
 
     @ApiOperation("批量删除文件信息")
-    @RequestMapping(value = "/file/deleteBatch", method = RequestMethod.POST)
+    @RequestMapping(value = "/file/delete/batch", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult deleteBatch(@RequestBody Long[] multipleSelectionId) {
         List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
@@ -143,7 +143,7 @@ public class FileController {
     }
 
     @ApiOperation(value = "删除文件")
-    @RequestMapping(value = "/file/deleteFile/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/file/delete/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult deleteFile(@PathVariable("id") Long id) {
         int count = iUserFileService.deleteFile(id);
@@ -155,7 +155,7 @@ public class FileController {
     }
 
     @ApiOperation("批量审核文件信息")
-    @RequestMapping(value = "/file/passeBatch", method = RequestMethod.POST)
+    @RequestMapping(value = "/file/passe/batch", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult passeBatch(@RequestBody Long[] multipleSelectionId) {
         List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
@@ -167,7 +167,7 @@ public class FileController {
     }
 
     @ApiOperation(value = "审核")
-    @RequestMapping(value = "/file/passFile/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/file/pass/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult passFile(@PathVariable("id") Long id) throws ParseException {
         Object loginUser = getLoginUser();
@@ -194,7 +194,7 @@ public class FileController {
             value = "分片上传并检查已上传的分片",
             notes = "该接口提供了分片上传并检查已上传的分片的功能"
     )
-    @GetMapping("file/chunk-upload")
+    @GetMapping("file/upload/chunk-upload")
     public CommonResult<CheckFileChunkUploadVO> checkUploadWithChunk(@Validated FileChunkCheckPO fileChunkCheckPO) throws IOException, ParseException {
         CheckFileChunkUploadVO checkFileChunkUploadVO = iUserFileService.checkUploadWithChunk(getLoginUserId(), fileChunkCheckPO.getIdentifier());
         return CommonResult.success(checkFileChunkUploadVO);
@@ -204,7 +204,7 @@ public class FileController {
             value = "分片上传文件",
             notes = "该接口提供了分片上传文件的功能"
     )
-    @PostMapping("file/chunk-upload")
+    @PostMapping("file/upload/chunk-upload")
     public CommonResult<FileChunkUploadVO> uploadWithChunk(@Validated FileChunkUploadPO fileChunkUploadPO) throws ParseException {
         FileChunkUploadVO fileChunkUploadVO = iUserFileService.uploadWithChunk(fileChunkUploadPO.getFile(), getLoginUserId(), fileChunkUploadPO.getIdentifier(), fileChunkUploadPO.getTotalChunks(), fileChunkUploadPO.getChunkNumber(), fileChunkUploadPO.getTotalSize(), fileChunkUploadPO.getFilename());
         return CommonResult.success(fileChunkUploadVO);
@@ -214,7 +214,7 @@ public class FileController {
             value = "合并文件分片",
             notes = "该接口提供了合并文件分片的功能"
     )
-    @PostMapping("file/merge")
+    @PostMapping("file/upload/merge")
     public CommonResult mergeChunks(@Validated @RequestBody FileChunkMergePO fileChunkMergePO) throws ParseException {
         Object loginUser = getLoginUser();
         iUserFileService.mergeChunks(fileChunkMergePO.getPageType(),fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), loginUser);
@@ -225,7 +225,7 @@ public class FileController {
             value = "秒传文件",
             notes = "该接口提供了秒传文件的功能，在文件生成唯一标识之后上传，根据返回结果决定是否要执行物理上传"
     )
-    @PostMapping("file/sec-upload")
+    @PostMapping("file/upload/sec-upload")
     public CommonResult secUpload(@Validated @RequestBody FileSecUploadPO fileSecUploadPO) throws ParseException {
         Object loginUser = getLoginUser();
         if (iUserFileService.secUpload(fileSecUploadPO.getPageType(),fileSecUploadPO.getParentId(), fileSecUploadPO.getFilename(), fileSecUploadPO.getIdentifier(), loginUser)) {
@@ -298,7 +298,7 @@ public class FileController {
             value = "获取用户File根信息",
             notes = "该接口提供了获取用户File根信息的功能"
     )
-    @GetMapping("file/getUserTopFileInfo")
+    @GetMapping("file/required/getUserTopFileInfo")
     public CommonResult getUserTopFileInfo(@RequestParam Long depId) {
         return CommonResult.success(rPanUserFileMapper.selectTopFolderByUserId(depId));
     }
@@ -307,7 +307,7 @@ public class FileController {
             value = "提供首页展示文件类型数量",
             notes = "该接口提供首页展示文件类型数量的功能"
     )
-    @GetMapping("file/getTheNumberOfFileTypes")
+    @GetMapping("file/required/getTheNumberOfFileTypes")
     public CommonResult getTheNumberOfFileTypes() {
         return CommonResult.success(iUserFileService.getTheNumberOfFileTypes());
     }

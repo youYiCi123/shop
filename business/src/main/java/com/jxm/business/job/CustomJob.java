@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,11 @@ public class CustomJob extends QuartzJobBean {
             emailVo.setContent("你所负责的客户（" + t.getCustomName() + "）的许可证到期时间为" + sdf.format(t.getLicenseTime()));
             //后期使用消息中间件
             emailService.send(emailVo,emailService.find());
-            smsService.send(t.getSalesPersonPhone(),t.getCustomName(),sdf.format(t.getLicenseTime()));
+            Date nowDate = new Date();
+            Long starTime=nowDate.getTime();
+            Long endTime=t.getLicenseTime().getTime();
+            Long num=endTime-starTime;//时间戳相差的毫秒数
+            smsService.send(t.getSalesPersonPhone(),t.getCustomName(),sdf.format(t.getLicenseTime()),(num/24/60/60/1000)+"");
         });
     }
 }

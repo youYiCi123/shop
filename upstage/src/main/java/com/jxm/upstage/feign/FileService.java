@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("file-service")
 public interface FileService {
 
-    @GetMapping(value = "file/getUserTopFileInfo")
+    @GetMapping(value = "file/required/getUserTopFileInfo")
     CommonResult getUserTopFileInfo(@RequestParam Long depId);
 
-    @PostMapping(value = "file/createDepRootFolder")
+    @PostMapping(value = "file/folder/createDepRootFolder")
     CommonResult createFolder(@RequestParam("parentId") Long parentId,@RequestParam("folderName")  String folderName,
                               @RequestParam("userId")  Long userId,@RequestParam("depId") Long depId);
 }
