@@ -15,6 +15,8 @@ public class ExcelUser {
     private String email;
     @ExcelProperty(value = "手机号",index = 3)
     private String phoneNumber;
-    @ExcelProperty(value = "职务",index = 4)
+    @ExcelProperty(value = "部门",index = 4)
+    private String depName;
+    @ExcelProperty(value = "职务",index = 5)
     private String duty;
 }

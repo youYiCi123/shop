@@ -78,6 +78,12 @@
         update comment set is_published=#{published} where id=#{commentId}
     </update>
 
+    <select id="getCommentCountByJumpId" resultType="java.lang.Integer">
+        select count(*)
+        from comment
+        where jump_id=#{articleId}
+    </select>
+
     <!--更新评论接收邮件提醒状态-->
     <update id="updateCommentNoticeById">
         update comment set is_notice=#{notice} where id=#{commentId}

@@ -2,8 +2,10 @@ package com.jxm.upstage.service.Impl;
 
 import cn.hutool.crypto.digest.BCrypt;
 import com.jxm.common.generator.UniqueIdGenerator;
+import com.jxm.upstage.dto.DepIdToName;
 import com.jxm.upstage.dto.ExcelUser;
 import com.jxm.upstage.model.UmsAdmin;
+import com.jxm.upstage.service.DepService;
 import com.jxm.upstage.service.ExportExcelHandleService;
 import com.jxm.upstage.service.UmsAdminService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,8 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
     @Autowired
     private UmsAdminService umsAdminService;
 
+    @Autowired
+    private DepService depService;
     /**
      * 正则表达式：验证手机号
      */
@@ -58,6 +62,7 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
 
             //判断手机号、部门列表是否已经存在
             List<String> allUserPhone = umsAdminService.getAllUserPhone();
+            List<DepIdToName> depIdToNames = depService.getDepIdToName();
 
             boolean addFlag = false;
             for (ExcelUser userExportExcelModel : userExportExcelModels) {
@@ -89,11 +94,13 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
                     userInfo.setStatus(1);
                     userInfo.setCreateTime(new Date());
                     userInfo.setPassword(BCrypt.hashpw("123456"));
+                    //部门名转换成id存储
+                    Optional<DepIdToName> depIdToName = depIdToNames.stream().filter(t -> t.getDepName().equals(userExportExcelModel.getDepName())).findFirst();
+                    depIdToName.ifPresent(one->userInfo.setDepId(one.getId()));
                     userInfo.setDuty(userExportExcelModel.getDuty());
                     addUserInfoList.add(userInfo);
                     successCount++;
                 }
-
             }
             if(addUserInfoList.size()!=0)
             umsAdminService.saveBatch(addUserInfoList);

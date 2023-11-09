@@ -155,11 +155,12 @@ public class FileController {
     }
 
     @ApiOperation("批量审核文件信息")
-    @RequestMapping(value = "/file/passe/batch", method = RequestMethod.POST)
+    @RequestMapping(value = "/file/pass/batch", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult passeBatch(@RequestBody Long[] multipleSelectionId) {
+    public CommonResult passBatch(@RequestBody Long[] multipleSelectionId) throws ParseException {
+        Object loginUser = getLoginUser();
         List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
-        int count = iUserFileService.passeBatch(idList);
+        int count = iUserFileService.passBatch(idList,loginUser);
         if (count > 0) {
             return CommonResult.success(count);
         }

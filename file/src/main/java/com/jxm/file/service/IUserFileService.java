@@ -40,7 +40,7 @@ public interface IUserFileService {
     int deleteBatch(List<Long> idList);
 
     @Transactional
-    int passeBatch(List<Long> idList);
+    int passBatch(List<Long> idList,Object loginUser);
 
     int deleteFile(Long id);
 

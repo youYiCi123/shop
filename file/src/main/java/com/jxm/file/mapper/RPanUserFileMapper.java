@@ -59,7 +59,7 @@ public interface RPanUserFileMapper {
 
     int deleteBatchReal(@Param("idList") List<Long> idList);
 
-    int passeBatch(@Param("idList") List<Long> idList);
+    int passBatch(@Param("idList") List<Long> idList,@Param("passUserId") Long passUserId,@Param("passUserName") String passUserName);
 
     int deleteById(Long id);
 

@@ -47,14 +47,16 @@ public class CommentController {
      */
     @RequestMapping(value = "/getComments", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<CommonPage<PageComment>> getComments(@RequestParam(defaultValue = "0") Integer page,
-                                                          @RequestParam(defaultValue = "") Long jumpId,
-                                                          @RequestParam(defaultValue = "1") Integer pageNum,
-                                                          @RequestParam(defaultValue = "10") Integer pageSize) throws ParseException {
+    public CommonResult getComments(@RequestParam(defaultValue = "0") Integer page,
+                                                          @RequestParam(defaultValue = "") Long jumpId) throws ParseException {
         String jsonStr = JSONUtil.toJsonStr(upstageService.getCurrentAdmin().getData());
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
-        List<PageComment> pageCommentList = commentService.getPageCommentList(page,jumpId, -1L, userDepDto.getNickName(),pageNum, pageSize);
-        return CommonResult.success(CommonPage.restPage(pageCommentList));
+        List<PageComment> pageCommentList = commentService.getPageCommentList(page,jumpId, -1L, userDepDto.getNickName());
+        int commentCount = commentService.getCommentCountByJumpId(jumpId);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("pageCommentList",pageCommentList);
+        parameters.put("commentCount",commentCount);
+        return CommonResult.success(parameters);
     }
 
     @ApiOperation("提交评论")

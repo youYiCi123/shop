@@ -24,6 +24,8 @@ public interface CommentMapper {
 
 	Comment getCommentById(Long id);
 
+	int getCommentCountByJumpId(Long articleId);
+
 	int updateCommentPublishedById(Long commentId, Boolean published);
 
 	int updateCommentNoticeById(Long commentId, Boolean notice);

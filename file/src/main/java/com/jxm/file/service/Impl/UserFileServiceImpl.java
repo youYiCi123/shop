@@ -209,8 +209,10 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
-    public int passeBatch(List<Long> idList) {
-        return rPanUserFileMapper.passeBatch(idList);
+    public int passBatch(List<Long> idList,Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        return rPanUserFileMapper.passBatch(idList,userDepDto.getUserId(),userDepDto.getNickName());
     }
 
     @Override

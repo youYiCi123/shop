@@ -51,6 +51,7 @@
     <insert id="insertSelective" parameterType="com.jxm.file.entity.RPanUserFile">
         insert into r_pan_user_file
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_time,
             <if test="fileId != null">
                 file_id,
             </if>
@@ -84,9 +85,6 @@
             <if test="createUser != null">
                 create_user,
             </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
             <if test="updateUser != null">
                 update_user,
             </if>
@@ -98,6 +96,7 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            NOW(),
             <if test="fileId != null">
                 #{fileId,jdbcType=BIGINT},
             </if>
@@ -130,9 +129,6 @@
             </if>
             <if test="createUser != null">
                 #{createUser,jdbcType=BIGINT},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="updateUser != null">
                 #{updateUser,jdbcType=BIGINT},
@@ -217,9 +213,12 @@
         </foreach>
     </delete>
 
-    <update id="passeBatch" parameterType="java.lang.Long">
+    <update id="passBatch" parameterType="java.lang.Long">
         update  r_pan_user_file
-        set pass_flag=1
+        set pass_flag=1,
+        pass_user_id = #{passUserId},
+        pass_user_name = #{passUserName},
+        pass_time = NOW()
         where
         file_id in
         <foreach collection="idList" item="id" separator="," open="(" close=")">

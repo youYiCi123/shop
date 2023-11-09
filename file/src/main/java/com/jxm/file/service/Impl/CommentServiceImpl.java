@@ -33,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public List<PageComment> getPageCommentList(Integer page,Long jumpId, Long parentCommentId,String loginUserName,Integer pageSize,Integer pageNum) {
+	public List<PageComment> getPageCommentList(Integer page,Long jumpId, Long parentCommentId,String loginUserName) {
 //		PageHelper.startPage(pageNum, pageSize);
 		List<PageComment> comments = getPageCommentListByPageAndParentCommentId(page,jumpId, parentCommentId,loginUserName);
 		for (PageComment c : comments) {
@@ -47,6 +47,11 @@ public class CommentServiceImpl implements CommentService {
 			c.setReplyComments(tmpComments);
 		}
 		return comments;
+	}
+
+	@Override
+	public int getCommentCountByJumpId(Long articleId) {
+		return commentMapper.getCommentCountByJumpId(articleId);
 	}
 
 	@Override
