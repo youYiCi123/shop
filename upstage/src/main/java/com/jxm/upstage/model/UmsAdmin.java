@@ -20,6 +20,9 @@ public class UmsAdmin implements Serializable {
     @ApiModelProperty(value = "头像")
     private String icon;
 
+    @ApiModelProperty(value = "手机号")
+    private String phone;
+
     @ApiModelProperty(value = "邮箱")
     private String email;
 
@@ -35,6 +38,9 @@ public class UmsAdmin implements Serializable {
 
     @ApiModelProperty(value = "性别")
     private Integer sex;
+
+    @ApiModelProperty(value = "座右铭")
+    private String motto;
 
     @ApiModelProperty(value = "备注信息")
     private String note;
@@ -174,6 +180,22 @@ public class UmsAdmin implements Serializable {
         this.address = address;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getMotto() {
+        return motto;
+    }
+
+    public void setMotto(String motto) {
+        this.motto = motto;
+    }
+
     @Override
     public String toString() {
         return "UmsAdmin{" +
@@ -181,11 +203,13 @@ public class UmsAdmin implements Serializable {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", icon='" + icon + '\'' +
+                ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", depId=" + depId +
                 ", depName='" + depName + '\'' +
                 ", sex=" + sex +
+                ", motto='" + motto + '\'' +
                 ", note='" + note + '\'' +
                 ", createTime=" + createTime +
                 ", loginTime=" + loginTime +

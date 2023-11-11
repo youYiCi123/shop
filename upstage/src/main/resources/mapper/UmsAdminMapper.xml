@@ -6,6 +6,7 @@
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
     <result column="note" jdbcType="VARCHAR" property="note" />
@@ -19,17 +20,17 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, username, password, icon, email, nick_name, note, create_time, login_time, status,sex,duty,dep_id,address
+    id, username, password, icon,phone, email, nick_name, note, create_time, login_time, status,sex,duty,dep_id,address
   </sql>
   <insert id="insert" parameterType="com.jxm.upstage.model.UmsAdmin">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ums_admin (username, password, icon,
+    insert into ums_admin (username, password, icon,phone,
     email, nick_name, duty,sex,note,
     create_time, login_time, status,dep_id,address
     )
-    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},
     #{email,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR},
     #{duty,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},#{note,jdbcType=VARCHAR},
     #{createTime,jdbcType=TIMESTAMP}, #{loginTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
@@ -99,6 +100,9 @@
       </if>
       <if test="icon != null">
         icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},

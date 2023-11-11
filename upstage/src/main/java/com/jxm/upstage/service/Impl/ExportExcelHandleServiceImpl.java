@@ -84,6 +84,7 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
                     UniqueIdGenerator idGenerator = new UniqueIdGenerator(1,1);
                     userInfo.setId(idGenerator.nextId());
                     userInfo.setUsername(userExportExcelModel.getPhoneNumber());
+                    userInfo.setPhone(userExportExcelModel.getPhoneNumber());
                     userInfo.setEmail(userExportExcelModel.getEmail());
                     userInfo.setNickName(userExportExcelModel.getNickName());
                     if(userExportExcelModel.getSex().equals("男")){
