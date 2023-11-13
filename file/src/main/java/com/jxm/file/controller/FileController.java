@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -66,13 +68,13 @@ public class FileController {
                                                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) throws ParseException {
-        List<RPanUserFileDisplayVO> list = iUserFileService.filesForTable(pageType,keyword,fileType, pageNum, pageSize, getLoginDepId());
+        List<RPanUserFileDisplayVO> list = iUserFileService.filesForTable(pageType, keyword, fileType, pageNum, pageSize, getLoginDepId());
         return CommonResult.success(CommonPage.restPage(list));
     }
 
     @RequestMapping(value = "/files", method = RequestMethod.GET)
     @ResponseBody
-        public CommonResult<List<RPanUserFileDisplayVO>> list(@RequestParam(value = "pageType", required = false) Long pageType,
+    public CommonResult<List<RPanUserFileDisplayVO>> list(@RequestParam(value = "pageType", required = false) Long pageType,
                                                           @RequestParam(value = "parentId", required = false) Long parentId,
                                                           @RequestParam(name = "fileTypes", required = false, defaultValue = "-1") String fileTypes
     ) throws ParseException {
@@ -125,7 +127,7 @@ public class FileController {
             notes = "该接口提供了删除文件(批量)的功能"
     )
     @PostMapping("/file/delete")
-    public CommonResult delete(@Validated @RequestBody DeletePO deletePO){
+    public CommonResult delete(@Validated @RequestBody DeletePO deletePO) {
         iUserFileService.delete(deletePO.getFileIds());
         return CommonResult.success();
     }
@@ -134,7 +136,7 @@ public class FileController {
     @RequestMapping(value = "/file/delete/batch", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult deleteBatch(@RequestBody Long[] multipleSelectionId) {
-        List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
         int count = iUserFileService.deleteBatch(idList);
         if (count > 0) {
             return CommonResult.success(count);
@@ -159,8 +161,8 @@ public class FileController {
     @ResponseBody
     public CommonResult passBatch(@RequestBody Long[] multipleSelectionId) throws ParseException {
         Object loginUser = getLoginUser();
-        List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
-        int count = iUserFileService.passBatch(idList,loginUser);
+        List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        int count = iUserFileService.passBatch(idList, loginUser);
         if (count > 0) {
             return CommonResult.success(count);
         }
@@ -172,7 +174,7 @@ public class FileController {
     @ResponseBody
     public CommonResult passFile(@PathVariable("id") Long id) throws ParseException {
         Object loginUser = getLoginUser();
-        int count = iUserFileService.passFile(id,loginUser);
+        int count = iUserFileService.passFile(id, loginUser);
         if (count == 1) {
             return CommonResult.success(null);
         } else {
@@ -218,7 +220,7 @@ public class FileController {
     @PostMapping("file/upload/merge")
     public CommonResult mergeChunks(@Validated @RequestBody FileChunkMergePO fileChunkMergePO) throws ParseException {
         Object loginUser = getLoginUser();
-        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(),fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), loginUser);
+        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), loginUser);
         return CommonResult.success();
     }
 
@@ -229,7 +231,7 @@ public class FileController {
     @PostMapping("file/upload/sec-upload")
     public CommonResult secUpload(@Validated @RequestBody FileSecUploadPO fileSecUploadPO) throws ParseException {
         Object loginUser = getLoginUser();
-        if (iUserFileService.secUpload(fileSecUploadPO.getPageType(),fileSecUploadPO.getParentId(), fileSecUploadPO.getFilename(), fileSecUploadPO.getIdentifier(), loginUser)) {
+        if (iUserFileService.secUpload(fileSecUploadPO.getPageType(), fileSecUploadPO.getParentId(), fileSecUploadPO.getFilename(), fileSecUploadPO.getIdentifier(), loginUser)) {
             return CommonResult.success();
         }
         return CommonResult.failed("文件唯一标识不存在，请执行物理上传");
@@ -243,7 +245,7 @@ public class FileController {
     public void download(@NotNull(message = "请选择要下载的文件") @RequestParam(value = "fileId", required = false) Long fileId,
                          @RequestParam(value = "waterMark", required = false) String waterMark,
                          HttpServletResponse response) {
-        iUserFileService.download(fileId,waterMark,response);
+        iUserFileService.download(fileId, waterMark, response);
     }
 
     private Object getLoginUser() throws ParseException {
@@ -371,8 +373,19 @@ public class FileController {
     )
     @GetMapping("preview")
     public void preview(@NotNull(message = "文件id不能为空") @RequestParam(value = "fileId", required = false) Long fileId,
-                        HttpServletResponse response){
+                        HttpServletResponse response) {
         iUserFileService.preview(fileId, response);
+    }
+
+    @ApiOperation(
+            value = "预览单个文件",
+            notes = "该接口提供了预览单个文件的功能"
+    )
+    @GetMapping("previewByFilePath")
+    public void previewByFilePath(@RequestParam(value = "filePath") String filePath,
+                                  HttpServletResponse response,
+                                  @RequestParam(value = "filePreviewContentType") String filePreviewContentType) {
+        iUserFileService.preview(filePath,response,filePreviewContentType);
     }
 
     @GetMapping("image/{fileName}")

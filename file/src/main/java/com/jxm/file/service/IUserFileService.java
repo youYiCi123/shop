@@ -68,6 +68,8 @@ public interface IUserFileService {
 
     void preview(Long fileId, HttpServletResponse response);
 
+    void preview(String filePath, HttpServletResponse response, String filePreviewContentType);
+
     void restoreUserFiles(String fileIds, HashMap<String, Integer> map);
 
     void physicalDeleteUserFiles(String fileIds, Long depId);

@@ -68,8 +68,10 @@ secure:
       - "/auth-service/rsa/publicKey"
       - "/upstage-service/excel/download"
       - "/file-service/preview/**"
+      - "/file-service/previewByFilePath/**"
       - "/file-service/file/download"
       - "/business-service/excel/download/**"
+      - "/upstage-service/avatar/profile/**"
 
 
 

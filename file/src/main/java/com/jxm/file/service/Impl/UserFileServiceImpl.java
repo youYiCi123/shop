@@ -33,6 +33,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -415,10 +417,6 @@ public class UserFileServiceImpl implements IUserFileService {
      */
     @Override
     public void preview(Long fileId, HttpServletResponse response) {
-        //改为部门id和fileId之间的关系
-//        if (checkIsFolder(fileId, depId)) {
-//            Asserts.fail("不能预览文件夹");
-//        }
         RPanUserFile rPanUserFile = rPanUserFileMapper.selectByPrimaryKey(fileId);
         RPanFile fileDetail = iFileService.getFileDetail(rPanUserFile.getRealFileId());
         preview(fileDetail.getRealPath(), response, fileDetail.getFilePreviewContentType());
@@ -777,7 +775,7 @@ public class UserFileServiceImpl implements IUserFileService {
     /**
      * 文件预览
      */
-    private void preview(String filePath, HttpServletResponse response, String filePreviewContentType) {
+    public void preview(String filePath, HttpServletResponse response, String filePreviewContentType) {
         addCommonResponseHeader(response, filePreviewContentType);
         read2OutputStream(filePath, "",response);
     }

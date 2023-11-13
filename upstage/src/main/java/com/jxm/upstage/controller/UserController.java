@@ -104,6 +104,22 @@ public class UserController {
         return CommonResult.success(data);
     }
 
+    @ApiOperation(value = "获取当前登录用户的token信息")
+        @RequestMapping(value = "/getMimeInfo", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getMimeInfo() throws ParseException {
+        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        Map<String, Object> data = new HashMap<>();
+        data.put("userId", umsAdmin.getId());
+        data.put("username", umsAdmin.getUsername());
+        data.put("nickName", umsAdmin.getNickName());
+        data.put("email", umsAdmin.getEmail());
+        data.put("phone", umsAdmin.getPhone());
+        data.put("motto", umsAdmin.getMotto());
+        data.put("icon", umsAdmin.getIcon());
+        return CommonResult.success(data);
+    }
+
     @GetMapping("/getUserFileBrief")
     @ResponseBody
     public CommonResult<FileUserBrief> getUserFileBrief() throws ParseException {
