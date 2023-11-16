@@ -75,7 +75,8 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
                     !(pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath()) ||
                             pathMatcher.match(AuthConstant.PROD_URL_PATTERN, uri.getPath()) ||
                             pathMatcher.match(AuthConstant.FILE_URL_PATTERN, uri.getPath())||
-                            pathMatcher.match(AuthConstant.BUSINESS_URL_PATTERN, uri.getPath())
+                            pathMatcher.match(AuthConstant.BUSINESS_URL_PATTERN, uri.getPath())||
+                            pathMatcher.match(AuthConstant.CHAT_URL_PATTERN, uri.getPath())
                     )) {
                 return Mono.just(new AuthorizationDecision(false));
             }

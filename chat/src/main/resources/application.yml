@@ -20,7 +20,6 @@ seata:
       namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
       data-id: seataServer.properties
 
-
 spring:
   cloud:
     sentinel:

@@ -45,6 +45,11 @@ public interface AuthConstant {
      * 业务接口路径匹配
      */
     String BUSINESS_URL_PATTERN = "/business-service/**";
+
+    /**
+     * 聊天接口路径匹配
+     */
+    String CHAT_URL_PATTERN = "/chat-service/**";
     /**
      * Redis缓存权限规则key
      */

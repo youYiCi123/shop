@@ -1,4 +1,4 @@
-package com.jxm.stock.config;
+package com.jxm.chat.config;
 
 import com.jxm.common.config.BaseSwaggerConfig;
 import com.jxm.common.domain.SwaggerProperties;
@@ -18,9 +18,9 @@ public class SwaggerConfig extends BaseSwaggerConfig {
     @Override
     public SwaggerProperties swaggerProperties() {
         return SwaggerProperties.builder()
-                .apiBasePackage("com.jxm.user.controller")
-                .title("商城系统")
-                .description("商城系统相关接口文档")
+                .apiBasePackage("com.jxm.chat.controller")
+                .title("互通系统")
+                .description("互通系统相关接口文档")
                 .contactName("王瑞")
                 .version("1.0")
                 .enableSecurity(true)

@@ -132,6 +132,8 @@ public class UserController {
     public CommonResult getAdminInfo() throws ParseException {
         UmsAdmin umsAdmin = adminService.getCurrentAdmin();
         Map<String, Object> data = new HashMap<>();
+        data.put("id",String.valueOf(umsAdmin.getId()));
+        data.put("nickName", umsAdmin.getNickName());
         data.put("username", umsAdmin.getUsername());
         data.put("menus", roleService.getMenuList(umsAdmin.getId()));
         data.put("icon", umsAdmin.getIcon());
@@ -166,6 +168,15 @@ public class UserController {
         UmsAdmin admin = adminService.getItem(id);
         return CommonResult.success(admin);
     }
+
+    // todo
+//    @ApiOperation("获取指定用户头像信息")
+//    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+//    @ResponseBody
+//    public CommonResult<UmsAdmin> getAvatar(@PathVariable Long id) {
+//        UmsAdmin admin = adminService.getItem(id);
+//        return CommonResult.success(admin);
+//    }
 
     @ApiOperation("获取用户联系信息")
     @RequestMapping(value = "/getUmsAdminConcat", method = RequestMethod.GET)

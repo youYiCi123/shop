@@ -5,7 +5,7 @@
     <modules>
         <module>prod</module>
         <module>upstage</module>
-        <module>stock</module>
+        <module>chat</module>
         <module>business</module>
         <module>gateway</module>
         <module>common</module>
