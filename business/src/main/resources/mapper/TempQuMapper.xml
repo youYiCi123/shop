@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.TempQuMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.TempQuParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="temp_id" jdbcType="BIGINT" property="tempId"/>
+        <result column="qu_id" jdbcType="BIGINT" property="quId"/>
+        <result column="qu_type" jdbcType="INTEGER" property="quType"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, temp_id,qu_id,qu_type
+    </sql>
+
+    <select id="getTempIdsByQuId" resultType="java.lang.Long">
+        select
+        temp_id
+        from temp_qu
+        where qu_id=#{quId,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByQuId" parameterType="java.lang.Long">
+        delete from temp_qu where qu_id=#{quId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="addBatch">
+        INSERT INTO temp_qu (id, temp_id,qu_id,qu_type) VALUES
+        <foreach collection="list" separator="," item="item" index="index">
+            (#{item.id,jdbcType=BIGINT},
+            #{item.tempId,jdbcType=BIGINT},
+            #{item.quId,jdbcType=BIGINT},
+            #{item.quType,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+
+    <resultMap id="ListResultMap" extends="BaseResultMap" type="com.jxm.business.dto.TempQuDetailDto">
+        <result column="qu_name" property="content" />
+
+        <collection property="answerList" column="{quId=qu_id}"
+                    select="com.jxm.business.mapper.QuOptionMapper.listForShow" />
+    </resultMap>
+
+    <select id="listByTemp" resultMap="ListResultMap">
+        SELECT tq.*,q.qu_name
+        FROM temp_qu tq
+        LEFT JOIN qu q ON tq.qu_id = q.id
+        WHERE tq.temp_id=#{tempId}
+    </select>
+
+</mapper>

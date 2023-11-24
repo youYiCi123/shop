@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.QuOptionMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.dto.OptionDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="qu_id" jdbcType="BIGINT" property="quId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, qu_id,content
+    </sql>
+
+    <select id="getOptionById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from qu_option
+        where qu_id=#{quId,jdbcType=BIGINT}
+    </select>
+
+    <insert id="addBatch">
+        INSERT INTO qu_option (id, qu_id,content) VALUES
+        <foreach collection="list" separator="," item="item" index="index">
+            (#{item.id,jdbcType=BIGINT},
+            #{item.quId,jdbcType=BIGINT},
+            #{item.content,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByQu" parameterType="java.lang.Long">
+        delete from qu_option where qu_id=#{quId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="listForShow" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM qu_option
+        WHERE qu_id=#{quId}
+    </select>
+</mapper>

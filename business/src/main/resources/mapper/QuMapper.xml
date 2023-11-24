@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.QuMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.dto.QuDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="qu_name" jdbcType="VARCHAR" property="quName"/>
+        <result column="qu_type" jdbcType="INTEGER" property="quType"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, qu_name,qu_type,create_time,update_time
+    </sql>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from qu where id=#{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        SELECT
+        q.*
+        FROM qu q
+        LEFT JOIN temp_qu tq ON q.id=tq.qu_id
+        <where>
+            <if test="quType != null  and quType != ''">
+                q.qu_type= #{quType,jdbcType=BIGINT}
+            </if>
+            <if test="keyword != null  and keyword != ''" >
+                and q.qu_name like concat('%', #{keyword}, '%')
+            </if>
+            <if test="tempId != null  and tempId != ''" >
+                and tq.temp_id= #{tempId,jdbcType=BIGINT}
+            </if>
+        </where>
+        group by q.id ORDER BY q.create_time DESC
+    </select>
+
+    <select id="getInfoById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from qu
+    where id=#{quId,jdbcType=BIGINT}
+  </select>
+
+    <update id="updateByQuId" parameterType="com.jxm.business.dto.QuDto">
+        update qu
+        <set>
+            <if test="quName != null">
+                qu_name = #{quName,jdbcType=VARCHAR},
+            </if>
+            <if test="quType != null">
+                qu_type = #{quType,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="add" parameterType="com.jxm.business.dto.QuDto">
+        insert into qu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="quName != null">
+                qu_name,
+            </if>
+            <if test="quType != null">
+                qu_type,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="quName != null">
+                #{quName,jdbcType=VARCHAR},
+            </if>
+            <if test="quType != null">
+                #{quType,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

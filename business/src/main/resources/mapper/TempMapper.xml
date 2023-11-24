@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.TempMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.dto.TempParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="title_type" jdbcType="INTEGER" property="titleType"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="tempIdToName" type="com.jxm.business.dto.TempIdToName">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, title,title_type,remark,create_time
+    </sql>
+
+    <select id="selectByQuery" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from template
+        <where>
+            <if test="type != null  and type != ''">
+                title_type= #{type,jdbcType=BIGINT}
+            </if>
+            <if test="keyword != null  and keyword != ''" >
+                and title like concat('%', #{keyword}, '%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getTempIdToName" resultMap="tempIdToName">
+        select
+        id,title
+        from template
+    </select>
+
+    <select id="getTempById" resultType="com.jxm.business.dto.TempParam">
+        select
+        <include refid="Base_Column_List"/>
+        from template
+        where id=#{tempId}
+    </select>
+
+    <insert id="add" parameterType="com.jxm.business.dto.TempParam">
+        insert into template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="titleType != null">
+                title_type,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createTime != null">
+                create_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="titleType != null">
+                #{titleType,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.jxm.business.dto.TempParam">
+        update template
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="titleType != null">
+                title_type = #{titleType,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from template where id=#{tempId,jdbcType=INTEGER}
+    </delete>
+
+</mapper>
