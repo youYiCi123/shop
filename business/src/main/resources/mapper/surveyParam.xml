@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.SurveyMapper">
+
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.SurveyParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="temp_id" jdbcType="BIGINT" property="tempId"/>
+        <result column="qu_id" jdbcType="BIGINT" property="quId"/>
+        <result column="qu_type" jdbcType="INTEGER" property="quType"/>
+        <result column="rate_value" jdbcType="INTEGER" property="rateValue"/>
+        <result column="radio_value" jdbcType="BIGINT" property="radioValue"/>
+        <result column="check_value" jdbcType="VARCHAR" property="checkValue"/>
+        <result column="input_value" jdbcType="VARCHAR" property="inputValue"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id,user_name,temp_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time
+    </sql>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into survey (
+        id, user_id,user_name,temp_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time)
+        values
+        <foreach collection="list" item="surveyItem" index="index" separator=",">
+            (#{surveyItem.id},#{surveyItem.userId},
+            #{surveyItem.userName},#{surveyItem.tempId},
+            #{surveyItem.quId},#{surveyItem.quType},#{surveyItem.rateValue},
+            #{surveyItem.radioValue},
+            #{surveyItem.checkValue},
+            #{surveyItem.inputValue},
+            #{surveyItem.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <select id="inspectSurvey" resultType="com.jxm.business.model.SurveyParam">
+        select
+         <include refid="Base_Column_List"/>
+         from survey
+        <where>
+            <if test="userId!=0 and userId!=''">
+                user_id =#{userId,jdbcType=BIGINT}
+            </if>
+            <if test="tempId!=0 and tempId!=''">
+                and temp_id =#{tempId,jdbcType=BIGINT}
+            </if>
+        </where>
+        LIMIT 1
+    </select>
+
+</mapper>
