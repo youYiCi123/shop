@@ -8,6 +8,4 @@ public interface SurveyMapper {
 
     int saveBatch(List<SurveyParam> list);
 
-    SurveyParam inspectSurvey(Long tempId,Long userId);
-
 }

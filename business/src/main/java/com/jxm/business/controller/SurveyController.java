@@ -1,5 +1,6 @@
 package com.jxm.business.controller;
 
+import com.jxm.business.dto.SurveySubmitDto;
 import com.jxm.business.dto.TempValueSubmitSingerDto;
 import com.jxm.business.service.SurveyService;
 import com.jxm.common.api.CommonResult;
@@ -24,8 +25,8 @@ public class SurveyController {
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult submitContent(@RequestBody TempValueSubmitSingerDto[] tempValueSubmitDto) throws ParseException {
-        int count = surveyService.submitContent(tempValueSubmitDto);
+    public CommonResult submitContent(@RequestBody SurveySubmitDto surveySubmitDto) throws ParseException {
+        int count = surveyService.submitContent(surveySubmitDto);
         if(count>0){
             return CommonResult.success();
         }else if(count==-2){

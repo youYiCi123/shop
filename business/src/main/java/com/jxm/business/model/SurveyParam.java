@@ -9,8 +9,6 @@ public class SurveyParam {
 
     private Long id;
     private Long userId;
-    private String userName;
-    private Long  tempId;
     private Long  quId;
     private Integer  quType;
     private Integer  rateValue;
