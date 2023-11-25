@@ -34,6 +34,11 @@ public class SurveyServiceImpl implements SurveyService {
     private TempUserMapper tempUserMapper;
 
     @Override
+    public List<TempUserParam> getSurveyBySearch(String startDate, String endDate, String keyword, Long tempId) {
+        return tempUserMapper.getSurveyBySearch(startDate,endDate,keyword,tempId);
+    }
+
+    @Override
     public int submitContent(SurveySubmitDto surveySubmitDto) throws ParseException {
         UniqueIdGenerator idGenerator = new UniqueIdGenerator(1, 1);
 

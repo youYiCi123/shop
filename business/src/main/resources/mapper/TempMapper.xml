@@ -33,6 +33,20 @@
         order by create_time desc
     </select>
 
+    <select id="getSurveyIdToName" resultMap="tempIdToName">
+        select
+        id,title
+        from template
+        where title_type=1
+    </select>
+
+    <select id="getActiveIdToName" resultMap="tempIdToName">
+        select
+        id,title
+        from template
+        where title_type=2
+    </select>
+
     <select id="getTempIdToName" resultMap="tempIdToName">
         select
         id,title

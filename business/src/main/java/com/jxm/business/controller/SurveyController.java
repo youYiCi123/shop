@@ -1,17 +1,19 @@
 package com.jxm.business.controller;
 
+import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.SurveySubmitDto;
 import com.jxm.business.dto.TempValueSubmitSingerDto;
+import com.jxm.business.model.NewsPostParam;
+import com.jxm.business.model.TempUserParam;
 import com.jxm.business.service.SurveyService;
+import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/survey")
@@ -19,6 +21,24 @@ public class SurveyController {
 
     @Autowired
     private SurveyService surveyService;
+
+    @RequestMapping(value = "/getSurveyBySearch", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getSurveyBySearch(@RequestParam(defaultValue = "") String[] date,
+                                        @RequestParam(value = "keyword", required = false) String keyword,
+                                        @RequestParam(value = "tempId", required = false) Long tempId,
+                                        @RequestParam(defaultValue = "1") Integer pageNum,
+                                        @RequestParam(defaultValue = "10") Integer pageSize) {
+        String startDate = null;
+        String endDate = null;
+        if (date.length == 2) {
+            startDate = date[0];
+            endDate = date[1];
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        List<TempUserParam> tempUserParams=surveyService.getSurveyBySearch(startDate, endDate,keyword,tempId);
+        return CommonResult.success(CommonPage.restPage(tempUserParams),"请求成功");
+    }
 
     /**
      *用户提交填写后的调查问卷

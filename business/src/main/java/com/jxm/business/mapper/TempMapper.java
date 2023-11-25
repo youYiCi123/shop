@@ -9,6 +9,10 @@ public interface TempMapper {
 
     List<TempParam> selectByQuery(String keyword, Integer type);
 
+    List<TempIdToName> getSurveyIdToName();
+
+    List<TempIdToName> getActiveIdToName();
+
     List<TempIdToName> getTempIdToName();
 
     int add(TempParam tempParam);

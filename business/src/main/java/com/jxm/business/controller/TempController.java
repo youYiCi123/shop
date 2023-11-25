@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/temp")
-public class tempController {
+public class TempController {
 
     @Autowired
     private TempService tempService;
@@ -36,6 +36,20 @@ public class tempController {
     @ResponseBody
     public CommonResult<List<TempIdToName>> getTempIdToName(){
         return  CommonResult.success(tempService.getTempIdToName());
+    }
+
+    @ApiOperation("获取所有问卷调查idName关系")
+    @RequestMapping(value = "/getSurveyIdToName", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<TempIdToName>> getSurveyIdToName(){
+        return  CommonResult.success(tempService.getSurveyIdToName());
+    }
+
+    @ApiOperation("获取所有活动评估idName关系")
+    @RequestMapping(value = "/getActiveIdToName", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<TempIdToName>> getActiveIdToName(){
+        return  CommonResult.success(tempService.getActiveIdToName());
     }
 
     /**
