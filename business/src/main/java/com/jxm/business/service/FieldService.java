@@ -3,7 +3,9 @@ package com.jxm.business.service;
 import com.jxm.business.dto.FieldDetailDto;
 import com.jxm.business.dto.QuDto;
 import com.jxm.business.dto.TempQuDto;
+import com.jxm.business.dto.TempQuReturnDto;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface FieldService {
@@ -18,5 +20,7 @@ public interface FieldService {
 
     int delete(Long id);
 
-    TempQuDto getTempDetailResult(Long id);
+    TempQuReturnDto getTempDetailResult(Long id);
+
+    TempQuReturnDto getTempUserDetailResult(Long tempId,Long userId);
 }

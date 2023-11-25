@@ -35,10 +35,10 @@
 
 
     <resultMap id="ListResultMap" extends="BaseResultMap" type="com.jxm.business.dto.TempQuDetailDto">
-        <result column="qu_name" property="content" />
+        <result column="qu_name" property="content"/>
 
         <collection property="answerList" column="{quId=qu_id}"
-                    select="com.jxm.business.mapper.QuOptionMapper.listForShow" />
+                    select="com.jxm.business.mapper.QuOptionMapper.listForShow"/>
     </resultMap>
 
     <select id="listByTemp" resultMap="ListResultMap">
@@ -46,6 +46,18 @@
         FROM temp_qu tq
         LEFT JOIN qu q ON tq.qu_id = q.id
         WHERE tq.temp_id=#{tempId}
+    </select>
+
+    <select id="listByTempAndUser" resultMap="ListResultMap">
+        select t.*,s.rate_value,s.radio_value,s.check_value,s.input_value
+        from
+				(SELECT tq.*,q.qu_name
+        FROM temp_qu tq
+        LEFT JOIN qu q ON tq.qu_id = q.id
+        WHERE tq.temp_id=#{tempId}) t
+				LEFT JOIN survey s on s.qu_id=t.qu_id
+				where
+				s.user_id=#{userId}
     </select>
 
 </mapper>

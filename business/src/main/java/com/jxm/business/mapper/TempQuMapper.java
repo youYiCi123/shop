@@ -15,4 +15,6 @@ public interface TempQuMapper {
     List<Long> getTempIdsByQuId(Long quId);
 
     List<TempQuDetailDto> listByTemp(@Param("tempId") Long tempId);
+
+    List<TempQuDetailDto> listByTempAndUser(@Param("tempId") Long tempId,@Param("userId") Long userId);
 }

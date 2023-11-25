@@ -1,9 +1,6 @@
 package com.jxm.business.controller;
 
-import com.jxm.business.dto.FieldDetailDto;
-import com.jxm.business.dto.QuDto;
-import com.jxm.business.dto.TempParam;
-import com.jxm.business.dto.TempQuDto;
+import com.jxm.business.dto.*;
 import com.jxm.business.model.CustomParam;
 import com.jxm.business.service.FieldService;
 import com.jxm.common.api.CommonPage;
@@ -77,10 +74,24 @@ public class FieldController {
         return CommonResult.success();
     }
 
+    /**
+     * 查看模板详情
+     */
     @RequestMapping(value = "/tempDetail/{id}", method = { RequestMethod.GET})
     @ResponseBody
-    public CommonResult<TempQuDto> getTempDetailResult(@PathVariable Long id) {
-        TempQuDto respDTO = fieldService.getTempDetailResult(id);
+    public CommonResult<TempQuReturnDto> getTempDetailResult(@PathVariable Long id) {
+        TempQuReturnDto respDTO = fieldService.getTempDetailResult(id);
+        return CommonResult.success(respDTO);
+    }
+
+    /**
+     * 查看用户填写的模板详情
+     */
+    @RequestMapping(value = "/tempUserDetail", method = { RequestMethod.GET})
+    @ResponseBody
+    public CommonResult<TempQuReturnDto> getTempUserDetailResult(@RequestParam(value = "tempId", required = false) Long tempId,
+                                                           @RequestParam(value = "userId", required = false) Long userId) {
+        TempQuReturnDto respDTO = fieldService.getTempUserDetailResult(tempId,userId);
         return CommonResult.success(respDTO);
     }
 

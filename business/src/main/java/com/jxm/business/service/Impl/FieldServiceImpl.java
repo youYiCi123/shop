@@ -1,7 +1,9 @@
 package com.jxm.business.service.Impl;
 
+import cn.hutool.json.JSONUtil;
 import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.*;
+import com.jxm.business.feign.UpstageService;
 import com.jxm.business.mapper.QuMapper;
 import com.jxm.business.mapper.QuOptionMapper;
 import com.jxm.business.mapper.TempMapper;
@@ -15,13 +17,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class FieldServiceImpl implements FieldService {
+
+    @Autowired
+    private UpstageService upstageService;
 
     @Autowired
     private QuMapper quMapper;
@@ -71,13 +78,49 @@ public class FieldServiceImpl implements FieldService {
     }
 
     @Override
-    public TempQuDto getTempDetailResult(Long id) {
-        TempQuDto tempQuDto = new TempQuDto();
+    public TempQuReturnDto getTempDetailResult(Long id) {
+        TempQuReturnDto tempQuDto = new TempQuReturnDto();
         TempParam tempParam=tempMapper.getTempById(id);
         tempQuDto.setTempName(tempParam.getTitle());
         tempQuDto.setTempType(tempParam.getTitleType());
         List<TempQuDetailDto> tempQuDetailDtos = tempQuMapper.listByTemp(id);
-        tempQuDto.setQuList(tempQuDetailDtos);
+        List<TempQuDetailReturnDto> tempQuDetailReturnDtos=new ArrayList<>();
+        tempQuDetailDtos.forEach(t->{
+            TempQuDetailReturnDto tempQuDetailReturnDto = new TempQuDetailReturnDto();
+            BeanUtils.copyProperties(t,tempQuDetailReturnDto);
+            if(t.getCheckValue()!=null){
+                String[] split = t.getCheckValue().split(",");
+                tempQuDetailReturnDto.setCheckValue(Arrays.asList(split));
+            }else{
+                tempQuDetailReturnDto.setCheckValue(Arrays.asList());
+            }
+            tempQuDetailReturnDtos.add(tempQuDetailReturnDto);
+        });
+        tempQuDto.setQuList(tempQuDetailReturnDtos);
+        return tempQuDto;
+    }
+
+    @Override
+    public TempQuReturnDto getTempUserDetailResult(Long tempId,Long userId){
+        TempQuReturnDto tempQuDto = new TempQuReturnDto();
+        TempParam tempParam=tempMapper.getTempById(tempId);
+        tempQuDto.setTempName(tempParam.getTitle());
+        tempQuDto.setTempType(tempParam.getTitleType());
+        List<TempQuDetailReturnDto> tempQuDetailReturnDtos=new ArrayList<>();
+        List<TempQuDetailDto> tempQuDetailDtos = tempQuMapper.listByTempAndUser(tempId,userId);
+        tempQuDetailDtos.forEach(t->{
+            TempQuDetailReturnDto tempQuDetailReturnDto = new TempQuDetailReturnDto();
+            BeanUtils.copyProperties(t,tempQuDetailReturnDto);
+            if(t.getCheckValue()!=null){
+                String[] split = t.getCheckValue().split(",");
+                tempQuDetailReturnDto.setCheckValue(Arrays.asList(split));
+            }else{
+                tempQuDetailReturnDto.setCheckValue(Arrays.asList());
+            }
+            tempQuDetailReturnDtos.add(tempQuDetailReturnDto);
+        });
+
+        tempQuDto.setQuList(tempQuDetailReturnDtos);
         return tempQuDto;
     }
 
