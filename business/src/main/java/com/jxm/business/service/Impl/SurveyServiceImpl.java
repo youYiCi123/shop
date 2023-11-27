@@ -55,7 +55,6 @@ public class SurveyServiceImpl implements SurveyService {
         tempUserParam1.setId(nextId);
         tempUserParam1.setTempId(surveySubmitDto.getTempId());
         tempUserParam1.setTempName(surveySubmitDto.getTempName());
-        tempUserParam1.setTempType(surveySubmitDto.getTempType());
         tempUserParam1.setUserId(userDepDto.getUserId());
         tempUserParam1.setUserName(userDepDto.getNickName());
         tempUserParam1.setCreateTime(new Date());
@@ -88,5 +87,11 @@ public class SurveyServiceImpl implements SurveyService {
             surveyParamList.add(surveyParam);
         }
         return quUserMapper.saveBatch(surveyParamList);
+    }
+
+    @Override
+    public int delete(Long id) {
+        surveyUserMapper.deleteById(id);
+        return quUserMapper.deleteByRelateId(id);
     }
 }

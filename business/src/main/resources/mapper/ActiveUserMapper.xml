@@ -21,6 +21,32 @@
         id,user_id,user_name,active_name,active_address,start_time,end_time,handler_user_id,dep_ids,temp_id,temp_name,create_time
     </sql>
 
+    <select id="getActiveById" resultType="com.jxm.business.model.ActiveUserParam">
+        select
+        <include refid="Base_Column_List"/>
+        from active_user
+        where id=#{id}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from active_user where id=#{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="getActiveBySearch" resultType="com.jxm.business.model.ActiveUserParam">
+        select
+        <include refid="Base_Column_List"/>
+         from active_user
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                and active_name like concat('%', #{keyword}, '%')
+            </if>
+            <if test="startDate!=null and startDate!='' and endDate!=null and endDate!=''">
+                and create_time between #{startDate} and #{endDate}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
     <insert id="add" parameterType="com.jxm.business.model.ActiveUserParam">
         insert into active_user
         <trim prefix="(" suffix=")" suffixOverrides=",">

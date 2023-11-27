@@ -35,6 +35,11 @@ public class ActiveServiceImpl implements ActiveService {
     private QuUserMapper quUserMapper;
 
     @Override
+    public List<ActiveUserParam> getActiveBySearch(String startDate, String endDate, String keyword) {
+        return activeUserMapper.getActiveBySearch(startDate,endDate,keyword);
+    }
+
+    @Override
     public int submitContent(ActiveSubmitDto activeSubmitDto) throws ParseException {
         UniqueIdGenerator idGenerator = new UniqueIdGenerator(1, 1);
 
@@ -107,5 +112,11 @@ public class ActiveServiceImpl implements ActiveService {
             quUserParams.add(surveyParam);
         }
         return quUserMapper.saveBatch(quUserParams);
+    }
+
+    @Override
+    public int delete(Long id) {
+        activeUserMapper.deleteById(id);
+        return quUserMapper.deleteByRelateId(id);
     }
 }

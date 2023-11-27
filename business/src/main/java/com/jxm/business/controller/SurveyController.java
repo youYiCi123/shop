@@ -54,4 +54,13 @@ public class SurveyController {
         }
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult delete(@PathVariable Long id) {
+        int count=surveyService.delete(id);
+        if(count<0)
+            return CommonResult.failed("删除培训信息错误");
+        return CommonResult.success();
+    }
+
 }

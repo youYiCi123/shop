@@ -16,6 +16,5 @@ public class SurveyUserParam {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long  tempId;
     private String  tempName;
-    private Integer  tempType;
     private Date createTime;
 }

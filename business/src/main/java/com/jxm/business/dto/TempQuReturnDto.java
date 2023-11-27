@@ -7,6 +7,13 @@ import java.util.List;
 
 @Data
 public class TempQuReturnDto {
+
+    private String name;
+    private String address;
+    private List<String> activityTime;
+    private String handlerUserId;
+    private List<String> depIds;
+
     @ApiModelProperty(value = "模板名称", required=true)
     private String tempName;
 

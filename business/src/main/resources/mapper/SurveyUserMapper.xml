@@ -8,18 +8,20 @@
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="temp_id" jdbcType="BIGINT" property="tempId"/>
         <result column="temp_name" jdbcType="VARCHAR" property="tempName"/>
-        <result column="temp_type" jdbcType="INTEGER" property="tempType"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,user_id,user_name,temp_id,temp_name,temp_type,create_time
+        id,user_id,user_name,temp_id,temp_name,create_time
     </sql>
 
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from survey_user where id=#{id,jdbcType=BIGINT}
+    </delete>
+
     <select id="getSurveyBySearch" resultType="com.jxm.business.model.SurveyUserParam">
-        select id,user_id,user_name,temp_id,temp_name,temp_type,create_time from survey_user
+        select id,user_id,user_name,temp_id,temp_name,create_time from survey_user
         <where>
-            temp_type=1
             <if test="keyword!=null and keyword!=''">
                 and user_name like concat('%', #{keyword}, '%')
                 or temp_name like concat('%', #{keyword}, '%')
@@ -47,9 +49,6 @@
             <if test="tempName != null">
                 temp_name = #{tempName,jdbcType=VARCHAR},
             </if>
-            <if test="tempType != null">
-                temp_type = #{tempType,jdbcType=INTEGER},
-            </if>
         </set>
         where temp_id = #{tempId,jdbcType=BIGINT}
     </update>
@@ -72,9 +71,6 @@
             <if test="tempName != null">
                 temp_name,
             </if>
-            <if test="tempType != null">
-                temp_type,
-            </if>
             <if test="createTime != null">
                 create_time
             </if>
@@ -94,9 +90,6 @@
             </if>
             <if test="tempName != null">
                 #{tempName,jdbcType=VARCHAR},
-            </if>
-            <if test="tempType != null">
-                #{tempType,jdbcType=INTEGER},
             </if>
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP}

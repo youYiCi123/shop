@@ -19,6 +19,10 @@
         id,user_id,relate_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time
     </sql>
 
+    <delete id="deleteByRelateId" parameterType="java.lang.Long">
+        delete from qu_user where relate_id=#{relateId,jdbcType=BIGINT}
+    </delete>
+
     <insert id="saveBatch" parameterType="java.util.List">
         insert into qu_user (
         id, user_id,relate_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time)

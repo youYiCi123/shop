@@ -11,4 +11,6 @@ public interface SurveyService {
     List<SurveyUserParam> getSurveyBySearch(String startDate, String endDate, String keyword, Long tempId);
 
     int submitContent(SurveySubmitDto surveySubmitDto) throws ParseException;
+
+    int delete(Long id);
 }

@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface SurveyUserMapper {
 
+    int deleteById(Long id);
+
     int setTempNameAndType(Long tempId,String tempName,Integer tempType);
 
     List<SurveyUserParam> getSurveyBySearch(String startDate, String endDate, String keyword, Long tempId);

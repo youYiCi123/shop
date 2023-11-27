@@ -4,10 +4,8 @@ import cn.hutool.json.JSONUtil;
 import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.*;
 import com.jxm.business.feign.UpstageService;
-import com.jxm.business.mapper.QuMapper;
-import com.jxm.business.mapper.QuOptionMapper;
-import com.jxm.business.mapper.TempMapper;
-import com.jxm.business.mapper.TempQuMapper;
+import com.jxm.business.mapper.*;
+import com.jxm.business.model.ActiveUserParam;
 import com.jxm.business.model.TempQuParam;
 import com.jxm.business.service.FieldService;
 import com.jxm.common.generator.UniqueIdGenerator;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 public class FieldServiceImpl implements FieldService {
 
     @Autowired
-    private UpstageService upstageService;
+    private ActiveUserMapper activeUserMapper;
 
     @Autowired
     private QuMapper quMapper;
@@ -104,6 +103,24 @@ public class FieldServiceImpl implements FieldService {
     public TempQuReturnDto getTempUserDetailResult(Long tempId,Long relateId,Long userId){
         TempQuReturnDto tempQuDto = new TempQuReturnDto();
         TempParam tempParam=tempMapper.getTempById(tempId);
+        if(tempParam.getTitleType()==2){//问卷调查
+            ActiveUserParam activeUserParam = activeUserMapper.getActiveById(relateId);
+            tempQuDto.setName(activeUserParam.getActiveName());
+            tempQuDto.setAddress(activeUserParam.getActiveAddress());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sDate = sdf.format(activeUserParam.getCreateTime());
+            String eDate = sdf.format(activeUserParam.getEndTime());
+            tempQuDto.setActivityTime(Arrays.asList(sDate,eDate));
+            String[] depIds = activeUserParam.getDepIds().split(",");
+            tempQuDto.setDepIds(Arrays.asList(depIds));
+            tempQuDto.setHandlerUserId(String.valueOf(activeUserParam.getHandlerUserId()));
+        }else{
+            tempQuDto.setName("");
+            tempQuDto.setAddress("");
+            tempQuDto.setActivityTime(Arrays.asList());
+            tempQuDto.setDepIds(Arrays.asList());
+            tempQuDto.setHandlerUserId("");
+        }
         tempQuDto.setTempName(tempParam.getTitle());
         tempQuDto.setTempType(tempParam.getTitleType());
         List<TempQuDetailReturnDto> tempQuDetailReturnDtos=new ArrayList<>();
