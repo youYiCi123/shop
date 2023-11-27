@@ -90,8 +90,9 @@ public class FieldController {
     @RequestMapping(value = "/tempUserDetail", method = { RequestMethod.GET})
     @ResponseBody
     public CommonResult<TempQuReturnDto> getTempUserDetailResult(@RequestParam(value = "tempId", required = false) Long tempId,
+                                                                 @RequestParam(value = "relateId", required = false) Long relateId,
                                                            @RequestParam(value = "userId", required = false) Long userId) {
-        TempQuReturnDto respDTO = fieldService.getTempUserDetailResult(tempId,userId);
+        TempQuReturnDto respDTO = fieldService.getTempUserDetailResult(tempId,relateId,userId);
         return CommonResult.success(respDTO);
     }
 

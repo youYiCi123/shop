@@ -5,10 +5,11 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class SurveyParam {
+public class QuUserParam {
 
     private Long id;
     private Long userId;
+    private Long relateId;
     private Long  quId;
     private Integer  quType;
     private Integer  rateValue;

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.jxm.business.mapper.SurveyMapper">
+<mapper namespace="com.jxm.business.mapper.QuUserMapper">
 
-    <resultMap id="BaseResultMap" type="com.jxm.business.model.SurveyParam">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.QuUserParam">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
-        <result column="temp_id" jdbcType="BIGINT" property="tempId"/>
+        <result column="relate_id" jdbcType="BIGINT" property="relateId"/>
         <result column="qu_id" jdbcType="BIGINT" property="quId"/>
         <result column="qu_type" jdbcType="INTEGER" property="quType"/>
         <result column="rate_value" jdbcType="INTEGER" property="rateValue"/>
@@ -16,15 +16,15 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,user_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time
+        id,user_id,relate_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time
     </sql>
 
     <insert id="saveBatch" parameterType="java.util.List">
-        insert into survey (
-        id, user_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time)
+        insert into qu_user (
+        id, user_id,relate_id,qu_id,qu_type,rate_value,radio_value,check_value,input_value,create_time)
         values
         <foreach collection="list" item="surveyItem" index="index" separator=",">
-            (#{surveyItem.id},#{surveyItem.userId},#{surveyItem.quId},
+            (#{surveyItem.id},#{surveyItem.userId},#{surveyItem.relateId},#{surveyItem.quId},
             #{surveyItem.quType},#{surveyItem.rateValue},
             #{surveyItem.radioValue},
             #{surveyItem.checkValue},

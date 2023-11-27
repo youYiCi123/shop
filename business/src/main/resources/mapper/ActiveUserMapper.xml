@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.ActiveUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.ActiveUserParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="active_name" jdbcType="VARCHAR" property="activeName"/>
+        <result column="active_address" jdbcType="VARCHAR" property="activeAddress"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="handler_user_id" jdbcType="BIGINT" property="handlerUserId"/>
+        <result column="dep_ids" jdbcType="VARCHAR" property="depIds"/>
+        <result column="temp_id" jdbcType="BIGINT" property="tempId"/>
+        <result column="temp_name" jdbcType="VARCHAR" property="tempName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,user_name,active_name,active_address,start_time,end_time,handler_user_id,dep_ids,temp_id,temp_name,create_time
+    </sql>
+
+    <insert id="add" parameterType="com.jxm.business.model.ActiveUserParam">
+        insert into active_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="activeName != null">
+                active_name,
+            </if>
+            <if test="activeAddress != null">
+                active_address,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="handlerUserId != null">
+                handler_user_id,
+            </if>
+            <if test="depIds != null">
+                dep_ids,
+            </if>
+            <if test="tempId != null">
+                temp_id,
+            </if>
+            <if test="tempName != null">
+                temp_name,
+            </if>
+            <if test="createTime != null">
+                create_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="activeName != null">
+                #{activeName,jdbcType=VARCHAR},
+            </if>
+            <if test="activeAddress != null">
+                #{activeAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=INTEGER},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="handlerUserId != null">
+                #{handlerUserId,jdbcType=BIGINT},
+            </if>
+            <if test="depIds != null">
+                #{depIds,jdbcType=VARCHAR},
+            </if>
+            <if test="tempId != null">
+                #{tempId,jdbcType=BIGINT},
+            </if>
+            <if test="tempName != null">
+                #{tempName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

@@ -2,9 +2,7 @@ package com.jxm.business.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.SurveySubmitDto;
-import com.jxm.business.dto.TempValueSubmitSingerDto;
-import com.jxm.business.model.NewsPostParam;
-import com.jxm.business.model.TempUserParam;
+import com.jxm.business.model.SurveyUserParam;
 import com.jxm.business.service.SurveyService;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
@@ -36,7 +34,7 @@ public class SurveyController {
             endDate = date[1];
         }
         PageHelper.startPage(pageNum, pageSize);
-        List<TempUserParam> tempUserParams=surveyService.getSurveyBySearch(startDate, endDate,keyword,tempId);
+        List<SurveyUserParam> tempUserParams=surveyService.getSurveyBySearch(startDate, endDate,keyword,tempId);
         return CommonResult.success(CommonPage.restPage(tempUserParams),"请求成功");
     }
 

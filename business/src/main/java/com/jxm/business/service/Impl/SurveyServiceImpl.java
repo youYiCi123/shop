@@ -1,15 +1,14 @@
 package com.jxm.business.service.Impl;
 
 import cn.hutool.json.JSONUtil;
-import com.jxm.business.dto.DashboardFileTypeParam;
 import com.jxm.business.dto.SurveySubmitDto;
 import com.jxm.business.dto.TempValueSubmitSingerDto;
 import com.jxm.business.dto.UserDepDto;
 import com.jxm.business.feign.UpstageService;
-import com.jxm.business.mapper.SurveyMapper;
-import com.jxm.business.mapper.TempUserMapper;
-import com.jxm.business.model.SurveyParam;
-import com.jxm.business.model.TempUserParam;
+import com.jxm.business.mapper.QuUserMapper;
+import com.jxm.business.mapper.SurveyUserMapper;
+import com.jxm.business.model.QuUserParam;
+import com.jxm.business.model.SurveyUserParam;
 import com.jxm.business.service.SurveyService;
 import com.jxm.common.generator.UniqueIdGenerator;
 import org.springframework.beans.BeanUtils;
@@ -28,14 +27,14 @@ public class SurveyServiceImpl implements SurveyService {
     private UpstageService upstageService;
 
     @Autowired
-    private SurveyMapper surveyMapper;
+    private QuUserMapper quUserMapper;
 
     @Autowired
-    private TempUserMapper tempUserMapper;
+    private SurveyUserMapper surveyUserMapper;
 
     @Override
-    public List<TempUserParam> getSurveyBySearch(String startDate, String endDate, String keyword, Long tempId) {
-        return tempUserMapper.getSurveyBySearch(startDate,endDate,keyword,tempId);
+    public List<SurveyUserParam> getSurveyBySearch(String startDate, String endDate, String keyword, Long tempId) {
+        return surveyUserMapper.getSurveyBySearch(startDate,endDate,keyword,tempId);
     }
 
     @Override
@@ -46,24 +45,25 @@ public class SurveyServiceImpl implements SurveyService {
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
 
         //如果提交过了则不提交
-        TempUserParam tempUserParam = tempUserMapper.selectByTempAndUser(surveySubmitDto.getTempId(), userDepDto.getUserId());
+        SurveyUserParam tempUserParam = surveyUserMapper.selectByTempAndUser(surveySubmitDto.getTempId(), userDepDto.getUserId());
         if(tempUserParam!=null){
             return -2;
         }
         //填写用户和问卷关联信息
-        TempUserParam tempUserParam1 = new TempUserParam();
-        tempUserParam1.setId(idGenerator.nextId());
+        long nextId = idGenerator.nextId();
+        SurveyUserParam tempUserParam1 = new SurveyUserParam();
+        tempUserParam1.setId(nextId);
         tempUserParam1.setTempId(surveySubmitDto.getTempId());
         tempUserParam1.setTempName(surveySubmitDto.getTempName());
         tempUserParam1.setTempType(surveySubmitDto.getTempType());
         tempUserParam1.setUserId(userDepDto.getUserId());
         tempUserParam1.setUserName(userDepDto.getNickName());
         tempUserParam1.setCreateTime(new Date());
-        tempUserMapper.add(tempUserParam1);
+        surveyUserMapper.add(tempUserParam1);
         //填写问卷信息
-        List<SurveyParam> surveyParamList = new ArrayList<>();
+        List<QuUserParam> surveyParamList = new ArrayList<>();
         for (TempValueSubmitSingerDto tempValueSubmitDto : surveySubmitDto.getTempValueSubmitSingerDtos()) {
-            SurveyParam surveyParam = new SurveyParam();
+            QuUserParam surveyParam = new QuUserParam();
             long id = idGenerator.nextId();
             BeanUtils.copyProperties(tempValueSubmitDto, surveyParam);
             String[] checkValue = tempValueSubmitDto.getCheckValue();
@@ -83,9 +83,10 @@ public class SurveyServiceImpl implements SurveyService {
             }
             surveyParam.setId(id);
             surveyParam.setUserId(userDepDto.getUserId());
+            surveyParam.setRelateId(nextId);
             surveyParam.setCreateTime(new Date());
             surveyParamList.add(surveyParam);
         }
-        return surveyMapper.saveBatch(surveyParamList);
+        return quUserMapper.saveBatch(surveyParamList);
     }
 }

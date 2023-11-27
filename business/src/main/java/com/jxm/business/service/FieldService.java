@@ -22,5 +22,5 @@ public interface FieldService {
 
     TempQuReturnDto getTempDetailResult(Long id);
 
-    TempQuReturnDto getTempUserDetailResult(Long tempId,Long userId);
+    TempQuReturnDto getTempUserDetailResult(Long tempId,Long relateId,Long userId);
 }

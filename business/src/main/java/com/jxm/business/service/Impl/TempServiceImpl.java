@@ -3,9 +3,8 @@ package com.jxm.business.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.TempIdToName;
 import com.jxm.business.dto.TempParam;
-import com.jxm.business.mapper.NewsMapper;
 import com.jxm.business.mapper.TempMapper;
-import com.jxm.business.mapper.TempUserMapper;
+import com.jxm.business.mapper.SurveyUserMapper;
 import com.jxm.business.service.TempService;
 import com.jxm.common.generator.UniqueIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class TempServiceImpl implements TempService {
     private TempMapper tempMapper;
 
     @Autowired
-    private TempUserMapper tempUserMapper;
+    private SurveyUserMapper surveyUserMapper;
 
     @Override
     public List<TempParam> list(String keyword, Integer type, Integer pageSize, Integer pageNum) {
@@ -62,7 +61,7 @@ public class TempServiceImpl implements TempService {
     @Override
     public int update(TempParam tempParam) {
         //更改tempUser表信息
-        tempUserMapper.setTempNameAndType(tempParam.getId(),tempParam.getTitle(),tempParam.getTitleType());
+        surveyUserMapper.setTempNameAndType(tempParam.getId(),tempParam.getTitle(),tempParam.getTitleType());
         return tempMapper.update(tempParam);
     }
 }

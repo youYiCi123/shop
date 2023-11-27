@@ -49,15 +49,15 @@
     </select>
 
     <select id="listByTempAndUser" resultMap="ListResultMap">
-        select t.*,s.rate_value,s.radio_value,s.check_value,s.input_value
+        select t.*,qu.rate_value,qu.radio_value,qu.check_value,qu.input_value
         from
 				(SELECT tq.*,q.qu_name
         FROM temp_qu tq
         LEFT JOIN qu q ON tq.qu_id = q.id
         WHERE tq.temp_id=#{tempId}) t
-				LEFT JOIN survey s on s.qu_id=t.qu_id
+				LEFT JOIN qu_user qu on qu.qu_id=t.qu_id
 				where
-				s.user_id=#{userId}
+				qu.user_id=#{userId} and qu.relate_id=#{relateId}
     </select>
 
 </mapper>

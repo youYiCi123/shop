@@ -101,13 +101,13 @@ public class FieldServiceImpl implements FieldService {
     }
 
     @Override
-    public TempQuReturnDto getTempUserDetailResult(Long tempId,Long userId){
+    public TempQuReturnDto getTempUserDetailResult(Long tempId,Long relateId,Long userId){
         TempQuReturnDto tempQuDto = new TempQuReturnDto();
         TempParam tempParam=tempMapper.getTempById(tempId);
         tempQuDto.setTempName(tempParam.getTitle());
         tempQuDto.setTempType(tempParam.getTitleType());
         List<TempQuDetailReturnDto> tempQuDetailReturnDtos=new ArrayList<>();
-        List<TempQuDetailDto> tempQuDetailDtos = tempQuMapper.listByTempAndUser(tempId,userId);
+        List<TempQuDetailDto> tempQuDetailDtos = tempQuMapper.listByTempAndUser(tempId,relateId,userId);
         tempQuDetailDtos.forEach(t->{
             TempQuDetailReturnDto tempQuDetailReturnDto = new TempQuDetailReturnDto();
             BeanUtils.copyProperties(t,tempQuDetailReturnDto);
