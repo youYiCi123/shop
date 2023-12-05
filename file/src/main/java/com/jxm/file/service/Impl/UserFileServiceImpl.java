@@ -10,9 +10,14 @@ import com.jxm.file.bo.FilePositionBO;
 import com.jxm.file.constant.CommonConstant;
 import com.jxm.file.constant.FileConstant;
 import com.jxm.file.dto.DashboardUserFileParam;
+import com.jxm.file.dto.FileOperateLogDetail;
+import com.jxm.file.dto.UmsAdminConcat;
 import com.jxm.file.dto.UserDepDto;
+import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanFile;
 import com.jxm.file.entity.RPanUserFile;
+import com.jxm.file.feign.UpstageService;
+import com.jxm.file.mapper.FileOperateLogMapper;
 import com.jxm.file.mapper.RPanUserFileMapper;
 import com.jxm.file.service.IFileService;
 import com.jxm.file.service.IUserFileService;
@@ -67,6 +72,10 @@ public class UserFileServiceImpl implements IUserFileService {
     @Autowired
     @Qualifier(value = "storageManager")
     private StorageManager storageManager;
+
+    @Autowired
+    @Qualifier(value = "fileOperateLogMapper")
+    private FileOperateLogMapper fileOperateLogMapper;
 
     /**
      * 获取文件列表
@@ -288,6 +297,11 @@ public class UserFileServiceImpl implements IUserFileService {
         RPanUserFile rPanUserFile = rPanUserFileMapper.selectByPrimaryKey(fileId);
         RPanFile rPanFile = iFileService.getFileDetail(rPanUserFile.getRealFileId());
         doDownload(rPanFile.getRealPath(), response, rPanUserFile.getFilename(),waterMark);
+    }
+
+    @Override
+    public void downloadLog(Long fileId, Long userId) {
+        fileOperateLogMapper.insert(fileId,userId,"下载");
     }
 
     /**

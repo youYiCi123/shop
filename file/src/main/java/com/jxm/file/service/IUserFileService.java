@@ -2,6 +2,8 @@ package com.jxm.file.service;
 
 
 import com.jxm.file.dto.DashboardUserFileParam;
+import com.jxm.file.dto.FileOperateLogDetail;
+import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.vo.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,8 @@ public interface IUserFileService {
     FileChunkUploadVO uploadWithChunk(MultipartFile file, Long userId, String identifier, Integer totalChunks, Integer chunkNumber, Long totalSize, String filename);
 
     void download(Long fileId, String waterMark,HttpServletResponse response);
+
+    void downloadLog(Long fileId,Long userId);
 
     List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId);
 

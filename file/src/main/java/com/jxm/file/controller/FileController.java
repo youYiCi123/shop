@@ -4,11 +4,14 @@ import cn.hutool.json.JSONUtil;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.service.RedisService;
+import com.jxm.file.dto.FileOperateLogDetail;
 import com.jxm.file.dto.UserDepDto;
+import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.RPanUserFileMapper;
 import com.jxm.file.po.*;
+import com.jxm.file.service.FileOperateService;
 import com.jxm.file.service.IUserFileService;
 import com.jxm.file.vo.*;
 import io.swagger.annotations.Api;
@@ -52,8 +55,8 @@ public class FileController {
     @Autowired
     private UpstageService upstageService;
 
-    @Value("${spring.redis.key.admin}")
-    private String REDIS_KEY_ADMIN;
+    @Autowired
+    private FileOperateService fileOperateService;
 
 
     @ApiOperation(
@@ -71,6 +74,48 @@ public class FileController {
         List<RPanUserFileDisplayVO> list = iUserFileService.filesForTable(pageType, keyword, fileType, pageNum, pageSize, getLoginDepId());
         return CommonResult.success(CommonPage.restPage(list));
     }
+
+
+    @ApiOperation(
+            value = "获取文件日志列表",
+            notes = "该接口提供了获取文件日志列表的功能"
+    )
+    @RequestMapping(value = "/filesOperateLogs/select", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<FileOperateLogDetail>> filesOperateLogs(@RequestParam(defaultValue = "") String[] date,
+                                                                     @RequestParam(value = "userId", required = false) Long userId,
+                                                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        String startDate = null;
+        String endDate = null;
+        if (date.length == 2) {
+            startDate = date[0];
+            endDate = date[1];
+        }
+        List<FileOperateLogDetail> list = fileOperateService.getFileOperateLog(startDate,endDate,userId, pageNum, pageSize);
+        return CommonResult.success(CommonPage.restPage(list));
+    }
+
+    @RequestMapping(value = "/filesOperateLogs/delete/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteLog(@PathVariable Long id) {
+        //删除培训信息
+        int count=fileOperateService.deleteLog(id);
+        if(count<0)
+            return CommonResult.failed("删除培训信息错误");
+        return CommonResult.success();
+    }
+
+    @RequestMapping(value = "/filesOperateLogs/deleteBatch", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteBatchLog(@RequestBody Long[] multipleSelectionId) {
+        List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        int count=fileOperateService.deleteBatchLog(idList);
+        if(count<0)
+            return CommonResult.failed("删除培训信息错误");
+        return CommonResult.success();
+    }
+
 
     @RequestMapping(value = "/files", method = RequestMethod.GET)
     @ResponseBody
@@ -243,9 +288,11 @@ public class FileController {
     )
     @GetMapping("file/download")
     public void download(@NotNull(message = "请选择要下载的文件") @RequestParam(value = "fileId", required = false) Long fileId,
+                         @RequestParam(value = "userId", required = false) Long userId,
                          @RequestParam(value = "waterMark", required = false) String waterMark,
                          HttpServletResponse response) {
         iUserFileService.download(fileId, waterMark, response);
+        iUserFileService.downloadLog(fileId, userId);
     }
 
     private Object getLoginUser() throws ParseException {
@@ -385,7 +432,7 @@ public class FileController {
     public void previewByFilePath(@RequestParam(value = "filePath") String filePath,
                                   HttpServletResponse response,
                                   @RequestParam(value = "filePreviewContentType") String filePreviewContentType) {
-        iUserFileService.preview(filePath,response,filePreviewContentType);
+        iUserFileService.preview(filePath, response, filePreviewContentType);
     }
 
     @GetMapping("image/{fileName}")
