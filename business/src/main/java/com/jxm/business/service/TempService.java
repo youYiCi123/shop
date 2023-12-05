@@ -9,6 +9,8 @@ public interface TempService {
 
     List<TempParam> list(String keyword, Integer type, Integer pageSize, Integer pageNum);
 
+    List<TempParam> getAllActive(String keyword, Integer pageSize, Integer pageNum);
+
     List<TempIdToName> getSurveyIdToName();
 
     List<TempIdToName> getActiveIdToName();

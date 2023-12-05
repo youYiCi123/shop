@@ -30,6 +30,13 @@ public class TempServiceImpl implements TempService {
     }
 
     @Override
+    public List<TempParam> getAllActive(String keyword, Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<TempParam> tempParams = tempMapper.getAllActive(keyword);
+        return tempParams;
+    }
+
+    @Override
     public List<TempIdToName> getSurveyIdToName() {
         return tempMapper.getSurveyIdToName();
     }

@@ -30,6 +30,15 @@ public class TempController {
         List<TempParam> tempParamList = tempService.list(keyword,type, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(tempParamList));
     }
+    //获取活动模板
+    @RequestMapping(value = "/getAllActive", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<TempParam>> getAllActive(@RequestParam(value = "keyword", required = false) String keyword,
+                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+        List<TempParam> tempParamList = tempService.getAllActive(keyword,pageSize, pageNum);
+        return CommonResult.success(CommonPage.restPage(tempParamList));
+    }
 
     @ApiOperation("获取所有模板idName关系")
     @RequestMapping(value = "/getTempIdToName", method = RequestMethod.GET)

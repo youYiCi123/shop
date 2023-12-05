@@ -33,6 +33,19 @@
         order by create_time desc
     </select>
 
+    <select id="getAllActive" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from template
+        <where>
+                title_type= 2
+            <if test="keyword != null  and keyword != ''" >
+                and title like concat('%', #{keyword}, '%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
     <select id="getSurveyIdToName" resultMap="tempIdToName">
         select
         id,title
