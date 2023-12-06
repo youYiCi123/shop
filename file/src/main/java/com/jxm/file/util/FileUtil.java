@@ -129,7 +129,8 @@ public class FileUtil {
         FileChannel fileChannel = null;
         WritableByteChannel writableByteChannel = null;
         try {
-            if(!waterMark.equals("")){
+            String fileSuffix = fileName.substring(fileName.indexOf(".")+1);
+            if(!fileSuffix.equals("doc")&&!waterMark.equals("")){
                 //添加水印
                 Integer fileTypeCode = FileTypeContext.getFileTypeCode(fileName);
                 //1 普通文件 2 压缩文件 3 excel 4 word 5 pdf 6 txt 7 图片 8 音频 9 视频 10 ppt 11 源码文件 12 csv

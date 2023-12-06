@@ -420,8 +420,9 @@ public class FileController {
     )
     @GetMapping("preview")
     public void preview(@NotNull(message = "文件id不能为空") @RequestParam(value = "fileId", required = false) Long fileId,
+                        @RequestParam(value = "userName", required = false) String userName,
                         HttpServletResponse response) {
-        iUserFileService.preview(fileId, response);
+        iUserFileService.preview(fileId,userName, response);
     }
 
     @ApiOperation(
@@ -432,7 +433,7 @@ public class FileController {
     public void previewByFilePath(@RequestParam(value = "filePath") String filePath,
                                   HttpServletResponse response,
                                   @RequestParam(value = "filePreviewContentType") String filePreviewContentType) {
-        iUserFileService.preview(filePath, response, filePreviewContentType);
+        iUserFileService.preview(filePath, "",response, filePreviewContentType);
     }
 
     @GetMapping("image/{fileName}")

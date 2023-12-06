@@ -70,9 +70,9 @@ public interface IUserFileService {
 
     List<BreadcrumbVO> getBreadcrumbs(Long fileId, Long depId);
 
-    void preview(Long fileId, HttpServletResponse response);
+    void preview(Long fileId,String userName, HttpServletResponse response);
 
-    void preview(String filePath, HttpServletResponse response, String filePreviewContentType);
+    void preview(String filePath,String userName, HttpServletResponse response, String filePreviewContentType);
 
     void restoreUserFiles(String fileIds, HashMap<String, Integer> map);
 

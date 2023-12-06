@@ -430,10 +430,10 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param response
      */
     @Override
-    public void preview(Long fileId, HttpServletResponse response) {
+    public void preview(Long fileId,String userName, HttpServletResponse response) {
         RPanUserFile rPanUserFile = rPanUserFileMapper.selectByPrimaryKey(fileId);
         RPanFile fileDetail = iFileService.getFileDetail(rPanUserFile.getRealFileId());
-        preview(fileDetail.getRealPath(), response, fileDetail.getFilePreviewContentType());
+        preview(fileDetail.getRealPath(),userName, response, fileDetail.getFilePreviewContentType());
     }
 
     /**
@@ -789,9 +789,9 @@ public class UserFileServiceImpl implements IUserFileService {
     /**
      * 文件预览
      */
-    public void preview(String filePath, HttpServletResponse response, String filePreviewContentType) {
+    public void preview(String filePath,String userName, HttpServletResponse response, String filePreviewContentType) {
         addCommonResponseHeader(response, filePreviewContentType);
-        read2OutputStream(filePath, "",response);
+        read2OutputStream(filePath, userName,response);
     }
 
     /**
