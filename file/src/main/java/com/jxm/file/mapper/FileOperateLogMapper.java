@@ -1,14 +1,15 @@
 package com.jxm.file.mapper;
 
+import com.jxm.file.dto.userIdUploadDto;
 import com.jxm.file.entity.FileOperateLog;
-import com.jxm.file.vo.RPanUserFileDisplayVO;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository(value = "fileOperateLogMapper")
 public interface FileOperateLogMapper {
+
+    List<userIdUploadDto> getUserUploadCount();
 
     int insert(Long fileId,Long userId,String operate);
 

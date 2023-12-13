@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +19,9 @@ public interface UpstageService {
 
     @GetMapping(value = "/admin/getCurrentAdmin")
     CommonResult getCurrentAdmin() throws ParseException;
+
+    @GetMapping(value = "/admin/getUmsAdminConcatList")
+    CommonResult<List<UmsAdminConcat>> getUmsAdminConcatList();
 
     @GetMapping(value = "/admin/getUmsAdminConcat")
     CommonResult<UmsAdminConcat> getUmsAdminConcat(@RequestParam("id") Long id);

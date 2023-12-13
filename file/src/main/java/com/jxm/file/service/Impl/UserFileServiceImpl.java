@@ -300,6 +300,11 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
+    public void uploadLog(Long fileId, Long userId) {
+        fileOperateLogMapper.insert(fileId,userId,"上传");
+    }
+
+    @Override
     public void downloadLog(Long fileId, Long userId) {
         fileOperateLogMapper.insert(fileId,userId,"下载");
     }
@@ -646,10 +651,11 @@ public class UserFileServiceImpl implements IUserFileService {
      */
     private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, String nickName,Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc) {
         RPanUserFile rPanUserFile = new RPanUserFile();
+        long nextId = new UniqueIdGenerator(1, 1).nextId();
         rPanUserFile.setUserId(userId);
         rPanUserFile.setUserName(nickName);
         rPanUserFile.setParentId(parentId);
-        rPanUserFile.setFileId(new UniqueIdGenerator(1,1).nextId());
+        rPanUserFile.setFileId(nextId);
         rPanUserFile.setFilename(filename);
         rPanUserFile.setFileType(fileType);
         rPanUserFile.setFolderFlag(folderFlag.getCode());
@@ -661,6 +667,7 @@ public class UserFileServiceImpl implements IUserFileService {
         rPanUserFile.setUpdateTime(new Date());
         rPanUserFile.setDepId(depId);
         handleDuplicateFileName(rPanUserFile);//重复文件重命名
+        uploadLog(nextId,userId);
         return rPanUserFile;
     }
 

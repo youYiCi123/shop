@@ -6,6 +6,7 @@ import com.jxm.common.api.CommonResult;
 import com.jxm.common.service.RedisService;
 import com.jxm.file.dto.FileOperateLogDetail;
 import com.jxm.file.dto.UserDepDto;
+import com.jxm.file.dto.UserUploadCountDto;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
@@ -293,6 +294,13 @@ public class FileController {
                          HttpServletResponse response) {
         iUserFileService.download(fileId, waterMark, response);
         iUserFileService.downloadLog(fileId, userId);
+    }
+
+    @ApiOperation("获取前十分享用户数量信息")
+    @RequestMapping(value = "file/required/getUserUploadCount", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<UserUploadCountDto>> getUserUploadCount(){
+        return  CommonResult.success(fileOperateService.getUserUploadCount());
     }
 
     private Object getLoginUser() throws ParseException {

@@ -218,7 +218,7 @@ public class WaterMarkUtils {
         }
         makeFullWaterMarkByWordArt(doc, markStr, fontColor, fontSize, styleRotation);
         // 设置文档只读
-        doc.enforceReadonlyProtection();
+//        doc.enforceReadonlyProtection();
         try {
             doc.write(outputStream);
         } catch (FileNotFoundException var21) {
@@ -247,7 +247,7 @@ public class WaterMarkUtils {
 
         makeFullWaterMarkByWordArt(doc, markStr, fontColor, fontSize, styleRotation);
         // 设置文档只读
-        doc.enforceReadonlyProtection();
+//        doc.enforceReadonlyProtection();
         // 生成输出文件
         File file = new File(outPath);
         if (!file.exists()) {

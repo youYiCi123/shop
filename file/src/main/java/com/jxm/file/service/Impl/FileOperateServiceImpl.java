@@ -3,6 +3,8 @@ package com.jxm.file.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.jxm.file.dto.FileOperateLogDetail;
 import com.jxm.file.dto.UmsAdminConcat;
+import com.jxm.file.dto.UserUploadCountDto;
+import com.jxm.file.dto.userIdUploadDto;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
@@ -29,6 +31,24 @@ public class FileOperateServiceImpl implements FileOperateService {
     @Autowired
     @Qualifier(value = "fileOperateLogMapper")
     private FileOperateLogMapper fileOperateLogMapper;
+
+    @Override
+    public List<UserUploadCountDto> getUserUploadCount() {
+        List<UserUploadCountDto> userUploadCountDtos=new ArrayList<>();
+        List<userIdUploadDto> userUploadCount = fileOperateLogMapper.getUserUploadCount();
+        List<UmsAdminConcat> umsAdminConcats = upstageService.getUmsAdminConcatList().getData();
+        for (userIdUploadDto uploadDto: userUploadCount) {
+            UserUploadCountDto userUploadCountDto = new UserUploadCountDto();
+            umsAdminConcats.stream().forEach(t->{
+                if(uploadDto.getUserId().equals(t.getId())){
+                    userUploadCountDto.setUserName(t.getNickName());
+                }
+            });
+            userUploadCountDto.setUploadCount(uploadDto.getUploadCount());
+            userUploadCountDtos.add(userUploadCountDto);
+        }
+        return userUploadCountDtos;
+    }
 
     @Override
     public List<FileOperateLogDetail> getFileOperateLog(String startDate,String endDate,Long userId, Integer pageNum, Integer pageSize) {

@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.DashboardFileTypeParam;
 import com.jxm.business.dto.DashboardUserFileParam;
+import com.jxm.business.dto.UserUploadCountDto;
 import com.jxm.business.dto.depUserRelation;
 import com.jxm.business.feign.FileService;
 import com.jxm.business.feign.UpstageService;
@@ -56,7 +57,10 @@ public class NewsController {
             dashboardFileTypeParam.setNums(fileTypeNums.getValue().intValue());
             dashboardFileTypeParams.add(dashboardFileTypeParam);
         }
+        //用户分享文件数量信息
+        List<UserUploadCountDto> userUploadCountDtos = fileService.getUserUploadCount().getData();
         map.put("depUserRelationList", depUserRelationList);
+        map.put("userUploadCountArrayList", userUploadCountDtos);
         map.put("fileTypeNums", dashboardFileTypeParams);
         map.put("NewsShowList", NewsShowList);
         map.put("newsTopToHome", newsTopToHome);

@@ -13,6 +13,15 @@
         id, user_id, operate, file_id, create_time
     </sql>
 
+    <select id="getUserUploadCount" resultType="com.jxm.file.dto.userIdUploadDto">
+        select
+        user_id as userId,count(*) as uploadCount
+        from file_operate_log
+        where operate="上传"
+        GROUP BY user_id
+        LIMIT 10
+    </select>
+
     <select id="selectFileOperateLog" resultType="com.jxm.file.entity.FileOperateLog">
         select
         <include refid="Base_Column_List"/>
