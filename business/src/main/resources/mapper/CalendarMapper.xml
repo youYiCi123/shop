@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.CalendarMapper">
+
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.CalendarParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
+        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="is_remind" jdbcType="INTEGER" property="isRemind"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+
+    <resultMap id="JobByTodayMap" type="com.jxm.business.dto.CalendarUserSendDto">
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
+        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="user_email" jdbcType="VARCHAR" property="userEmail"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, title,start_date,end_date,level,is_remind,create_date
+    </sql>
+
+    <insert id="add" parameterType="com.jxm.business.model.CalendarParam">
+        insert into calendar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="startDate != null">
+                start_date,
+            </if>
+            <if test="endDate != null">
+                end_date,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="isRemind != null">
+                is_remind,
+            </if>
+            <if test="createDate != null">
+                create_date
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="startDate != null">
+                #{startDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endDate != null">
+                #{endDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="isRemind != null">
+                #{isRemind,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.jxm.business.model.CalendarParam">
+        update calendar
+        set title = #{title,jdbcType=VARCHAR},
+        start_date=#{startDate,jdbcType=TIMESTAMP},
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+        level=#{level,jdbcType=VARCHAR},
+        is_remind = #{isRemind,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="getCalendarJobByToday" resultMap="JobByTodayMap">
+        select
+            c.title,c.start_date,c.end_date,cu.user_name,cu.user_phone,cu.user_email
+        from calendar c left join calendar_user cu on c.id=cu.calendar_id where c.start_date=(select date_format(now(),'%Y-%m-%d')) and c.is_remind=1
+    </select>
+
+    <select id="queryContent" resultMap="BaseResultMap">
+        select
+            c.*
+        from calendar c left join calendar_user cu on c.id=cu.calendar_id where cu.user_id=#{id} order by c.create_date
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from calendar where id=#{id,jdbcType=INTEGER}
+    </delete>
+
+
+</mapper>

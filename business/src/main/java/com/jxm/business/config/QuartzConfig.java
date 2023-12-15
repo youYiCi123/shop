@@ -1,6 +1,7 @@
 package com.jxm.business.config;
 
 
+import com.jxm.business.job.CalendarJob;
 import com.jxm.business.job.CustomJob;
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;
@@ -22,27 +23,26 @@ public class QuartzConfig {
     @Bean
     public Trigger uploadTaskTrigger() {
         //每天的上午9点30分执行
-        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 30 13 * * ?");
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 30 9 * * ?");
         return TriggerBuilder.newTrigger().forJob(customTaskDetail())
                 .withIdentity("CustomTask")
                 .withSchedule(scheduleBuilder)
                 .build();
     }
     /*============================================================定时任务配置2============================================================*/
-//    //指定具体的定时任务类
-//    @Bean
-//    public JobDetail uploadTaskDetail2() {
-//        return JobBuilder.newJob(MyIncomeInformationTask2.class).withIdentity("MyHkInformationTask2").storeDurably().build();
-//    }
-//    //配置触发器
-//    @Bean
-//    public Trigger uploadTaskTrigger2() {
-//        //TODO 这里设定执行方式
-//        //每五秒执行一次
-//        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0/5 * * * * ?");
-//        return TriggerBuilder.newTrigger().forJob(uploadTaskDetail2())
-//                .withIdentity("MyHkInformationTask2")
-//                .withSchedule(scheduleBuilder)
-//                .build();
-//    }
+    //指定具体的定时任务类
+    @Bean
+    public JobDetail uploadTaskDetail2() {
+        return JobBuilder.newJob(CalendarJob.class).withIdentity("CalendarTask").storeDurably().build();
+    }
+    //配置触发器
+    @Bean
+    public Trigger uploadTaskTrigger2() {
+        //每天的上午9点30分执行
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 39 11 * * ? ");
+        return TriggerBuilder.newTrigger().forJob(uploadTaskDetail2())
+                .withIdentity("CalendarTask")
+                .withSchedule(scheduleBuilder)
+                .build();
+    }
 }
