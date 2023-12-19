@@ -67,4 +67,43 @@ public class SmsServiceImpl implements SmsService {
         }
     }
 
+    @Override
+    public Boolean sendCalendar(String phone, String title, String endTime) {
+        try {
+            IClientProfile profile = DefaultProfile.getProfile(REGION_ID,smsConfig.getAccessKeyId(),smsConfig.getAccessKeySecret());
+
+            DefaultProfile.addEndpoint(REGION_ID, REGION_ID, PRODUCT, DOMAIN);
+
+            IAcsClient acsClient = new DefaultAcsClient(profile);
+
+            SendSmsRequest request = new SendSmsRequest();
+
+            request.setMethod(MethodType.POST);
+
+            // 手机号可以单个也可以多个（多个用逗号隔开，如：15*******13,13*******27,17*******56）
+            request.setPhoneNumbers(phone);
+
+            request.setSignName(smsConfig.getSignName());
+
+            request.setTemplateCode(smsConfig.getTemplateCodeTwo());
+
+            /*  例如签名内容为：tianYiMsg
+             *你设定的的日程（${title}）已开始，请于${endTime}前完成"
+             */
+            request.setTemplateParam("{\"title\":\"" + title + "\"," +
+                    "\"endTime\":\"" + endTime +"\"}");
+
+            SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
+            if ((sendSmsResponse.getCode() != null) && (sendSmsResponse.getCode().equals("OK"))) {
+                log.info("发送成功,code:" + sendSmsResponse.getCode());
+                return true;
+            } else {
+                log.info("发送失败,code:" + sendSmsResponse.getCode());
+                return false;
+            }
+        } catch (ClientException e) {
+            log.error("发送失败,系统错误！", e);
+            return false;
+        }
+    }
 }

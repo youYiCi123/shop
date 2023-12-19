@@ -15,5 +15,6 @@ public class SmsConfig {
     private String regionId;
     private String signName;
     private String templateCode;
+    private String templateCodeTwo;
     private String endpoint;
 }

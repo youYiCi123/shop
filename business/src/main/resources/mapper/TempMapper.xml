@@ -46,6 +46,15 @@
         order by create_time desc
     </select>
 
+    <select id="getLatestId" resultType="java.lang.Long">
+        select
+        id
+        from template
+        where title_type=1
+        order by create_time desc
+        limit 1
+    </select>
+
     <select id="getSurveyIdToName" resultMap="tempIdToName">
         select
         id,title

@@ -71,7 +71,7 @@ public class CustomServiceImpl implements CustomService {
             customSaleParam.setSalesPersonId(customSalesParam.getSalesPersonId());
             customSaleParam.setSalesPersonName(umsAdminConcat.getNickName());
             customSaleParam.setSalesPersonEmail(umsAdminConcat.getEmail());
-            customSaleParam.setSalesPersonPhone(umsAdminConcat.getUsername());
+            customSaleParam.setSalesPersonPhone(umsAdminConcat.getPhone());
             customSaleParam.setCustomId(customId);
            return customSaleMapper.addCustomSales(customSaleParam);
         }
@@ -102,7 +102,7 @@ public class CustomServiceImpl implements CustomService {
             customSaleParam.setSalesPersonId(customSalesParam.getSalesPersonId());
             customSaleParam.setSalesPersonName(umsAdminConcat.getNickName());
             customSaleParam.setSalesPersonEmail(umsAdminConcat.getEmail());
-            customSaleParam.setSalesPersonPhone(umsAdminConcat.getUsername());
+            customSaleParam.setSalesPersonPhone(umsAdminConcat.getPhone());
             customSaleParam.setCustomId(customSalesParam.getId());
             return customSaleMapper.updateCustomSale(customSaleParam);
         }

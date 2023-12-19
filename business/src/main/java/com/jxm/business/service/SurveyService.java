@@ -13,4 +13,5 @@ public interface SurveyService {
     int submitContent(SurveySubmitDto surveySubmitDto) throws ParseException;
 
     int delete(Long id);
+
 }

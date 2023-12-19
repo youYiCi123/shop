@@ -100,7 +100,7 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
                     if (first.isPresent()) {
                         customSaleParam.setSalesPersonId(first.get().getId());
                         customSaleParam.setSalesPersonEmail(first.get().getEmail());
-                        customSaleParam.setSalesPersonPhone(first.get().getUsername());
+                        customSaleParam.setSalesPersonPhone(first.get().getPhone());
                     }
                     customSaleParam.setSalesPersonName(customExportExcelModel.getSalesPersonName());
 

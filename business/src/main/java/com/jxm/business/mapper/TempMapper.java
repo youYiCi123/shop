@@ -11,6 +11,8 @@ public interface TempMapper {
 
     List<TempParam> getAllActive(String keyword);
 
+    Long getLatestId();
+
     List<TempIdToName> getSurveyIdToName();
 
     List<TempIdToName> getActiveIdToName();

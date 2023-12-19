@@ -12,7 +12,7 @@
 
     <resultMap id="UserChildMap" type="com.jxm.upstage.dto.UmsAdminConcat">
         <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
         <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
     </resultMap>
@@ -44,7 +44,7 @@
             c2.id ,
             c2.dep_name ,
             c1.id user_id,
-            c1.username user_username,
+            c1.phone user_phone,
             c1.nick_name user_nick_name,
             c1.email user_email
         FROM

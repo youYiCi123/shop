@@ -13,6 +13,8 @@ import com.jxm.business.model.NewsParam;
 import com.jxm.business.model.NewsPostParam;
 import com.jxm.business.model.NewsShowHomeParam;
 import com.jxm.business.service.NewsService;
+import com.jxm.business.service.SurveyService;
+import com.jxm.business.service.TempService;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class NewsController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private TempService tempService;
 
     /**
      * 首页上展示
@@ -59,11 +64,14 @@ public class NewsController {
         }
         //用户分享文件数量信息
         List<UserUploadCountDto> userUploadCountDtos = fileService.getUserUploadCount().getData();
+        //获取最新的调查问卷Id
+        String latestId = String.valueOf(tempService.getLatestId());
         map.put("depUserRelationList", depUserRelationList);
         map.put("userUploadCountArrayList", userUploadCountDtos);
         map.put("fileTypeNums", dashboardFileTypeParams);
         map.put("NewsShowList", NewsShowList);
         map.put("newsTopToHome", newsTopToHome);
+        map.put("surveyLatestId", latestId);
         return CommonResult.success(map, "获取成功");
     }
 

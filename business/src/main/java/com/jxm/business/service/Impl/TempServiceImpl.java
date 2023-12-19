@@ -37,6 +37,11 @@ public class TempServiceImpl implements TempService {
     }
 
     @Override
+    public Long getLatestId() {
+      return tempMapper.getLatestId();
+    }
+
+    @Override
     public List<TempIdToName> getSurveyIdToName() {
         return tempMapper.getSurveyIdToName();
     }

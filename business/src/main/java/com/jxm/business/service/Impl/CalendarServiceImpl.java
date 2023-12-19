@@ -56,6 +56,7 @@ public class CalendarServiceImpl implements CalendarService {
         calendarUserParam.setUserId(calendarUserDto.getUserId());
         calendarUserParam.setUserName(umsAdminConcat.getNickName());
         calendarUserParam.setUserEmail(umsAdminConcat.getEmail());
+        calendarUserParam.setUserPhone(umsAdminConcat.getPhone());
         return calendarUserMapper.add(calendarUserParam);
     }
 

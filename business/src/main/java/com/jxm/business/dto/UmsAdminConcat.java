@@ -17,6 +17,6 @@ public class UmsAdminConcat {
     @ApiModelProperty(value = "邮箱")
     private String email;
 
-    @ApiModelProperty(value = "手机号、账号")
-    private String username;
+    @ApiModelProperty(value = "手机号")
+    private String phone;
 }

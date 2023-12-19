@@ -38,11 +38,7 @@ public class CalendarJob extends QuartzJobBean {
             emailVo.setContent("你设定的的日程（" + t.getTitle() + "）已开始，请在" + sdf.format(t.getEndDate())+"前完成");
             //后期使用消息中间件
             emailService.send(emailVo,emailService.find());
-//            Date nowDate = new Date();
-//            Long starTime=nowDate.getTime();
-//            Long endTime=t.getLicenseTime().getTime();
-//            Long num=endTime-starTime;//时间戳相差的毫秒数
-//            smsService.send(t.getSalesPersonPhone(),t.getCustomName(),sdf.format(t.getLicenseTime()),(num/24/60/60/1000)+"");
+            smsService.sendCalendar(t.getUserPhone(),t.getTitle(),sdf.format(t.getEndDate()));
         });
     }
 }

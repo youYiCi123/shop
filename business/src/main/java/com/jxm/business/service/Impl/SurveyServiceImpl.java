@@ -94,4 +94,5 @@ public class SurveyServiceImpl implements SurveyService {
         surveyUserMapper.deleteById(id);
         return quUserMapper.deleteByRelateId(id);
     }
+
 }

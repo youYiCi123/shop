@@ -21,7 +21,10 @@
                 user_phone,
             </if>
             <if test="userEmail != null">
-                user_email
+                user_email,
+            </if>
+            <if test="userPhone != null">
+                user_phone
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -42,6 +45,9 @@
             </if>
             <if test="userEmail != null">
                 #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone,jdbcType=VARCHAR}
             </if>
         </trim>
     </insert>
