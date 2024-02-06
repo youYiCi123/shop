@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.ProcessMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.ProcessParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="created_user_id" jdbcType="BIGINT" property="createdUserId"/>
+        <result column="created_user_name" jdbcType="VARCHAR" property="createdUserName"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user_id" jdbcType="BIGINT" property="updateUserId"/>
+        <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, process_name,created_time,created_user_id,created_user_name,update_time,update_user_id,update_user_name
+    </sql>
+
+    <select id="getProcessByKeyword" resultType="com.jxm.business.model.ProcessParam">
+        select
+        <include refid="Base_Column_List"/>
+         from process_brief
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                process_name like concat('%', #{keyword}, '%')
+            </if>
+        </where>
+        order by created_time desc
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from process_brief where id=#{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="add" parameterType="com.jxm.business.dto.ProcessDto">
+        insert into process_brief
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="processName != null">
+                process_name,
+            </if>
+            <if test="handTime != null">
+                created_time,
+            </if>
+            <if test="handUserId != null">
+                created_user_id,
+            </if>
+            <if test="handUserName != null">
+                created_user_name
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="processName != null">
+                #{processName,jdbcType=VARCHAR},
+            </if>
+            <if test="handTime != null">
+                #{handTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="handUserId != null">
+                #{handUserId,jdbcType=BIGINT},
+            </if>
+            <if test="handUserName != null">
+                #{handUserName,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.jxm.business.dto.ProcessDto">
+        update process_brief
+        <set>
+            <if test="processName != null">
+                process_name = #{processName,jdbcType=VARCHAR},
+            </if>
+            <if test="handTime != null">
+                update_time = #{handTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="handUserId != null">
+                update_user_id = #{handUserId,jdbcType=BIGINT},
+            </if>
+            <if test="handUserName != null">
+                update_user_name = #{handUserName,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>
