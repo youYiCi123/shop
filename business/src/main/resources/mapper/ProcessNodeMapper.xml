@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.ProcessNodeMapper">
+
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.ProcessNodeParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="node_name" jdbcType="VARCHAR" property="nodeName"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="priority_level" jdbcType="VARCHAR" property="priorityLevel"/>
+        <result column="set_type" jdbcType="VARCHAR" property="setType"/>
+        <result column="select_mode" jdbcType="VARCHAR" property="selectMode"/>
+        <result column="select_range" jdbcType="VARCHAR" property="selectRange"/>
+        <result column="examine_mode" jdbcType="VARCHAR" property="examineMode"/>
+        <result column="cc_self_select_flag" jdbcType="VARCHAR" property="ccSelfSelectFlag"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+    </resultMap>
+
+    <select id="getByIdAndNull" parameterType="java.lang.Long" resultType="com.jxm.business.model.ProcessNodeParam">
+        select pn.id,pn.node_name,pn.type,pn.priority_level,pn.set_type,pn.select_mode,pn.select_range,pn.examine_mode,pn.cc_self_select_flag,pn.parent_id
+        from process_node pn  where pn.process_id=#{id} and pn.parent_id is null
+    </select>
+
+    <select id="getByIdAndNotNull" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select pn.id,pn.node_name,pn.type,pn.priority_level,pn.set_type,pn.select_mode,pn.select_range,pn.examine_mode,pn.cc_self_select_flag,pn.parent_id
+        from process_node pn  where pn.process_id=#{id} and pn.parent_id is not null
+    </select>
+
+</mapper>

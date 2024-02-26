@@ -1,0 +1,18 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.ProcessNodeUserMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.ProcessNodeUserParam">
+        <result column="node_id" jdbcType="BIGINT" property="nodeId"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="IdValue" jdbcType="BIGINT" property="value"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.jxm.business.dto.ProcessNodeUser">
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="IdValue" jdbcType="BIGINT" property="value"/>
+    </resultMap>
+
+    <select id="getListById" parameterType="java.lang.Long" resultMap="BaseResultMap1">
+        select label,IdValue
+        from process_node_user where node_id=#{id}
+    </select>
+</mapper>

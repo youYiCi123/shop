@@ -89,4 +89,8 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <select id="getById" resultType="com.jxm.business.model.ProcessBriefDto">
+        select id, process_name from process_brief where id=#{id,jdbcType=BIGINT}
+    </select>
+
 </mapper>

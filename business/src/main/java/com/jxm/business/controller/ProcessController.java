@@ -1,8 +1,11 @@
 package com.jxm.business.controller;
 
 import com.github.pagehelper.PageHelper;
+import com.jxm.business.dto.ProcessDetailDto;
 import com.jxm.business.dto.ProcessDto;
+import com.jxm.business.model.NewsHomeDetail;
 import com.jxm.business.model.ProcessParam;
+import com.jxm.business.service.ProcessDetailService;
 import com.jxm.business.service.ProcessService;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
@@ -19,6 +22,9 @@ public class ProcessController {
 
     @Autowired
     private ProcessService processService;
+
+    @Autowired
+    private ProcessDetailService processDetailService;
 
     @ApiOperation(value = "添加流程")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -62,5 +68,16 @@ public class ProcessController {
             return CommonResult.failed("删除流程信息错误");
         return CommonResult.success();
     }
+
+
+    /**
+     * 用户点击查看流程内容
+     */
+    @RequestMapping(value = "/queryDetailContent/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<ProcessDetailDto> queryDetailContent(@PathVariable Long id){
+        return CommonResult.success(processDetailService.queryDetailContent(id));
+    }
+
 
 }

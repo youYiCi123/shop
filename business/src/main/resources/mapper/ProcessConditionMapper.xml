@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.ProcessConditionMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.dto.ProcessCondition">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="opt_type" jdbcType="VARCHAR" property="optType"/>
+        <result column="zdy1" jdbcType="VARCHAR" property="zdy1"/>
+        <result column="zdy2" jdbcType="VARCHAR" property="zdy2"/>
+        <result column="opt1" jdbcType="VARCHAR" property="opt1"/>
+        <result column="opt2" jdbcType="VARCHAR" property="opt2"/>
+        <result column="column_id" jdbcType="INTEGER" property="columnId"/>
+        <result column="column_name" jdbcType="VARCHAR" property="columnDbname"/>
+        <result column="column_type" jdbcType="VARCHAR" property="columnType"/>
+        <result column="show_type" jdbcType="VARCHAR" property="showType"/>
+        <result column="show_name" jdbcType="VARCHAR" property="showName"/>
+        <result column="fixed_down_box_value" jdbcType="VARCHAR" property="fixedDownBoxValue"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, type,opt_type,zdy1,zdy2,opt1,opt2,column_id,column_name,column_type,show_type,show_name,fixed_down_box_value
+    </sql>
+
+    <select id="getListById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from process_condition where node_id=#{id,jdbcType=BIGINT}
+    </select>
+
+</mapper>
