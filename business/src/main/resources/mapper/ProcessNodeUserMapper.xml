@@ -15,4 +15,14 @@
         select label,IdValue
         from process_node_user where node_id=#{id}
     </select>
+
+    <insert id="batchInsert">
+        INSERT INTO temp_qu (node_id, label,IdValue) VALUES
+        <foreach collection="nodeUserList" separator="," item="item" index="index">
+            (#{nodeId,jdbcType=BIGINT},
+            #{item.Label,jdbcType=VARCHAR},
+            #{item.value,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
 </mapper>

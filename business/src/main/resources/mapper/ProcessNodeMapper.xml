@@ -26,4 +26,20 @@
         from process_node pn  where pn.process_id=#{id} and pn.parent_id is not null
     </select>
 
+    <insert id="batchInsert">
+        INSERT INTO process_node (node_name,type,priority_level,set_type,select_mode,select_range,examine_mode,cc_self_select_flag,parent_id,process_id) VALUES
+        <foreach collection="processNodeParams" separator="," item="item" index="index">
+            (#{item.nodeName,jdbcType=VARCHAR},
+            #{item.type,jdbcType=INTEGER},
+            #{item.priorityLevel,jdbcType=VARCHAR},
+            #{item.setType,jdbcType=VARCHAR},
+            #{item.selectMode,jdbcType=VARCHAR},
+            #{item.selectRange,jdbcType=VARCHAR},
+            #{item.examineMode,jdbcType=VARCHAR},
+            #{item.ccSelfSelect_flag,jdbcType=VARCHAR},
+            #{item.parentId,jdbcType=BIGINT},
+            #{item.processId,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
 </mapper>

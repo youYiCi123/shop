@@ -79,5 +79,14 @@ public class ProcessController {
         return CommonResult.success(processDetailService.queryDetailContent(id));
     }
 
+    /**
+     * 用户修改流程内容 todo 还未做删除操作
+     */
+    @RequestMapping(value = "/updateDetailContent", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateDetailContent(@RequestBody ProcessDetailDto processDetailDto){
+        return CommonResult.success(processDetailService.updateDetailContent(processDetailDto));
+    }
+
 
 }

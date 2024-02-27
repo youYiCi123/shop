@@ -94,5 +94,45 @@ public class ProcessDetailServiceImpl implements ProcessDetailService {
         return processNodeConfig;
     }
 
+
+    @Override
+    public int updateDetailContent(ProcessDetailDto processDetailDto) {
+        List<ProcessNodeParam> processNodeParams=new ArrayList<>();
+        processNodeParams = findNextLayer(processDetailDto.getId(), null, processDetailDto.getNodeConfig(), processNodeParams);
+        return processNodeMapper.batchInsert(processNodeParams);
+    }
+
+    /**
+     * 流程processId,父级Id,ProcessNodeConfig，processNodeParams
+     */
+    public List<ProcessNodeParam> findNextLayer(Long processId,Long parentId,ProcessNodeConfig nodeConfig,List<ProcessNodeParam> processNodeParams){
+        if(nodeConfig==null)
+            return processNodeParams;
+        if(nodeConfig.getConditionNodes().size()!=0){
+            nodeConfig.getConditionNodes().stream().forEach(t->{
+                ProcessNodeParam processNodeParam = new ProcessNodeParam();
+                BeanUtils.copyProperties(t,processNodeParam);
+                processNodeParam.setParentId(nodeConfig.getId());
+                processNodeParam.setProcessId(processId);
+                processNodeParams.add(processNodeParam);
+            });
+        }
+        //插入用户信息
+        if(nodeConfig.getNodeUserList().size()!=0){
+            processNodeUserMapper.batchInsert(nodeConfig.getId(),nodeConfig.getNodeUserList());
+        }
+        //插入条件信息
+        if(nodeConfig.getConditionList().size()!=0){
+            processConditionMapper.batchInsert(nodeConfig.getId(),nodeConfig.getConditionList());
+        }
+        ProcessNodeParam processNodeParam = new ProcessNodeParam();
+        BeanUtils.copyProperties(nodeConfig,processNodeParam);
+        processNodeParam.setParentId(parentId);
+        processNodeParam.setProcessId(processId);
+        processNodeParams.add(processNodeParam);
+        findNextLayer(processId,processNodeParam.getId(),nodeConfig.getChildNode(),processNodeParams);
+        return Arrays.asList();
+    }
+
 }
 
