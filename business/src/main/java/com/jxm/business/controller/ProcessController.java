@@ -80,7 +80,7 @@ public class ProcessController {
     }
 
     /**
-     * 用户修改流程内容 todo 还未做删除操作
+     * 用户添加或修改流程内容
      */
     @RequestMapping(value = "/updateDetailContent", method = RequestMethod.POST)
     @ResponseBody

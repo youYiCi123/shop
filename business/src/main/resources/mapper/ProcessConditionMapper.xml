@@ -25,4 +25,9 @@
         select <include refid="Base_Column_List"/> from process_condition where node_id=#{id,jdbcType=BIGINT}
     </select>
 
+    <delete id="deleteByNodeId" parameterType="java.lang.Long">
+        delete from process_condition where node_id=#{nodeId,jdbcType=BIGINT}
+    </delete>
+
+
 </mapper>

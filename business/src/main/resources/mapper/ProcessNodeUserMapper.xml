@@ -17,12 +17,17 @@
     </select>
 
     <insert id="batchInsert">
-        INSERT INTO temp_qu (node_id, label,IdValue) VALUES
+        INSERT INTO process_node_user (node_id, label,IdValue) VALUES
         <foreach collection="nodeUserList" separator="," item="item" index="index">
             (#{nodeId,jdbcType=BIGINT},
             #{item.Label,jdbcType=VARCHAR},
             #{item.value,jdbcType=BIGINT})
         </foreach>
     </insert>
+
+
+    <delete id="deleteByNodeId" parameterType="java.lang.Long">
+        delete from process_node_user where node_id=#{nodeId,jdbcType=BIGINT}
+    </delete>
 
 </mapper>

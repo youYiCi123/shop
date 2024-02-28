@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ProcessConditionMapper {
 
+    int deleteByNodeId(Long nodeId);
     //批量插入
     int batchInsert(@Param("nodeId")Long nodeId, @Param("processConditions") List<ProcessCondition> processConditions);
     //查找子节点

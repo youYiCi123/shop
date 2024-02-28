@@ -12,6 +12,7 @@ import com.jxm.business.model.ProcessBriefDto;
 import com.jxm.business.model.ProcessNodeParam;
 import com.jxm.business.model.ProcessNodeUserParam;
 import com.jxm.business.service.ProcessDetailService;
+import com.jxm.common.generator.UniqueIdGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,6 +99,7 @@ public class ProcessDetailServiceImpl implements ProcessDetailService {
     @Override
     public int updateDetailContent(ProcessDetailDto processDetailDto) {
         List<ProcessNodeParam> processNodeParams=new ArrayList<>();
+        processNodeMapper.deleteByProcessId(processDetailDto.getId());
         processNodeParams = findNextLayer(processDetailDto.getId(), null, processDetailDto.getNodeConfig(), processNodeParams);
         return processNodeMapper.batchInsert(processNodeParams);
     }
@@ -108,22 +110,31 @@ public class ProcessDetailServiceImpl implements ProcessDetailService {
     public List<ProcessNodeParam> findNextLayer(Long processId,Long parentId,ProcessNodeConfig nodeConfig,List<ProcessNodeParam> processNodeParams){
         if(nodeConfig==null)
             return processNodeParams;
+
+        Long nodeId=nodeConfig.getId();
+        if(nodeId==null) {
+            UniqueIdGenerator idGenerator = new UniqueIdGenerator(1, 1);
+            nodeId = idGenerator.nextId();
+        }
         if(nodeConfig.getConditionNodes().size()!=0){
+            Long finalNodeId = nodeId;
             nodeConfig.getConditionNodes().stream().forEach(t->{
                 ProcessNodeParam processNodeParam = new ProcessNodeParam();
                 BeanUtils.copyProperties(t,processNodeParam);
-                processNodeParam.setParentId(nodeConfig.getId());
+                processNodeParam.setParentId(finalNodeId);
                 processNodeParam.setProcessId(processId);
                 processNodeParams.add(processNodeParam);
             });
         }
         //插入用户信息
         if(nodeConfig.getNodeUserList().size()!=0){
-            processNodeUserMapper.batchInsert(nodeConfig.getId(),nodeConfig.getNodeUserList());
+            processNodeUserMapper.deleteByNodeId(nodeId);
+            processNodeUserMapper.batchInsert(nodeId,nodeConfig.getNodeUserList());
         }
         //插入条件信息
         if(nodeConfig.getConditionList().size()!=0){
-            processConditionMapper.batchInsert(nodeConfig.getId(),nodeConfig.getConditionList());
+            processConditionMapper.deleteByNodeId(nodeId);
+            processConditionMapper.batchInsert(nodeId,nodeConfig.getConditionList());
         }
         ProcessNodeParam processNodeParam = new ProcessNodeParam();
         BeanUtils.copyProperties(nodeConfig,processNodeParam);

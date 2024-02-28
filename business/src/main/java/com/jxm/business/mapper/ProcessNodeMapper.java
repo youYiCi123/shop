@@ -16,4 +16,5 @@ public interface ProcessNodeMapper {
     //批量插入
     int batchInsert(@Param("processNodeParams") List<ProcessNodeParam> processNodeParams);
 
+    int deleteByProcessId(Long processId);
 }

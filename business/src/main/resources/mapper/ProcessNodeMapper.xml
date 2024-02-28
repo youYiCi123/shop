@@ -42,4 +42,9 @@
         </foreach>
     </insert>
 
+
+    <delete id="deleteByProcessId" parameterType="java.lang.Long">
+        delete from process_node where process_id=#{processId,jdbcType=BIGINT}
+    </delete>
+
 </mapper>

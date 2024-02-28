@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ProcessNodeUserMapper {
 
+    int deleteByNodeId(Long nodeId);
+
     //批量插入
     int batchInsert(@Param("nodeId")Long nodeId,@Param("nodeUserList") List<ProcessNodeUser> nodeUserList);
     //查找子节点
