@@ -1,5 +1,6 @@
 package com.jxm.file.service;
 
+import com.jxm.common.api.CommonPage;
 import com.jxm.file.dto.FileOperateLogDetail;
 import com.jxm.file.dto.UserUploadCountDto;
 
@@ -9,7 +10,7 @@ public interface FileOperateService {
 
     List<UserUploadCountDto> getUserUploadCount();
 
-    List<FileOperateLogDetail> getFileOperateLog(String startDate, String endDate, Long userId, Integer pageNum, Integer pageSize);
+    CommonPage<FileOperateLogDetail> getFileOperateLog(String startDate, String endDate, Long userId, Integer pageNum, Integer pageSize);
 
     int deleteLog(Long logId);
 

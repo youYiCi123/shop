@@ -93,8 +93,8 @@ public class FileController {
             startDate = date[0];
             endDate = date[1];
         }
-        List<FileOperateLogDetail> list = fileOperateService.getFileOperateLog(startDate,endDate,userId, pageNum, pageSize);
-        return CommonResult.success(CommonPage.restPage(list));
+        CommonPage<FileOperateLogDetail> list = fileOperateService.getFileOperateLog(startDate,endDate,userId, pageNum, pageSize);
+        return CommonResult.success(list);
     }
 
     @RequestMapping(value = "/filesOperateLogs/delete/{id}", method = RequestMethod.POST)

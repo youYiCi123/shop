@@ -1,6 +1,7 @@
 package com.jxm.file.service.Impl;
 
 import com.github.pagehelper.PageHelper;
+import com.jxm.common.api.CommonPage;
 import com.jxm.file.dto.FileOperateLogDetail;
 import com.jxm.file.dto.UmsAdminConcat;
 import com.jxm.file.dto.UserUploadCountDto;
@@ -51,11 +52,12 @@ public class FileOperateServiceImpl implements FileOperateService {
     }
 
     @Override
-    public List<FileOperateLogDetail> getFileOperateLog(String startDate,String endDate,Long userId, Integer pageNum, Integer pageSize) {
+    public CommonPage<FileOperateLogDetail> getFileOperateLog(String startDate,String endDate,Long userId, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<FileOperateLog> fileOperateLogs=fileOperateLogMapper.selectFileOperateLog(startDate,endDate,userId);
+        CommonPage<FileOperateLog> fileOperateLogCommonPage = CommonPage.restPage(fileOperateLogs);
         List<FileOperateLogDetail> fileOperateLogDetails=new ArrayList<>();
-        fileOperateLogs.stream().forEach(t->{
+        fileOperateLogCommonPage.getList().stream().forEach(t->{
             FileOperateLogDetail fileOperateLogDetail = new FileOperateLogDetail();
             fileOperateLogDetail.setCreateTime(t.getCreateTime());
             fileOperateLogDetail.setFileId(t.getFileId());
@@ -68,7 +70,13 @@ public class FileOperateServiceImpl implements FileOperateService {
             fileOperateLogDetail.setFileName(rPanFile.getFilename());
             fileOperateLogDetails.add(fileOperateLogDetail);
         });
-        return fileOperateLogDetails;
+        CommonPage<FileOperateLogDetail> fileOperateLogDetailCommonPage=new CommonPage<>();
+        fileOperateLogDetailCommonPage.setList(fileOperateLogDetails);
+        fileOperateLogDetailCommonPage.setTotal(fileOperateLogCommonPage.getTotal());
+        fileOperateLogDetailCommonPage.setPageNum(fileOperateLogCommonPage.getPageNum());
+        fileOperateLogDetailCommonPage.setPageSize(fileOperateLogCommonPage.getPageSize());
+        fileOperateLogDetailCommonPage.setTotalPage(fileOperateLogCommonPage.getTotalPage());
+        return fileOperateLogDetailCommonPage;
     }
 
     @Override
