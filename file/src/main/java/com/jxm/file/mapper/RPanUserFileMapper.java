@@ -20,8 +20,6 @@ public interface RPanUserFileMapper {
 
     List<DashboardUserFileParam> getTheNumberOfFileTypes();
 
-    int deleteByPrimaryKey(Long fileId);
-
     int insert(RPanUserFile record);
 
     int insertSelective(RPanUserFile record);
@@ -55,7 +53,7 @@ public interface RPanUserFileMapper {
                                                   @Param("filename") String filename,
                                                   @Param("parentId") Long parentId);
 
-    int deleteBatch(@Param("idList") List<Long> idList);
+    int deleteFileById(Long fileId);
 
     int deleteBatchReal(@Param("idList") List<Long> idList);
 

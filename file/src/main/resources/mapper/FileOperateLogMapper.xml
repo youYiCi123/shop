@@ -6,11 +6,12 @@
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
         <result column="operate" jdbcType="VARCHAR" property="operate"/>
         <result column="file_id" jdbcType="BIGINT" property="fileId"/>
+        <result column="extend_field" jdbcType="VARCHAR" property="extendField"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, user_id, operate, file_id, create_time
+        id, user_id, operate, file_id,extend_field, create_time
     </sql>
 
     <select id="getUserUploadCount" resultType="com.jxm.file.dto.userIdUploadDto">
@@ -47,6 +48,9 @@
             <if test="operate != null">
                 operate,
             </if>
+            <if test="extendField != null">
+                extend_field,
+            </if>
             <if test="fileId != null">
                 file_id
             </if>
@@ -58,6 +62,9 @@
             </if>
             <if test="operate != null">
                 #{operate,jdbcType=VARCHAR},
+            </if>
+            <if test="extendField != null">
+                #{extendField,jdbcType=VARCHAR},
             </if>
             <if test="fileId != null">
                 #{fileId,jdbcType=BIGINT}

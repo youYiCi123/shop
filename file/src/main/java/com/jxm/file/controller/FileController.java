@@ -173,12 +173,13 @@ public class FileController {
             notes = "该接口提供了删除文件(批量)的功能"
     )
     @PostMapping("/file/delete")
-    public CommonResult delete(@Validated @RequestBody DeletePO deletePO) {
-        iUserFileService.delete(deletePO.getFileIds());
+    public CommonResult delete(Long fileId) throws ParseException {
+        iUserFileService.delete(fileId);
+        iUserFileService.deleteLog(fileId,getLoginUserId());
         return CommonResult.success();
     }
 
-    @ApiOperation("批量删除文件信息")
+    @ApiOperation("批量删除文件信息 --审核页面")
     @RequestMapping(value = "/file/delete/batch", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult deleteBatch(@RequestBody Long[] multipleSelectionId) {
@@ -190,7 +191,7 @@ public class FileController {
         return CommonResult.failed();
     }
 
-    @ApiOperation(value = "删除文件")
+    @ApiOperation(value = "删除文件--审核页面")
     @RequestMapping(value = "/file/delete/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult deleteFile(@PathVariable("id") Long id) {
@@ -293,7 +294,7 @@ public class FileController {
                          @RequestParam(value = "waterMark", required = false) String waterMark,
                          HttpServletResponse response) {
         iUserFileService.download(fileId, waterMark, response);
-        iUserFileService.downloadLog(fileId, userId);
+        iUserFileService.downloadLog(fileId, userId,waterMark);
     }
 
     @ApiOperation("获取前十分享用户数量信息")

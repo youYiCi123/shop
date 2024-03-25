@@ -11,7 +11,7 @@ public interface FileOperateLogMapper {
 
     List<userIdUploadDto> getUserUploadCount();
 
-    int insert(Long fileId,Long userId,String operate);
+    int insert(Long fileId,Long userId,String operate,String extendField);
 
     List<FileOperateLog> selectFileOperateLog(String startDate, String endDate,Long userId);
 

@@ -33,7 +33,7 @@ public interface IUserFileService {
 
     void updateFilename(Long fileId, String newFilename, Object loginUser);
 
-    void delete(String fileIds);
+    void delete(Long fileId);
 
     /**
      * 批量删除指定用户
@@ -58,7 +58,9 @@ public interface IUserFileService {
 
     void uploadLog(Long fileId,Long userId);
 
-    void downloadLog(Long fileId,Long userId);
+    void downloadLog(Long fileId,Long userId,String waterMark);
+
+    void deleteLog(Long fileId,Long userId);
 
     List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId);
 

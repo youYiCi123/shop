@@ -18,6 +18,7 @@ public class FileOperateLogDetail implements Serializable {
     private Long userId;
     private String userName;
     private String operate;
+    private String extendField;
     private Long fileId;
     private String fileName;
     private Date createTime;

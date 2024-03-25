@@ -32,10 +32,6 @@
         from r_pan_user_file
         where file_id = #{fileId,jdbcType=BIGINT}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        delete from r_pan_user_file
-        where file_id = #{id,jdbcType=BIGINT}
-    </delete>
     <insert id="insert" parameterType="com.jxm.file.entity.RPanUserFile">
         insert into r_pan_user_file (file_id, user_id, parent_id,
           real_file_id, filename, folder_flag,
@@ -204,14 +200,15 @@
         where file_id = #{fileId,jdbcType=BIGINT}
     </update>
 
-    <delete id="deleteBatchReal" parameterType="java.lang.Long">
-        delete from r_pan_user_file
+    <update id="deleteBatchReal" parameterType="java.lang.Long">
+        update r_pan_user_file
+        set del_flag=1
         where
         file_id in
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
-    </delete>
+    </update>
 
     <update id="passBatch" parameterType="java.lang.Long">
         update  r_pan_user_file
@@ -342,17 +339,14 @@
             AND filename = #{filename}
     </select>
 
-    <delete id="deleteBatch">
-        DELETE FROM r_pan_user_file WHERE  file_id IN
-        <foreach collection="idList" open="(" close=")" item="item" separator=",">
-            #{item}
-        </foreach>
-    </delete>
+    <update id="deleteFileById">
+        update r_pan_user_file set del_flag=1 WHERE file_id =#{fileId}
+    </update>
 
-    <delete id="deleteById" parameterType="java.lang.Long">
-    delete from r_pan_user_file
+    <update id="deleteById" parameterType="java.lang.Long">
+    update  r_pan_user_file set del_flag=1
     where file_id = #{id,jdbcType=BIGINT}
-  </delete>
+  </update>
 
     <update id="passFileById">
         update r_pan_user_file

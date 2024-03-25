@@ -63,6 +63,7 @@ public class FileOperateServiceImpl implements FileOperateService {
             fileOperateLogDetail.setFileId(t.getFileId());
             fileOperateLogDetail.setId(t.getId());
             fileOperateLogDetail.setOperate(t.getOperate());
+            fileOperateLogDetail.setExtendField(t.getExtendField());
             fileOperateLogDetail.setUserId(t.getUserId());
             UmsAdminConcat adminConcat = upstageService.getUmsAdminConcat(t.getUserId()).getData();
             fileOperateLogDetail.setUserName(adminConcat.getNickName());

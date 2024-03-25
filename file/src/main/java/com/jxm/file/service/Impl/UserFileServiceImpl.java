@@ -207,9 +207,9 @@ public class UserFileServiceImpl implements IUserFileService {
      * 删除文件(批量)
      */
     @Override
-    public void delete(String fileIds) {
-        List<Long> idList = StringListUtil.string2LongList(fileIds);
-        if (rPanUserFileMapper.deleteBatch(idList) != idList.size()) {
+    public void delete(Long fileId) {
+//        List<Long> idList = StringListUtil.string2LongList(fileIds);
+        if (rPanUserFileMapper.deleteFileById(fileId) == 0) {
             Asserts.fail("删除失败");
         }
     }
@@ -301,12 +301,17 @@ public class UserFileServiceImpl implements IUserFileService {
 
     @Override
     public void uploadLog(Long fileId, Long userId) {
-        fileOperateLogMapper.insert(fileId,userId,"上传");
+        fileOperateLogMapper.insert(fileId,userId,"上传","");
     }
 
     @Override
-    public void downloadLog(Long fileId, Long userId) {
-        fileOperateLogMapper.insert(fileId,userId,"下载");
+    public void downloadLog(Long fileId, Long userId,String waterMark) {
+        fileOperateLogMapper.insert(fileId,userId,"下载",waterMark);
+    }
+
+    @Override
+    public void deleteLog(Long fileId, Long userId) {
+        fileOperateLogMapper.insert(fileId,userId,"删除","");
     }
 
     /**
