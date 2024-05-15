@@ -1,5 +1,6 @@
 package com.jxm.business.mapper;
 
+import com.jxm.business.dto.CertificateBriefDto;
 import com.jxm.business.model.CertificateParam;
 import com.jxm.business.model.CustomParam;
 import com.jxm.business.model.CustomSaleParam;

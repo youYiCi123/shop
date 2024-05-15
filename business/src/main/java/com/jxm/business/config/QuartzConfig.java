@@ -2,6 +2,7 @@ package com.jxm.business.config;
 
 
 import com.jxm.business.job.CalendarJob;
+import com.jxm.business.job.CertificateJob;
 import com.jxm.business.job.CustomJob;
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;
@@ -45,4 +46,21 @@ public class QuartzConfig {
                 .withSchedule(scheduleBuilder)
                 .build();
     }
+    /*--------------------------定时任务配置3------------------------------*/
+    //指定具体的定时任务类
+    @Bean
+    public JobDetail uploadTaskDetail3() {
+        return JobBuilder.newJob(CertificateJob.class).withIdentity("CertificateTask").storeDurably().build();
+    }
+    //配置触发器
+    @Bean
+    public Trigger uploadTaskTrigger3() {
+        //每天的上午9点30分执行
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 07 16 * * ? ");
+        return TriggerBuilder.newTrigger().forJob(uploadTaskDetail3())
+                .withIdentity("CertificateTask")
+                .withSchedule(scheduleBuilder)
+                .build();
+    }
+
 }

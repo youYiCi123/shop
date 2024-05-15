@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.ProcessConditionDetailMapper">
+
+    <resultMap id="ConditionChildMap" type="com.jxm.business.dto.ProcessConditionChild">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="value" jdbcType="VARCHAR" property="value" />
+    </resultMap>
+
+    <resultMap id="listWithChildrenMap" type="com.jxm.business.dto.ProcessConditionDetail">
+        <id column="id" jdbcType="INTEGER" property="columnId"/>
+        <result column="show_type" jdbcType="VARCHAR" property="showType" />
+        <result column="show_name" jdbcType="VARCHAR" property="showName" />
+        <result column="column_type" jdbcType="VARCHAR" property="columnType" />
+        <collection property="child" resultMap="ConditionChildMap"
+                    columnPrefix="child_"></collection>
+    </resultMap>
+
+    <select id="getAllList" resultMap="listWithChildrenMap">
+        select pcb.*,pcc.id child_id,pcc.value child_value from process_condition_basis pcb left join process_condition_child pcc
+        on pcb.id=pcc.parent_condition_id
+        where pcb.process_id=#{processId}
+    </select>
+
+</mapper>

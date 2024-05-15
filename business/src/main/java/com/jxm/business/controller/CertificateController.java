@@ -3,6 +3,7 @@ package com.jxm.business.controller;
 import com.github.pagehelper.PageHelper;
 import com.jxm.business.dto.CustomSalesParam;
 import com.jxm.business.model.CertificateParam;
+import com.jxm.business.model.CertificateRemindParam;
 import com.jxm.business.model.CustomParam;
 import com.jxm.business.model.NewsPostParam;
 import com.jxm.business.service.CertificateService;
@@ -43,6 +44,25 @@ public class CertificateController {
     @ResponseBody
     public CommonResult<CertificateParam> queryContent(@PathVariable Long id){
         return CommonResult.success(certificateService.queryContent(id));
+    }
+
+    @ApiOperation(value = "获取证书提醒人内容")
+    @RequestMapping(value = "/getRemind", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getRemind() {
+        CertificateRemindParam remind = certificateService.getRemind();
+            return CommonResult.success(remind);
+    }
+
+    @ApiOperation(value = "设置证书提醒人内容")
+    @RequestMapping(value = "/setRemind", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult setRemind(@RequestBody CertificateRemindParam certificateRemindParam) {
+        int count= certificateService.setRemind(certificateRemindParam);
+        if (count<0) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success();
     }
 
     @ApiOperation(value = "添加证书")

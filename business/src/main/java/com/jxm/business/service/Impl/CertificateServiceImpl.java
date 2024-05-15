@@ -1,8 +1,11 @@
 package com.jxm.business.service.Impl;
 
 import com.github.pagehelper.PageHelper;
+import com.jxm.business.dto.CertificateBriefDto;
 import com.jxm.business.mapper.CertificateMapper;
+import com.jxm.business.mapper.CertificateRemindMapper;
 import com.jxm.business.model.CertificateParam;
+import com.jxm.business.model.CertificateRemindParam;
 import com.jxm.business.service.CertificateService;
 import com.jxm.common.generator.UniqueIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Autowired
     private CertificateMapper certificateMapper;
+
+    @Autowired
+    private CertificateRemindMapper certificateRemindMapper;
 
     @Override
     public List<CertificateParam> getListBySearch(String[] lastDeclareTime, String[] firstRegisterTime, String keyword,
@@ -44,6 +50,23 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    public CertificateRemindParam getRemind() {
+        return certificateRemindMapper.query();
+    }
+
+    @Override
+    public int setRemind(CertificateRemindParam certificateRemindParam) {
+        if(certificateRemindParam.getId().equals(-1)){
+            //插入
+            certificateRemindParam.setId(1);
+            return certificateRemindMapper.add(certificateRemindParam);
+        }else{
+            //修改
+            return certificateRemindMapper.update(certificateRemindParam);
+        }
+    }
+
+    @Override
     public int add(CertificateParam certificateParam) {
         UniqueIdGenerator uniqueId = new UniqueIdGenerator(1,1);
         long customId = uniqueId.nextId();
@@ -69,5 +92,10 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public int saveCertificateBatch(List<CertificateParam> certificateParams) {
         return certificateMapper.saveBatch(certificateParams);
+    }
+
+    @Override
+    public List<CertificateBriefDto> getCertificateByNearDeadline(int days) {
+        return certificateRemindMapper.getCertificateByNearDeadline(days);
     }
 }

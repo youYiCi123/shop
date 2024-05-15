@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.CertificateRemindMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.CertificateRemindParam">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="forward_days" jdbcType="INTEGER" property="forwardDays"/>
+        <result column="send_type" jdbcType="INTEGER" property="sendType"/>
+        <result column="remind_person_email" jdbcType="VARCHAR" property="remindPersonEmail"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, forward_days,send_type,remind_person_email,update_time
+    </sql>
+
+    <select id="query" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        certificate_remind
+        LIMIT 1;
+    </select>
+
+    <update id="update" parameterType="com.jxm.business.model.CertificateRemindParam">
+        update certificate_remind
+        set forward_days = #{forwardDays,jdbcType=VARCHAR},
+        send_type=#{sendType,jdbcType=VARCHAR},
+        remind_person_email = #{remindPersonEmail,jdbcType=VARCHAR},
+        update_time=NOW()
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <insert id="add" parameterType="com.jxm.business.model.CustomPostParam">
+        insert into certificate_remind
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="forwardDays != null">
+                forward_days,
+            </if>
+            <if test="sendType != null">
+                send_type,
+            </if>
+            <if test="remindPersonEmail != null">
+                remind_person_email,
+            </if>
+            update_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="forwardDays != null">
+                #{forwardDays,jdbcType=INTEGER},
+            </if>
+            <if test="sendType != null">
+                #{sendType,jdbcType=INTEGER},
+            </if>
+            <if test="remindPersonEmail != null">
+                #{remindPersonEmail,jdbcType=VARCHAR},
+            </if>
+            NOW()
+        </trim>
+    </insert>
+
+
+    <resultMap id="ConditionChildMap" type="com.jxm.business.dto.CertificateBriefDto">
+        <result column="certificate_name" jdbcType="VARCHAR" property="certificateName" />
+        <result column="last_declare_time" jdbcType="TIMESTAMP" property="lastDeclareTime" />
+    </resultMap>
+
+    <select id="getCertificateByNearDeadline" resultMap="ConditionChildMap">
+        select certificate_name,last_declare_time from certificate where DATEDIFF(last_declare_time,NOW())=#{days}
+    </select>
+
+</mapper>
