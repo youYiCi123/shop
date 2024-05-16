@@ -7,6 +7,7 @@
         <result column="norms" jdbcType="VARCHAR" property="norms"/>
         <result column="category" jdbcType="BIGINT" property="category"/>
         <result column="register_number" jdbcType="VARCHAR" property="registerNumber"/>
+        <result column="prod_license_number" jdbcType="VARCHAR" property="prodLicenseNumber"/>
         <result column="approval_time" jdbcType="TIMESTAMP" property="approvalTime"/>
         <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
         <result column="last_declare_time" jdbcType="TIMESTAMP" property="lastDeclareTime"/>
@@ -15,7 +16,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, certificate_name,norms,category,register_number,approval_time,effective_time,last_declare_time,risk_evaluate_time,first_register_time
+        id, certificate_name,norms,category,register_number,prod_license_number,approval_time,effective_time,last_declare_time,risk_evaluate_time,first_register_time
     </sql>
 
     <select id="getListBySearch"  resultMap="BaseResultMap">
@@ -65,6 +66,9 @@
             <if test="registerNumber != null">
                 register_number,
             </if>
+            <if test="prodLicenseNumber != null">
+                prod_license_number,
+            </if>
             <if test="approvalTime != null">
                 approval_time,
             </if>
@@ -97,6 +101,9 @@
             <if test="registerNumber != null">
                 #{registerNumber,jdbcType=VARCHAR},
             </if>
+            <if test="prodLicenseNumber != null">
+                #{prodLicenseNumber,jdbcType=VARCHAR},
+            </if>
             <if test="approvalTime != null">
                 #{approvalTime,jdbcType=TIMESTAMP},
             </if>
@@ -121,6 +128,7 @@
         norms=#{norms,jdbcType=VARCHAR},
         category = #{category,jdbcType=BIGINT},
         register_number=#{registerNumber,jdbcType=VARCHAR},
+        prod_license_number=#{prodLicenseNumber,jdbcType=VARCHAR},
         approval_time = #{approvalTime,jdbcType=TIMESTAMP},
         effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
         last_declare_time=#{lastDeclareTime,jdbcType=TIMESTAMP},
@@ -144,7 +152,7 @@
 
     <insert id="saveBatch" parameterType="java.util.List">
         insert into certificate (
-        id, certificate_name,norms,category,register_number,approval_time,effective_time,last_declare_time,risk_evaluate_time,first_register_time)
+        id, certificate_name,norms,category,register_number,prod_license_number,approval_time,effective_time,last_declare_time,risk_evaluate_time,first_register_time)
         values
         <foreach collection="list" item="certificateItem" index="index" separator=",">
             (#{certificateItem.id},
@@ -152,6 +160,7 @@
             #{certificateItem.norms},
             #{certificateItem.category},
             #{certificateItem.registerNumber},
+            #{certificateItem.prodLicenseNumber},
             #{certificateItem.approvalTime,jdbcType=TIMESTAMP},
             #{certificateItem.effectiveTime,jdbcType=TIMESTAMP},
             #{certificateItem.lastDeclareTime,jdbcType=TIMESTAMP},

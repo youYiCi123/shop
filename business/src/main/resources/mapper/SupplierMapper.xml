@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.business.mapper.SupplierMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.business.model.SupplierParam">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="organize_structure_code" jdbcType="VARCHAR" property="organizeStructureCode"/>
+        <result column="business_time" jdbcType="TIMESTAMP" property="businessTime"/>
+        <result column="record_number" jdbcType="VARCHAR" property="recordNumber"/>
+        <result column="license_time" jdbcType="TIMESTAMP" property="licenseTime"/>
+        <result column="product" jdbcType="VARCHAR" property="product"/>
+        <result column="qa_agreement_time" jdbcType="TIMESTAMP" property="qaAgreementTime"/>
+        <result column="business_auth_time" jdbcType="TIMESTAMP" property="businessAuthTime"/>
+        <result column="legal_person_auth_time" jdbcType="TIMESTAMP" property="legalPersonAuthTime"/>
+        <result column="other" jdbcType="VARCHAR" property="other"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, supplier_name,organize_structure_code,business_time,record_number,license_time,product,qa_agreement_time,business_auth_time,legal_person_auth_time,other
+    </sql>
+
+    <select id="getSupplierBySearch" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from supplier
+        <where>
+            <if test="keyword!=null and keyword!=''">
+               supplier_name like concat('%', #{keyword}, '%')
+            </if>
+            <if test="businessAutStartDate!=null and businessAutStartDate!='' and businessAutEndDate!=null and businessAutEndDate!=''">
+                and business_auth_time between #{businessAutStartDate} and #{businessAutEndDate}
+            </if>
+        </where>
+        order by business_auth_time asc
+    </select>
+
+    <select id="querySupplierContent" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        supplier
+        where id=#{id}
+    </select>
+
+    <insert id="addSupplier" parameterType="com.jxm.business.model.SupplierParam">
+        insert into supplier
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="supplierName != null">
+                supplier_name,
+            </if>
+            <if test="organizeStructureCode != null">
+                organize_structure_code,
+            </if>
+            <if test="businessTime != null">
+                business_time,
+            </if>
+            <if test="recordNumber != null">
+                record_number,
+            </if>
+            <if test="licenseTime != null">
+                license_time,
+            </if>
+            <if test="product != null">
+                product,
+            </if>
+            <if test="qaAgreementTime != null">
+                qa_agreement_time,
+            </if>
+            <if test="businessAuthTime != null">
+                business_auth_time,
+            </if>
+            <if test="legalPersonAuthTime != null">
+                legal_person_auth_time,
+            </if>
+            <if test="other != null">
+                other
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="supplierName != null">
+                #{supplierName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizeStructureCode != null">
+                #{organizeStructureCode,jdbcType=VARCHAR},
+            </if>
+            <if test="businessTime != null">
+                #{businessTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recordNumber != null">
+                #{recordNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="licenseTime != null">
+                #{licenseTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="product != null">
+                #{product,jdbcType=VARCHAR},
+            </if>
+            <if test="qaAgreementTime != null">
+                #{qaAgreementTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="businessAuthTime != null">
+                #{businessAuthTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="legalPersonAuthTime != null">
+                #{legalPersonAuthTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="other != null">
+                #{other,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateSupplier" parameterType="com.jxm.business.model.SupplierParam">
+        update supplier
+        set supplier_name = #{supplierName,jdbcType=VARCHAR},
+        organize_structure_code=#{organizeStructureCode,jdbcType=VARCHAR},
+        business_time = #{businessTime,jdbcType=TIMESTAMP},
+        record_number=#{recordNumber,jdbcType=VARCHAR},
+        license_time = #{licenseTime,jdbcType=TIMESTAMP},
+        product = #{product,jdbcType=VARCHAR},
+        qa_agreement_time=#{qaAgreementTime,jdbcType=TIMESTAMP},
+        business_auth_time = #{businessAuthTime,jdbcType=TIMESTAMP},
+        legal_person_auth_time=#{legalPersonAuthTime,jdbcType=TIMESTAMP},
+        other=#{other,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from supplier where id=#{supplierId,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteBatchSupplier" parameterType="java.lang.Long">
+        delete from supplier
+        where
+        id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

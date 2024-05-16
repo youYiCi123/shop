@@ -14,6 +14,7 @@ public class CertificateParam {
     private String norms;//规格
     private Integer category;//证书类别（1 I类；2 II类；3 III类 ）
     private String registerNumber;//注册证号
+    private String prodLicenseNumber;//生产许可证号
     private Date approvalTime;//核准日期
     private Date effectiveTime;//有效日期
     private Date lastDeclareTime;//下次申报日期

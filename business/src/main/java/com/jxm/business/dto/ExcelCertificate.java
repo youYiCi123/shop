@@ -17,14 +17,16 @@ public class ExcelCertificate {
     private String category;
     @ExcelProperty(value = "注册证号",index = 3)
     private String registerNumber;
-    @ExcelProperty(value = "核准日期",index = 4)
+    @ExcelProperty(value = "生产许可证号",index = 4)
+    private String prodLicenseNumber;
+    @ExcelProperty(value = "核准日期",index = 5)
     private String approvalTime;
-    @ExcelProperty(value = "有效期",index = 5)
+    @ExcelProperty(value = "有效期",index = 6)
     private String effectiveTime;
-    @ExcelProperty(value = "下次申报日期",index = 6)
+    @ExcelProperty(value = "下次申报日期",index = 7)
     private String lastDeclareTime;
-    @ExcelProperty(value = "风险再评价",index = 7)
+    @ExcelProperty(value = "风险再评价",index = 8)
     private String riskEvaluateTime;
-    @ExcelProperty(value = "首次注册时间",index = 8)
+    @ExcelProperty(value = "首次注册时间",index = 9)
     private String firstRegisterTime;
 }

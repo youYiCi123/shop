@@ -157,6 +157,7 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
                     certificatePostParam.setCertificateName(certificateModel.getCertificateName());
                     certificatePostParam.setNorms(certificateModel.getNorms());
                     certificatePostParam.setRegisterNumber(certificateModel.getRegisterNumber());
+                    certificatePostParam.setProdLicenseNumber(certificateModel.getProdLicenseNumber());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     Date approvalTime = sdf.parse(certificateModel.getApprovalTime());
                     certificatePostParam.setApprovalTime(approvalTime);
