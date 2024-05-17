@@ -1,5 +1,6 @@
 package com.jxm.business.controller;
 
+import com.jxm.business.model.RemindParam;
 import com.jxm.business.model.SupplierParam;
 import com.jxm.business.service.SupplierService;
 import com.jxm.common.api.CommonPage;
@@ -82,4 +83,24 @@ public class SupplierController {
             return CommonResult.failed("删除供应商信息错误");
         return CommonResult.success();
     }
+
+    @ApiOperation(value = "获取供应商提醒人内容")
+    @RequestMapping(value = "/getRemind", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getRemind() {
+        RemindParam remind = supplierService.getRemind();
+        return CommonResult.success(remind);
+    }
+
+    @ApiOperation(value = "设置供应商提醒人内容")
+    @RequestMapping(value = "/setRemind", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult setRemind(@RequestBody RemindParam remindParam) {
+        int count= supplierService.setRemind(remindParam);
+        if (count<0) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success();
+    }
+
 }

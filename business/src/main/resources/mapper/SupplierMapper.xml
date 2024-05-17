@@ -143,4 +143,27 @@
         </foreach>
     </delete>
 
+    <select id="getAllSupplier" resultType="java.lang.String">
+        select
+        supplier_name
+        from
+        supplier
+    </select>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into supplier (
+        id, supplier_name,organize_structure_code,business_time,record_number,license_time,product,
+        qa_agreement_time,business_auth_time,legal_person_auth_time,other)
+        values
+        <foreach collection="list" item="supplierItem" index="index" separator=",">
+            (#{supplierItem.id},#{supplierItem.supplierName},
+            #{supplierItem.organizeStructureCode},#{supplierItem.businessTime,jdbcType=TIMESTAMP},
+            #{supplierItem.recordNumber},#{supplierItem.licenseTime,jdbcType=TIMESTAMP},#{supplierItem.product},
+            #{supplierItem.qaAgreementTime,jdbcType=TIMESTAMP},
+            #{supplierItem.businessAuthTime,jdbcType=TIMESTAMP},
+            #{supplierItem.legalPersonAuthTime,jdbcType=TIMESTAMP},
+            #{supplierItem.other})
+        </foreach>
+    </insert>
+
 </mapper>

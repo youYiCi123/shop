@@ -1,11 +1,7 @@
 package com.jxm.business.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.jxm.business.dto.CustomSalesParam;
 import com.jxm.business.model.CertificateParam;
-import com.jxm.business.model.CertificateRemindParam;
-import com.jxm.business.model.CustomParam;
-import com.jxm.business.model.NewsPostParam;
+import com.jxm.business.model.RemindParam;
 import com.jxm.business.service.CertificateService;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
@@ -50,15 +46,15 @@ public class CertificateController {
     @RequestMapping(value = "/getRemind", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getRemind() {
-        CertificateRemindParam remind = certificateService.getRemind();
+        RemindParam remind = certificateService.getRemind();
             return CommonResult.success(remind);
     }
 
     @ApiOperation(value = "设置证书提醒人内容")
     @RequestMapping(value = "/setRemind", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult setRemind(@RequestBody CertificateRemindParam certificateRemindParam) {
-        int count= certificateService.setRemind(certificateRemindParam);
+    public CommonResult setRemind(@RequestBody RemindParam remindParam) {
+        int count= certificateService.setRemind(remindParam);
         if (count<0) {
             return CommonResult.failed();
         }

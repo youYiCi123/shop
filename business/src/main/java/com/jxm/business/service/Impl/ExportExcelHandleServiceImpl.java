@@ -2,14 +2,17 @@ package com.jxm.business.service.Impl;
 
 import com.jxm.business.dto.ExcelCertificate;
 import com.jxm.business.dto.ExcelCustom;
+import com.jxm.business.dto.ExcelSupplier;
 import com.jxm.business.dto.UmsAdminConcat;
 import com.jxm.business.feign.UpstageService;
 import com.jxm.business.model.CertificateParam;
 import com.jxm.business.model.CustomPostParam;
 import com.jxm.business.model.CustomSaleParam;
+import com.jxm.business.model.SupplierParam;
 import com.jxm.business.service.CertificateService;
 import com.jxm.business.service.CustomService;
 import com.jxm.business.service.ExportExcelHandleService;
+import com.jxm.business.service.SupplierService;
 import com.jxm.common.generator.UniqueIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
 
     @Autowired
     private CertificateService certificateService;
+
+    @Autowired
+    private SupplierService supplierService;
 
     @Autowired
     private UpstageService upstageService;
@@ -111,6 +117,73 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
             if (addCustomInfoList.size() != 0)
             customService.saveCustomBatch(addCustomInfoList);
             customService.saveCustomSaleBatch(addCustomSaleList);
+            failCount = totalCount - successCount;
+            request.getSession().setAttribute("success", successCount);
+            request.getSession().setAttribute("fail", failCount);
+        } catch (Exception e) {
+            log.error("保存客户数据失败:", e);
+        }
+    }
+
+    @Override
+    public void saveSupplierInfo(List<ExcelSupplier> supplierModels) {
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        //总条件、失败条数
+        Integer totalCount = supplierModels.size(), successCount = 0, failCount = 0;
+
+        List<SupplierParam> supplierParams = new ArrayList<>();
+        try {
+            //校验excel数据是否重复
+            long sameSupplierNameCount = supplierModels.stream().map(ExcelSupplier::getSupplierName).filter(Objects::nonNull).distinct().count();
+            if (sameSupplierNameCount != totalCount) {
+                failCount = totalCount;
+                request.getSession().setAttribute("success", 0);
+                request.getSession().setAttribute("fail", failCount);
+                return;
+            }
+
+            //判断供应商是否已经存在
+            List<String> allSupplier = supplierService.getAllSupplier();
+            UniqueIdGenerator idGenerator = new UniqueIdGenerator(1, 1);
+            boolean addFlag = false;
+            for (ExcelSupplier supplierExportExcelModel : supplierModels) {
+                if (allSupplier.size() == 0) {
+                    addFlag = true;
+                } else {
+                    Optional<String> subOptional = allSupplier.stream().filter(Objects::nonNull).filter(t -> t.equals(supplierExportExcelModel.getSupplierName())).findFirst();
+                    if (!subOptional.isPresent()) {
+                        addFlag = true;
+                    }
+                }
+                if (addFlag) {
+                    SupplierParam supplierParam = new SupplierParam();
+                    long customId = idGenerator.nextId();
+                    supplierParam.setId(customId);
+                    supplierParam.setSupplierName(supplierExportExcelModel.getSupplierName());
+                    supplierParam.setOrganizeStructureCode(supplierExportExcelModel.getOrganizeStructureCode());
+                    supplierParam.setProduct(supplierExportExcelModel.getProduct());
+                    supplierParam.setRecordNumber(supplierExportExcelModel.getRecordNumber());
+                    supplierParam.setOther(supplierExportExcelModel.getOther());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date businessAuthTime = sdf.parse(supplierExportExcelModel.getBusinessAuthTime());
+                    supplierParam.setBusinessAuthTime(businessAuthTime);
+                    Date businessTime = sdf.parse(supplierExportExcelModel.getBusinessTime());
+                    supplierParam.setBusinessTime(businessTime);
+                    Date legalPersonAuthTime = sdf.parse(supplierExportExcelModel.getLegalPersonAuthTime());
+                    supplierParam.setLegalPersonAuthTime(legalPersonAuthTime);
+                    Date licenseTime = sdf.parse(supplierExportExcelModel.getLicenseTime());
+                    supplierParam.setLicenseTime(licenseTime);
+                    Date qaAgreementTime = sdf.parse(supplierExportExcelModel.getQaAgreementTime());
+                    supplierParam.setQaAgreementTime(qaAgreementTime);
+
+                    supplierParams.add(supplierParam);
+
+                    successCount++;
+                }
+            }
+            if (supplierParams.size() != 0)
+                supplierService.saveSupplierBatch(supplierParams);
             failCount = totalCount - successCount;
             request.getSession().setAttribute("success", successCount);
             request.getSession().setAttribute("fail", failCount);

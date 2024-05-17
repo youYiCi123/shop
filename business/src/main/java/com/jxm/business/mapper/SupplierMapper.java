@@ -18,4 +18,8 @@ public interface SupplierMapper {
 
     int deleteBatchSupplier(List<Long> idList);
 
+    List<String> getAllSupplier();
+
+    int saveBatch(List<SupplierParam> supplierParams);
+
 }

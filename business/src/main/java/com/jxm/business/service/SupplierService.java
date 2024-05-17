@@ -1,8 +1,9 @@
 package com.jxm.business.service;
 
+import com.jxm.business.dto.CertificateBriefDto;
 import com.jxm.business.dto.CustomSalesParam;
-import com.jxm.business.model.CustomParam;
-import com.jxm.business.model.SupplierParam;
+import com.jxm.business.dto.SupplierBriefDto;
+import com.jxm.business.model.*;
 
 import java.util.List;
 
@@ -19,4 +20,15 @@ public interface SupplierService {
     int delete(Long supplierId);
 
     int deleteBatchSupplier(List<Long> idList);
+
+    List<String> getAllSupplier();
+
+    int saveSupplierBatch(List<SupplierParam> supplierParams);
+
+    RemindParam getRemind();
+
+    int setRemind(RemindParam remindParam);
+
+    List<SupplierBriefDto> getSupplierByNearDeadline(int days);
+
 }

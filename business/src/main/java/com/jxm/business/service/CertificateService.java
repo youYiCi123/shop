@@ -1,11 +1,8 @@
 package com.jxm.business.service;
 
 import com.jxm.business.dto.CertificateBriefDto;
-import com.jxm.business.dto.CustomSalesParam;
 import com.jxm.business.model.CertificateParam;
-import com.jxm.business.model.CertificateRemindParam;
-import com.jxm.business.model.CustomParam;
-import com.jxm.business.model.CustomPostParam;
+import com.jxm.business.model.RemindParam;
 
 import java.util.List;
 
@@ -15,9 +12,9 @@ public interface CertificateService {
 
     CertificateParam queryContent(Long id);
 
-    CertificateRemindParam getRemind();
+    RemindParam getRemind();
 
-    int setRemind(CertificateRemindParam certificateRemindParam);
+    int setRemind(RemindParam remindParam);
 
     int add(CertificateParam certificateParam);
 
