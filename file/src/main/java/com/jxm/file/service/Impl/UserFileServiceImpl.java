@@ -77,6 +77,18 @@ public class UserFileServiceImpl implements IUserFileService {
     @Qualifier(value = "fileOperateLogMapper")
     private FileOperateLogMapper fileOperateLogMapper;
 
+
+    @Override
+    public List<RPanUserFileDisplayVO> searchForName(Long pageType, String keyword,Long depId) {
+        List<RPanUserFileDisplayVO> rPanUserFileDisplayVOS =new ArrayList<>();
+        if(Objects.equals(1L, pageType)){
+            rPanUserFileDisplayVOS = rPanUserFileMapper.searchForName(1L, keyword);
+        }else{
+            rPanUserFileDisplayVOS = rPanUserFileMapper.searchForName(depId,keyword);
+        }
+        return rPanUserFileDisplayVOS;
+    }
+
     /**
      * 获取文件列表
      */

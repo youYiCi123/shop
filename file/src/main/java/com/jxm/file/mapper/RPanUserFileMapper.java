@@ -18,6 +18,9 @@ import java.util.List;
 @Repository(value = "rPanUserFileMapper")
 public interface RPanUserFileMapper {
 
+    List<RPanUserFileDisplayVO> searchForName(@Param("depId") Long depId,
+                                              @Param("keyword") String keyword);
+
     List<DashboardUserFileParam> getTheNumberOfFileTypes();
 
     int insert(RPanUserFile record);

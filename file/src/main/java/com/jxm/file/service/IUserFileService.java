@@ -19,6 +19,8 @@ import java.util.List;
  */
 public interface IUserFileService {
 
+    List<RPanUserFileDisplayVO> searchForName(Long pageType,String keyword,Long depId);
+
     List<RPanUserFileDisplayVO> filesForTable(Long pageType,String keyword,Integer fileType,Integer pageNum,Integer pageSize,Long depId);
 
     List<RPanUserFileDisplayVO> list( Long pageType,Long parentId, String fileTypes, Long depId);

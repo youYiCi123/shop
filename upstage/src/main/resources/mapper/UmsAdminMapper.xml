@@ -155,7 +155,7 @@
   </delete>
 
   <insert id="saveBatch" parameterType="java.util.List">
-    insert into ums_admin (id,username,password,icon,email,nick_name,note,create_time,login_time,status,dep_id,duty)
+    insert into ums_admin (id,username,password,icon,email,nick_name,note,create_time,login_time,status,dep_id,duty,phone,sex)
     values
     <foreach collection="list" item="userItem" index="index" separator=",">
       (#{userItem.id},#{userItem.username},
@@ -163,7 +163,7 @@
       #{userItem.email},#{userItem.nickName},#{userItem.note},
       #{userItem.createTime,jdbcType=TIMESTAMP},
       #{userItem.loginTime,jdbcType=TIMESTAMP},
-      #{userItem.status},#{userItem.depId},#{userItem.duty})
+      #{userItem.status},#{userItem.depId},#{userItem.duty},#{userItem.phone},#{userItem.sex})
     </foreach>
   </insert>
 

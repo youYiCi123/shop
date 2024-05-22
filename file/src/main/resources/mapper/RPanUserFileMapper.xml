@@ -226,6 +226,32 @@
 
     <!--===================================================================自定义===================================================================-->
 
+    <select id="searchForName" resultType="com.jxm.file.vo.RPanUserFileDisplayVO">
+        SELECT
+        a1.file_id AS fileId,
+        a1.parent_id AS parentId,
+        a1.filename AS filename,
+        a1.folder_flag AS folderFlag,
+        a1.file_size_desc AS fileSizeDesc,
+        a1.file_type AS fileType,
+        a1.create_time AS createTime,
+        a1.update_time AS updateTime,
+        a1.user_name AS creatName
+        FROM
+        r_pan_user_file a1
+        <where>
+            a1.pass_flag =1
+            and a1.del_flag = 0
+            <if test="depId != null  and depId != ''">
+                and   a1.dep_id = #{depId,jdbcType=BIGINT}
+            </if>
+            <if test="keyword != null  and keyword != ''">
+                and a1.filename like concat('%', #{keyword}, '%')
+            </if>
+        </where>
+        order by a1.update_time desc
+    </select>
+
     <select id="selectRPanUserFileVOListByUserIdAndFileTypeAndParentIdAndDelFlag"
             resultType="com.jxm.file.vo.RPanUserFileVO">
         SELECT

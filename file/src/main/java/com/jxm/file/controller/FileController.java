@@ -61,6 +61,19 @@ public class FileController {
 
 
     @ApiOperation(
+            value = "搜索文件",
+            notes = "该接口提供了根据文件名搜索文件的功能"
+    )
+    @RequestMapping(value = "/searchForName", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<RPanUserFileDisplayVO>> searchForName(@RequestParam(value = "pageType", required = false) Long pageType,
+                                                                         @RequestParam(value = "keyword", required = false) String keyword) throws ParseException {
+        List<RPanUserFileDisplayVO> list = iUserFileService.searchForName(pageType, keyword,getLoginDepId());
+        return CommonResult.success(list);
+    }
+
+
+    @ApiOperation(
             value = "获取文件列表",
             notes = "该接口提供了获取文件列表的功能"
     )

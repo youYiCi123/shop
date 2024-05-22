@@ -66,7 +66,9 @@ public class FileOperateServiceImpl implements FileOperateService {
             fileOperateLogDetail.setExtendField(t.getExtendField());
             fileOperateLogDetail.setUserId(t.getUserId());
             UmsAdminConcat adminConcat = upstageService.getUmsAdminConcat(t.getUserId()).getData();
-            fileOperateLogDetail.setUserName(adminConcat.getNickName());
+            if(adminConcat!=null){
+                fileOperateLogDetail.setUserName(adminConcat.getNickName());
+            }
             RPanUserFile rPanFile = rPanUserFileMapper.selectByPrimaryKey(t.getFileId());
             fileOperateLogDetail.setFileName(rPanFile.getFilename());
             fileOperateLogDetails.add(fileOperateLogDetail);
