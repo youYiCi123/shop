@@ -7,7 +7,7 @@ seata:
     type: nacos
     nacos:
       server-addr: 127.0.0.1:8848
-      namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+      namespace: 24ae8979-b6a4-4d62-859d-e9c77e1acac8
       username: nacos
       password: nacos
   config:
@@ -17,7 +17,7 @@ seata:
       group: SEATA_GROUP
       username: nacos
       password: nacos
-      namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+      namespace: 24ae8979-b6a4-4d62-859d-e9c77e1acac8
       data-id: seataServer.properties
 
 spring:

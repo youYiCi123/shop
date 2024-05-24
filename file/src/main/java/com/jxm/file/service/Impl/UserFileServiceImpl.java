@@ -18,6 +18,7 @@ import com.jxm.file.entity.RPanFile;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.FileOperateLogMapper;
+import com.jxm.file.mapper.RPanFileMapper;
 import com.jxm.file.mapper.RPanUserFileMapper;
 import com.jxm.file.service.IFileService;
 import com.jxm.file.service.IUserFileService;
@@ -43,6 +44,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,6 +62,10 @@ public class UserFileServiceImpl implements IUserFileService {
     @Autowired
     @Qualifier(value = "rPanUserFileMapper")
     private RPanUserFileMapper rPanUserFileMapper;
+
+    @Autowired
+    @Qualifier(value = "rPanFileMapper")
+    private RPanFileMapper rPanFileMapper;
 
     @Autowired
     @Qualifier(value = "fileService")
@@ -102,6 +108,20 @@ public class UserFileServiceImpl implements IUserFileService {
             rPanUserFileDisplayVOS = rPanUserFileMapper.selectRPanUserFileVOListBykeyword(depId,keyword,fileType,FileConstant.DelFlagEnum.NO.getCode());
         }
         if (CollectionUtils.isNotEmpty(rPanUserFileDisplayVOS)) {
+            List<Long> parentIdList = rPanUserFileDisplayVOS.stream().map(RPanUserFileDisplayVO::getParentId).collect(Collectors.toList());
+            List<FilePositionBO> filePositionBOList = rPanUserFileMapper.selectFilePositionBOListByFileIds(parentIdList);
+            final Map<Long, String> filePositionMap = filePositionBOList.stream().collect(Collectors.toMap(FilePositionBO::getFileId, FilePositionBO::getFilename));
+            rPanUserFileDisplayVOS.stream().forEach(rPanUserFileSearchVO -> rPanUserFileSearchVO.setParentFilename(filePositionMap.get(rPanUserFileSearchVO.getParentId())));
+        }
+        return rPanUserFileDisplayVOS;
+    }
+
+    @Override
+    public List<RPanUserFileDisplayVO> filesFromRecycleBin(Integer pageNum, Integer pageSize, Long userId) {
+        List<RPanUserFileDisplayVO> rPanUserFileDisplayVOS =new ArrayList<>();
+        PageHelper.startPage(pageNum, pageSize);
+        rPanUserFileDisplayVOS = rPanUserFileMapper.filesFromRecycleBin(userId);
+        if (CollectionUtils.isNotEmpty(rPanUserFileDisplayVOS)){
             List<Long> parentIdList = rPanUserFileDisplayVOS.stream().map(RPanUserFileDisplayVO::getParentId).collect(Collectors.toList());
             List<FilePositionBO> filePositionBOList = rPanUserFileMapper.selectFilePositionBOListByFileIds(parentIdList);
             final Map<Long, String> filePositionMap = filePositionBOList.stream().collect(Collectors.toMap(FilePositionBO::getFileId, FilePositionBO::getFilename));
@@ -219,15 +239,26 @@ public class UserFileServiceImpl implements IUserFileService {
      * 删除文件(批量)
      */
     @Override
-    public void delete(Long fileId) {
+    public void delete(Long fileId,Long userId) {
 //        List<Long> idList = StringListUtil.string2LongList(fileIds);
-        if (rPanUserFileMapper.deleteFileById(fileId) == 0) {
+        if (rPanUserFileMapper.deleteFileById(fileId,userId) == 0) {
             Asserts.fail("删除失败");
         }
     }
 
     @Override
     public int deleteBatch(List<Long> idList) {
+        List<Long> realFileIds = rPanUserFileMapper.searchRealFileIds(idList);
+        List<String> filePaths = rPanFileMapper.filePathByIds(realFileIds);
+        for(String filePath:filePaths){
+            File file = new File(filePath);
+            if (file.delete()) {
+                System.out.println("文件删除成功");
+            } else {
+                System.out.println("文件删除失败:"+filePath);
+            }
+        }
+        rPanFileMapper.deleteByPrimaryKeys(realFileIds);
         return rPanUserFileMapper.deleteBatchReal(idList);
     }
 
@@ -239,7 +270,27 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
+    public int recoveryBatch(List<Long> idList) {
+        return rPanUserFileMapper.recoveryBatch(idList);
+    }
+
+    @Override
+    public int recoveryFile(Long id) {
+        return rPanUserFileMapper.recoveryFile(id);
+    }
+
+    @Override
     public int deleteFile(Long id) {
+        //查询出真实地址然后删除
+        Long realFileId = rPanUserFileMapper.searchRealFileId(id);
+        String filePath = rPanFileMapper.filePathById(realFileId);
+        File file = new File(filePath);
+        if (file.delete()) {
+            System.out.println("文件删除成功");
+        } else {
+            System.out.println("文件删除失败");
+        }
+        rPanFileMapper.deleteByPrimaryKey(realFileId);
         return rPanUserFileMapper.deleteById(id);
     }
 
@@ -586,6 +637,7 @@ public class UserFileServiceImpl implements IUserFileService {
     @Override
     public boolean secUpload(Integer pageType,Long parentId, String filename, String identifier, Object loginUser) {
         String jsonStr = JSONUtil.toJsonStr(loginUser);
+        //为什么
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         List<RPanFile> rPanFileList = iFileService.selectByIdentifier(identifier);
         if (CollectionUtils.isEmpty(rPanFileList)) {

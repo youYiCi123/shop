@@ -8,7 +8,7 @@ spring:
       discovery: #nacos服务注册发现
         username: nacos
         password: nacos
-        namespace: 5bf17891-cbb5-4379-87c7-328de242f02d #namespace默认public不用写命名空间Id,其余命名空间需要写id
+        namespace: 24ae8979-b6a4-4d62-859d-e9c77e1acac8 #namespace默认public不用写命名空间Id,其余命名空间需要写id
       config: #nacos配置中心
         file-extension: yaml #nacos客户端，默认是porperties的文件扩展名
-        namespace: 5bf17891-cbb5-4379-87c7-328de242f02d
+        namespace: 24ae8979-b6a4-4d62-859d-e9c77e1acac8

@@ -74,6 +74,20 @@ public class FileController {
 
 
     @ApiOperation(
+            value = "获取回收站文件列表",
+            notes = "该接口提供了获取文件列表的功能"
+    )
+    @RequestMapping(value = "/filesFromRecycleBin", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<RPanUserFileDisplayVO>> filesFromRecycleBin(
+                                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+    ) throws ParseException {
+        List<RPanUserFileDisplayVO> list = iUserFileService.filesFromRecycleBin(pageNum, pageSize, getLoginUserId());
+        return CommonResult.success(CommonPage.restPage(list));
+    }
+
+    @ApiOperation(
             value = "获取文件列表",
             notes = "该接口提供了获取文件列表的功能"
     )
@@ -187,8 +201,9 @@ public class FileController {
     )
     @PostMapping("/file/delete")
     public CommonResult delete(Long fileId) throws ParseException {
-        iUserFileService.delete(fileId);
-        iUserFileService.deleteLog(fileId,getLoginUserId());
+        Long userId = getLoginUserId();
+        iUserFileService.delete(fileId,userId);
+        iUserFileService.deleteLog(fileId,userId);
         return CommonResult.success();
     }
 
@@ -216,6 +231,30 @@ public class FileController {
         }
     }
 
+    @ApiOperation("批量删除文件 --回收站页面")
+    @RequestMapping(value = "/file/deleteRecycle/batch", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteRecycleBatch(@RequestBody Long[] multipleSelectionId) {
+        List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        int count = iUserFileService.deleteBatch(idList);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation(value = "删除文件--回收站页面")
+    @RequestMapping(value = "/file/deleteRecycle/fileById/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult deleteRecycleFileById(@PathVariable("id") Long id) {
+        int count = iUserFileService.deleteFile(id);
+        if (count == 1) {
+            return CommonResult.success(null);
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
     @ApiOperation("批量审核文件信息")
     @RequestMapping(value = "/file/pass/batch", method = RequestMethod.POST)
     @ResponseBody
@@ -229,12 +268,38 @@ public class FileController {
         return CommonResult.failed();
     }
 
+
+
     @ApiOperation(value = "审核")
     @RequestMapping(value = "/file/pass/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult passFile(@PathVariable("id") Long id) throws ParseException {
         Object loginUser = getLoginUser();
         int count = iUserFileService.passFile(id, loginUser);
+        if (count == 1) {
+            return CommonResult.success(null);
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+    @ApiOperation("批量恢复文件")
+    @RequestMapping(value = "/file/recovery/batch", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult recoveryBatch(@RequestBody Long[] multipleSelectionId){
+        List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        int count = iUserFileService.recoveryBatch(idList);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation(value = "恢复文件")
+    @RequestMapping(value = "/file/recovery/fileById/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult recoveryFile(@PathVariable("id") Long id){
+        int count = iUserFileService.recoveryFile(id);
         if (count == 1) {
             return CommonResult.success(null);
         } else {

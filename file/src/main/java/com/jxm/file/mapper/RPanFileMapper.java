@@ -14,6 +14,8 @@ public interface RPanFileMapper {
 
     int deleteByPrimaryKey(Long fileId);
 
+    int deleteByPrimaryKeys(List<Long> fileIds);
+
     int insert(RPanFile record);
 
     int insertSelective(RPanFile record);
@@ -31,5 +33,9 @@ public interface RPanFileMapper {
     List<RPanFile> selectByIdentifier(@Param("identifier") String identifier);
 
     List<RPanFile> selectRPanFileList(@Param("batchIndex") Long batchIndex, @Param("batchSize") Long batchSize);
+
+    String filePathById(Long fileId);
+
+    List<String> filePathByIds(@Param("realFileIds") List<Long> realFileIds);
 
 }

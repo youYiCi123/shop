@@ -38,6 +38,8 @@ public interface RPanUserFileMapper {
                                                                   @Param("fileType") Integer fileType,
                                                                   @Param("delFlag") Integer delFlag);
 
+    List<RPanUserFileDisplayVO> filesFromRecycleBin(@Param("userId") Long userId);
+
     List<RPanUserFileDisplayVO> selectRPanUserFileVOListByUserId(@Param("depId") Long depId,
                                                                  @Param("passFlag") Integer passFlag,
                                                                  @Param("fileTypeArray") List<Integer> fileTypeArray,
@@ -56,17 +58,21 @@ public interface RPanUserFileMapper {
                                                   @Param("filename") String filename,
                                                   @Param("parentId") Long parentId);
 
-    int deleteFileById(Long fileId);
+    int deleteFileById(@Param("fileId") Long fileId,@Param("userId") Long userId);
 
     int deleteBatchReal(@Param("idList") List<Long> idList);
 
     int passBatch(@Param("idList") List<Long> idList,@Param("passUserId") Long passUserId,@Param("passUserName") String passUserName);
+
+    int recoveryBatch(@Param("idList") List<Long> idList);
 
     int deleteById(Long id);
 
     Long getUserByFileId(@Param("fileId") Long fileId);
 
     int passFileById(@Param("id") Long id,@Param("passUserId") Long passUserId,@Param("passUserName") String passUserName);
+
+    int recoveryFile(@Param("id") Long id);
 
     List<RPanUserFile> selectFolderListByUserId(@Param("rootFileId") Long rootFileId);
 
@@ -97,5 +103,9 @@ public interface RPanUserFileMapper {
     List<Long> selectAvailableFileIdListByParentId(@Param("parentId") Long parentId);
 
     List<FilePositionBO> selectFilePositionBOListByFileIds(@Param("fileIdList") List<Long> fileIdList);
+
+    Long searchRealFileId(Long fileId);
+
+    List<Long> searchRealFileIds(@Param("idList") List<Long> idList);
 
 }

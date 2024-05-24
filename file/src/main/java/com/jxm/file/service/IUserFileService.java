@@ -23,6 +23,8 @@ public interface IUserFileService {
 
     List<RPanUserFileDisplayVO> filesForTable(Long pageType,String keyword,Integer fileType,Integer pageNum,Integer pageSize,Long depId);
 
+    List<RPanUserFileDisplayVO> filesFromRecycleBin(Integer pageNum,Integer pageSize,Long userId);
+
     List<RPanUserFileDisplayVO> list( Long pageType,Long parentId, String fileTypes, Long depId);
 
     List<RPanUserFileVO> list(String fileIds);
@@ -35,7 +37,7 @@ public interface IUserFileService {
 
     void updateFilename(Long fileId, String newFilename, Object loginUser);
 
-    void delete(Long fileId);
+    void delete(Long fileId, Long loginUserId);
 
     /**
      * 批量删除指定用户
@@ -46,11 +48,16 @@ public interface IUserFileService {
     @Transactional
     int passBatch(List<Long> idList,Object loginUser);
 
+    @Transactional
+    int recoveryBatch(List<Long> idList);
+
     int deleteFile(Long id);
 
     Long getUserByFileId(Long fileId);
 
     int passFile(Long id,Object loginUser);
+
+    int recoveryFile(Long id);
 
     void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename);
 

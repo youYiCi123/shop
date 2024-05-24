@@ -27,6 +27,17 @@
         from r_pan_file
         where file_id = #{id,jdbcType=BIGINT}
     </delete>
+
+    <delete id="deleteByPrimaryKeys" parameterType="java.lang.Long">
+        delete
+        from r_pan_file
+        WHERE
+        file_id IN
+        <foreach collection="fileIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
     <insert id="insert" parameterType="com.jxm.file.entity.RPanFile">
         insert into r_pan_file (file_id, filename, real_path,
                                 file_size, file_size_desc, file_suffix,
@@ -188,6 +199,25 @@
         WHERE
             file_id &gt;= ( SELECT file_id FROM r_pan_file LIMIT #{batchIndex}, 1 )
         LIMIT #{batchSize}
+    </select>
+
+    <select id="filePathById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select
+        real_path
+        from r_pan_file
+        where file_id = #{fileId,jdbcType=BIGINT}
+    </select>
+
+    <select id="filePathByIds" resultType="java.lang.String">
+        SELECT
+        real_path
+        FROM
+        r_pan_file
+        WHERE
+        file_id IN
+        <foreach collection="realFileIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
     </select>
 
 </mapper>

@@ -70,7 +70,9 @@ public class FileOperateServiceImpl implements FileOperateService {
                 fileOperateLogDetail.setUserName(adminConcat.getNickName());
             }
             RPanUserFile rPanFile = rPanUserFileMapper.selectByPrimaryKey(t.getFileId());
-            fileOperateLogDetail.setFileName(rPanFile.getFilename());
+            if(rPanFile!=null){
+                fileOperateLogDetail.setFileName(rPanFile.getFilename());
+            }
             fileOperateLogDetails.add(fileOperateLogDetail);
         });
         CommonPage<FileOperateLogDetail> fileOperateLogDetailCommonPage=new CommonPage<>();
