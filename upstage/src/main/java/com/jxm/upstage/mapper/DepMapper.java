@@ -25,4 +25,5 @@ public interface DepMapper {
 
     List<depUserRelation> selectUserRelation();
 
+    Long selectDepHeadIdByUser(Long userId);
 }

@@ -52,4 +52,6 @@ public interface DepService {
      */
     List<depUserRelation> selectUserRelation();
 
+    Long selectDepHeadIdByUser(Long userId);
+
 }

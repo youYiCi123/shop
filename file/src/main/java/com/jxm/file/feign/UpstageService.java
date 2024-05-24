@@ -25,4 +25,7 @@ public interface UpstageService {
 
     @GetMapping(value = "/admin/getUmsAdminConcat")
     CommonResult<UmsAdminConcat> getUmsAdminConcat(@RequestParam("id") Long id);
+
+    @GetMapping(value = "/dep/selectDepHeadIdByUser")
+    CommonResult<Long> selectDepHeadIdByUser(@RequestParam("userId") Long userId);
 }

@@ -202,9 +202,16 @@ public class FileController {
     @PostMapping("/file/delete")
     public CommonResult delete(Long fileId) throws ParseException {
         Long userId = getLoginUserId();
+        //文件创建人本人、文件创建人的部门长,才可以删除文件
+        Long createUserId = iUserFileService.getUserByFileId(fileId);
+        Long depHeadId = upstageService.selectDepHeadIdByUser(createUserId).getData();
+        if(userId.equals(createUserId)||userId.equals(depHeadId)){
         iUserFileService.delete(fileId,userId);
         iUserFileService.deleteLog(fileId,userId);
         return CommonResult.success();
+        }else{
+            return CommonResult.failed("文件上传人本人或其部门长,才可该删除文件");
+        }
     }
 
     @ApiOperation("批量删除文件信息 --审核页面")

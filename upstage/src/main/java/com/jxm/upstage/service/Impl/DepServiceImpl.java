@@ -56,6 +56,7 @@ public class DepServiceImpl implements DepService {
             umsAdmin.setSex(depParam.getLeadSex());
             umsAdmin.setDuty(dep.getDepName()+" 负责人");
             umsAdmin.setPassword(BCrypt.hashpw("123456"));
+            umsAdmin.setPhone(leadPhone);
             umsAdmin.setEmail(depParam.getLeadEmail());
             umsAdmin.setDepId(depId);
             umsAdmin.setCreateTime(new Date());
@@ -119,5 +120,10 @@ public class DepServiceImpl implements DepService {
     @Override
     public List<depUserRelation> selectUserRelation(){
         return  depMapper.selectUserRelation();
+    }
+
+    @Override
+    public Long selectDepHeadIdByUser(Long userId) {
+        return depMapper.selectDepHeadIdByUser(userId);
     }
 }

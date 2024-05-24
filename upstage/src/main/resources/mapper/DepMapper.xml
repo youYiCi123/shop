@@ -12,7 +12,7 @@
 
     <resultMap id="UserChildMap" type="com.jxm.upstage.dto.UmsAdminConcat">
         <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
     </resultMap>
@@ -55,11 +55,11 @@
     </select>
 
     <select id="getDepByDeptId" parameterType="java.lang.Long" resultMap="BaseResultMap">
-                SELECT
+        SELECT
         <include refid="Base_Column_List"/>
         FROM
-          dep
-       where
+        dep
+        where
         id=#{deptId,jdbcType=VARCHAR}
     </select>
 
@@ -111,8 +111,8 @@
         select
         <include refid="Base_Column_List"/>
         from dep
-        <if test="keyword != null  and keyword != ''" >
-           where dep_name like concat('%', #{keyword}, '%')
+        <if test="keyword != null  and keyword != ''">
+            where dep_name like concat('%', #{keyword}, '%')
         </if>
     </select>
 
@@ -149,4 +149,13 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectDepHeadIdByUser" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT ua.id
+        FROM ums_admin ua
+        JOIN dep d ON d.lead_phone = ua.phone
+        JOIN ums_admin ua2 ON ua2.dep_id = d.id
+        WHERE ua2.id = #{userId};
+    </select>
+
 </mapper>

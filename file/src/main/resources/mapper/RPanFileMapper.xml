@@ -27,7 +27,7 @@
         from r_pan_file
         where file_id = #{id,jdbcType=BIGINT}
     </delete>
-    <!--批量-->
+
     <delete id="deleteByPrimaryKeys" parameterType="java.lang.Long">
         delete
         from r_pan_file

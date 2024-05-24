@@ -117,4 +117,11 @@ public class depController {
            List<depUserRelation> depUserRelationList= depService.selectUserRelation();
             return CommonResult.success(depUserRelationList);
     }
+
+    @ApiOperation("根据用户id获取部门长id")
+    @RequestMapping(value = "/selectDepHeadIdByUser", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<Long> selectDepHeadIdByUser(Long userId) {
+        return CommonResult.success(depService.selectDepHeadIdByUser(userId));
+    }
 }
