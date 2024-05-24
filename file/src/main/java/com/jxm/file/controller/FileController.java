@@ -295,7 +295,7 @@ public class FileController {
         return CommonResult.failed();
     }
 
-    @ApiOperation(value = "恢复文件")
+    @ApiOperation(value = "恢复文件 回收站")
     @RequestMapping(value = "/file/recovery/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult recoveryFile(@PathVariable("id") Long id){

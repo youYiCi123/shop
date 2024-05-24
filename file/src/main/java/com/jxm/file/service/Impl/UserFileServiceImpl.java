@@ -273,7 +273,7 @@ public class UserFileServiceImpl implements IUserFileService {
     public int recoveryBatch(List<Long> idList) {
         return rPanUserFileMapper.recoveryBatch(idList);
     }
-
+//回收站
     @Override
     public int recoveryFile(Long id) {
         return rPanUserFileMapper.recoveryFile(id);

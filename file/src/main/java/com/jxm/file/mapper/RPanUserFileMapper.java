@@ -71,7 +71,7 @@ public interface RPanUserFileMapper {
     Long getUserByFileId(@Param("fileId") Long fileId);
 
     int passFileById(@Param("id") Long id,@Param("passUserId") Long passUserId,@Param("passUserName") String passUserName);
-
+    //回收站
     int recoveryFile(@Param("id") Long id);
 
     List<RPanUserFile> selectFolderListByUserId(@Param("rootFileId") Long rootFileId);

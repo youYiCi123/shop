@@ -56,7 +56,7 @@ public interface IUserFileService {
     Long getUserByFileId(Long fileId);
 
     int passFile(Long id,Object loginUser);
-
+    //回收站
     int recoveryFile(Long id);
 
     void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename);

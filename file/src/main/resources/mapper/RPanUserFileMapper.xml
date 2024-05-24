@@ -412,7 +412,7 @@
         pass_time = NOW()
         where file_id = #{id,jdbcType=BIGINT}
     </update>
-
+<!--回收站-->
     <update id="recoveryFile">
         update r_pan_user_file
         SET

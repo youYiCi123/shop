@@ -14,6 +14,7 @@ public interface RPanFileMapper {
 
     int deleteByPrimaryKey(Long fileId);
 
+    //批量删除
     int deleteByPrimaryKeys(List<Long> fileIds);
 
     int insert(RPanFile record);
