@@ -96,6 +96,7 @@ public class UserController {
     @ResponseBody
     public CommonResult getCurrentAdmin() throws ParseException {
         UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        //获取所属部门长id
         Map<String, Object> data = new HashMap<>();
         data.put("userId", umsAdmin.getId());
         data.put("nickName", umsAdmin.getNickName());

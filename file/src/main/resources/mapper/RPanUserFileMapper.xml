@@ -677,4 +677,13 @@
         </foreach>
     </select>
 
+    <select id="getFileNameById" resultType="java.lang.String">
+        SELECT
+            filename
+        FROM
+            r_pan_user_file
+        WHERE
+            file_id = #{fileId}
+    </select>
+
 </mapper>

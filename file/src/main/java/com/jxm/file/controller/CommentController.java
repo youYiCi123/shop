@@ -7,9 +7,11 @@ import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.file.dto.Comment;
 import com.jxm.file.dto.UserDepDto;
+import com.jxm.file.entity.Message;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.service.CommentService;
 import com.jxm.file.service.IUserFileService;
+import com.jxm.file.service.MessageService;
 import com.jxm.file.vo.PageComment;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +40,8 @@ public class CommentController {
     private CommentService commentService;
     @Autowired
     private UpstageService upstageService;
+    @Autowired
+    private MessageService messageService;
     @Autowired
     @Qualifier(value = "userFileService")
     private IUserFileService iUserFileService;
@@ -69,6 +73,8 @@ public class CommentController {
                 comment.getPage() == null || comment.getParentCommentId() == null) {
             return CommonResult.failed("参数有误");
         }
+        String jsonStr = JSONUtil.toJsonStr(upstageService.getCurrentAdmin().getData());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         //父评论
         com.jxm.file.entity.Comment parentComment = null;
         //对于有指定父评论的评论，应该以父评论为准，只判断页面可能会被绕过“评论开启状态检测”
@@ -79,22 +85,38 @@ public class CommentController {
             Long articleId = page == 0 ? parentComment.getArticle().getId() : null;
             comment.setPage(page);
             comment.setJumpId(articleId);
+            //并消息提醒父评论者被评论
+            Message message = new Message();
+            message.setCreateDate(new Date());
+            message.setReminderId(parentComment.getUserId());
+            message.setWhoName(userDepDto.getNickName());
+            message.setFileName(iUserFileService.getFileNameById(articleId));
+            message.setMessageType(2);
+            messageService.insert(message);
         } else {
             //当前评论为顶级评论
             if (comment.getPage() != 0) {
                 comment.setJumpId(null);
             }
         }
-        String jsonStr = JSONUtil.toJsonStr(upstageService.getCurrentAdmin().getData());
-        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+
         //设置评论者信息
         Long authorId = iUserFileService.getUserByFileId(comment.getJumpId());
+        //消息提醒原作者有新消息
+        Message message = new Message();
+        message.setCreateDate(new Date());
+        message.setReminderId(authorId);
+        message.setWhoName(userDepDto.getNickName());
+        message.setFileName(iUserFileService.getFileNameById(comment.getJumpId()));
+        message.setMessageType(1);
+        messageService.insert(message);
         if (userDepDto.getUserId().equals(authorId)) {
             comment.setAdminComment(true);
         } else {
             comment.setAdminComment(false);
         }
         comment.setPublished(false);
+        comment.setUserId(userDepDto.getUserId());
         comment.setNickname(userDepDto.getNickName());
         comment.setAvatar(userDepDto.getIcon());
         comment.setCreateTime(new Date());

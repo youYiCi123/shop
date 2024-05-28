@@ -23,4 +23,6 @@ public class NewsPostParam implements Serializable {
     private Long createdAdminId;
     //创建人
     private String createdAdminName;
+    //修改日期
+    private Date updateTime;
 }

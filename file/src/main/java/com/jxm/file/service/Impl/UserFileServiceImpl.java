@@ -315,9 +315,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param totalSize
      */
     @Override
-    public void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename) {
-        String jsonStr = JSONUtil.toJsonStr(loginUser);
-        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+    public void upload(MultipartFile file, Long parentId,UserDepDto userDepDto, String identifier, Long totalSize, String filename) {
         RPanFile rPanFile = uploadRealFile(file, userDepDto.getDepId(), identifier, totalSize, FileUtil.getFileSuffix(filename));
         saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),userDepDto.getDepId());
     }
@@ -684,9 +682,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param totalSize
      */
     @Override
-    public void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, Object loginUser) {
-        String jsonStr = JSONUtil.toJsonStr(loginUser);
-        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+    public void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, UserDepDto userDepDto) {
         RPanFile rPanFile = iFileService.mergeChunks(identifier, totalSize, userDepDto.getUserId(), filename);
         if(pageType==1){//企业
             saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),1L);
@@ -702,6 +698,11 @@ public class UserFileServiceImpl implements IUserFileService {
             theNumberOfFileTypes=Collections.emptyList();
         }
         return theNumberOfFileTypes;
+    }
+
+    @Override
+    public String getFileNameById(Long fileId) {
+        return rPanUserFileMapper.getFileNameById(fileId);
     }
 
     /******************************************************私有****************************************************/

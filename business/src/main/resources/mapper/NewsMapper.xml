@@ -8,11 +8,12 @@
         <result column="created_admin_id" jdbcType="INTEGER" property="createdAdminId"/>
         <result column="news_type" jdbcType="BIGINT" property="newsType"/>
         <result column="created_admin_name" jdbcType="VARCHAR" property="createdAdminName"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="view_count" jdbcType="INTEGER" property="viewCount"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, theme,created_time,news_type,created_admin_id,created_admin_name,view_count
+        id, theme,created_time,news_type,created_admin_id,created_admin_name,update_time,view_count
     </sql>
 
     <delete id="delete" parameterType="java.lang.Long">
@@ -29,7 +30,7 @@
     </delete>
 
     <select id="getNewsByDateAndKeyword" resultType="com.jxm.business.model.NewsPostParam">
-        select id, theme,created_time,news_type,created_admin_id,created_admin_name from news_brief
+        select id, theme,created_time,news_type,created_admin_id,created_admin_name,update_time from news_brief
         <where>
             <if test="keyword!=null and keyword!=''">
                 theme like concat('%', #{keyword}, '%')
@@ -95,6 +96,7 @@
     <update id="update" parameterType="com.jxm.business.model.NewsPostParam">
         update news_brief
         <set>
+            update_time=now(),
             <if test="theme != null">
                 theme = #{theme,jdbcType=VARCHAR},
             </if>

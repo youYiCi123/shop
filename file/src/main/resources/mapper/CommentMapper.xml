@@ -3,6 +3,7 @@
 <mapper namespace="com.jxm.file.mapper.CommentMapper">
     <resultMap id="comment" type="com.jxm.file.entity.Comment">
         <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
         <result property="content" column="content"/>
         <result property="avatar" column="avatar"/>
@@ -68,7 +69,7 @@
 
     <!--按id查询评论-->
     <select id="getCommentById" resultMap="comment">
-        select c.id, c.nickname, c.content, c.avatar, c.create_time, c.is_published, c.is_admin_comment, c.page,c.parent_comment_id,c.jump_id, b.filename
+        select c.id,c.user_id, c.nickname, c.content, c.avatar, c.create_time, c.is_published, c.is_admin_comment, c.page,c.parent_comment_id,c.jump_id, b.filename
         from comment as c left join r_pan_user_file as b on c.jump_id=b.file_id
         where c.id=#{id}
     </select>
@@ -124,9 +125,9 @@
 
     <!--保存评论-->
     <insert id="saveComment" useGeneratedKeys="true" keyProperty="id">
-        insert into comment (nickname, content, avatar, create_time,is_published, is_admin_comment,
+        insert into comment (user_id,nickname, content, avatar, create_time,is_published, is_admin_comment,
         page, parent_comment_id, jump_id)
-        values (#{nickname}, #{content}, #{avatar}, #{createTime}, #{published}, #{adminComment},
+        values (#{userId},#{nickname}, #{content}, #{avatar}, #{createTime}, #{published}, #{adminComment},
         #{page}, #{parentCommentId}, #{jumpId})
     </insert>
 </mapper>

@@ -8,12 +8,14 @@ import com.jxm.file.dto.FileOperateLogDetail;
 import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.dto.UserUploadCountDto;
 import com.jxm.file.entity.FileOperateLog;
+import com.jxm.file.entity.Message;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.RPanUserFileMapper;
 import com.jxm.file.po.*;
 import com.jxm.file.service.FileOperateService;
 import com.jxm.file.service.IUserFileService;
+import com.jxm.file.service.MessageService;
 import com.jxm.file.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,6 +58,9 @@ public class FileController {
 
     @Autowired
     private UpstageService upstageService;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private FileOperateService fileOperateService;
@@ -320,8 +326,9 @@ public class FileController {
     )
     @PostMapping("file/upload")
     public CommonResult upload(@Validated FileUploadPO fileUploadPO) throws ParseException {
-        Object loginUser = getLoginUser();
-        iUserFileService.upload(fileUploadPO.getFile(), fileUploadPO.getParentId(), loginUser, fileUploadPO.getIdentifier(), fileUploadPO.getTotalSize(), fileUploadPO.getFilename());
+        String jsonStr = JSONUtil.toJsonStr(getLoginUser());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        iUserFileService.upload(fileUploadPO.getFile(), fileUploadPO.getParentId(), userDepDto, fileUploadPO.getIdentifier(), fileUploadPO.getTotalSize(), fileUploadPO.getFilename());
         return CommonResult.success();
     }
 
@@ -351,8 +358,19 @@ public class FileController {
     )
     @PostMapping("file/upload/merge")
     public CommonResult mergeChunks(@Validated @RequestBody FileChunkMergePO fileChunkMergePO) throws ParseException {
-        Object loginUser = getLoginUser();
-        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), loginUser);
+        String jsonStr = JSONUtil.toJsonStr(getLoginUser());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        Long leaderId = upstageService.selectDepHeadIdByUser(userDepDto.getUserId()).getData();
+        if(!leaderId.equals(userDepDto.getUserId())){
+            Message message = new Message();
+            message.setWhoName(userDepDto.getNickName());
+            message.setFileName(fileChunkMergePO.getFilename());
+            message.setMessageType(3);
+            message.setCreateDate(new Date());
+            message.setReminderId(leaderId);
+            messageService.insert(message);
+        }
+        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), userDepDto);
         return CommonResult.success();
     }
 

@@ -108,4 +108,6 @@ public interface RPanUserFileMapper {
 
     List<Long> searchRealFileIds(@Param("idList") List<Long> idList);
 
+    String getFileNameById(Long fileId);
+
 }

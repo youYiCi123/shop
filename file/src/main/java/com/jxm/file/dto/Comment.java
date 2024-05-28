@@ -18,6 +18,7 @@ import java.util.Date;
 @ToString
 public class Comment {
 	private Long id;
+	private Long userId;//用户id
 	private String nickname;//昵称
 	private String content;//评论内容
 	private String avatar;//头像(图片路径)

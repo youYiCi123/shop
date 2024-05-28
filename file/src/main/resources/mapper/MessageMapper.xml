@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.file.mapper.MessageMapper">
+    <resultMap id="BaseResultMap" type="com.jxm.file.entity.Message">
+        <id property="id" jdbcType="INTEGER" column="id"/>
+        <result property="reminderId" jdbcType="BIGINT" column="reminder_id"/>
+        <result property="createDate" jdbcType="TIMESTAMP" column="create_date"/>
+        <result property="whoName" jdbcType="VARCHAR" column="who_name"/>
+        <result property="fileName" jdbcType="VARCHAR" column="file_name"/>
+        <result property="messageType" jdbcType="INTEGER" column="message_type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, reminder_id, create_date, who_name, file_name, message_type
+    </sql>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from message
+        where reminder_id = #{remindId,jdbcType=BIGINT}
+        order by create_date desc
+    </select>
+
+    <select id="getCountByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select
+        count(*)
+        from message
+        where reminder_id = #{remindId,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteAllByUserId" parameterType="java.lang.Long">
+        delete from message where reminder_id = #{remindId,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.jxm.file.entity.Message">
+                insert into message (reminder_id, create_date,
+                                      who_name, file_name, message_type)
+        values (#{reminderId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+                #{whoName,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{messageType,jdbcType=INTEGER})
+    </insert>
+
+</mapper>

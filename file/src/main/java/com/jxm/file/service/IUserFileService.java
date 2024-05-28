@@ -3,6 +3,7 @@ package com.jxm.file.service;
 
 import com.jxm.file.dto.DashboardUserFileParam;
 import com.jxm.file.dto.FileOperateLogDetail;
+import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.vo.*;
@@ -59,7 +60,7 @@ public interface IUserFileService {
     //回收站
     int recoveryFile(Long id);
 
-    void upload(MultipartFile file, Long parentId, Object loginUser, String identifier, Long totalSize, String filename);
+    void upload(MultipartFile file, Long parentId, UserDepDto userDepDto, String identifier, Long totalSize, String filename);
 
     FileChunkUploadVO uploadWithChunk(MultipartFile file, Long userId, String identifier, Integer totalChunks, Integer chunkNumber, Long totalSize, String filename);
 
@@ -103,11 +104,13 @@ public interface IUserFileService {
 
     CheckFileChunkUploadVO checkUploadWithChunk(Long userId, String identifier);
 
-    void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, Object loginUser);
+    void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, UserDepDto userDepDto);
 
     /**
      * 获取企业文件类型数量信息
      */
     List<DashboardUserFileParam> getTheNumberOfFileTypes();
+
+    String getFileNameById(Long fileId);
 
 }
