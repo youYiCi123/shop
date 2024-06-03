@@ -87,6 +87,9 @@
             <if test="updateTime != null">
                 update_time,
             </if>
+            <if test="waterMaterFlag != null">
+                water_mater_flag,
+            </if>
             <if test="depId != null">
                 dep_id,
             </if>
@@ -131,6 +134,9 @@
             </if>
             <if test="updateTime != null">
                 #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="waterMaterFlag != null">
+                #{waterMaterFlag,jdbcType=INTEGER},
             </if>
             <if test="depId != null">
                 #{depId,jdbcType=VARCHAR},

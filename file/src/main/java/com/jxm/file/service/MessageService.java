@@ -8,9 +8,13 @@ public interface MessageService {
 
     int insert(Message message);
 
-    int getCountByUserId(Long remindId);
+    int getUnReadCount(Long remindId);
 
-    List<Message> selectByUserId(Long remindId);
+    int readSingleMessage(Integer id);
 
-    int deleteAllByUserId(Long remindId);
+    List<Message> selectMessage(Long remindId,Integer readFlag,Integer pageNum,Integer pageSize);
+
+    int readAll(Long remindId);
+
+    int deleteReadAll(Long remindId);
 }

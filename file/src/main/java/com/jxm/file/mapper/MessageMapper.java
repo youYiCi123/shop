@@ -8,9 +8,15 @@ public interface MessageMapper {
 
     int insert(Message message);
 
-    int getCountByUserId(Long remindId);
+    //获取未读消息数量
+    int getUnReadCount(Long remindId);
 
-    List<Message> selectByUserId(Long remindId);
+    //对单条数据已读
+    int readSingleMessage(Integer id);
 
-    int deleteAllByUserId(Long remindId);
+    List<Message> selectMessage(Long remindId,Integer readFlag);
+
+    int readAll(Long remindId);
+
+    int deleteReadAll(Long remindId);
 }

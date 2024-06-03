@@ -8,35 +8,45 @@
         <result property="whoName" jdbcType="VARCHAR" column="who_name"/>
         <result property="fileName" jdbcType="VARCHAR" column="file_name"/>
         <result property="messageType" jdbcType="INTEGER" column="message_type"/>
+        <result property="readFlag" jdbcType="INTEGER" column="read_flag"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-        id, reminder_id, create_date, who_name, file_name, message_type
+        id, reminder_id, create_date, who_name, file_name, message_type,read_flag
     </sql>
 
-    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="selectMessage"  resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from message
-        where reminder_id = #{remindId,jdbcType=BIGINT}
+        where reminder_id = #{remindId,jdbcType=BIGINT} and read_flag = #{readFlag,jdbcType=INTEGER}
         order by create_date desc
     </select>
 
-    <select id="getCountByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    <select id="getUnReadCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select
         count(*)
         from message
-        where reminder_id = #{remindId,jdbcType=BIGINT}
+        where reminder_id = #{remindId,jdbcType=BIGINT} and read_flag=0
     </select>
 
-    <delete id="deleteAllByUserId" parameterType="java.lang.Long">
-        delete from message where reminder_id = #{remindId,jdbcType=BIGINT}
+    <update id="readSingleMessage" parameterType="java.lang.Integer">
+        update message set read_flag=1 where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="readAll" parameterType="java.lang.Long">
+        update message set read_flag=1 where reminder_id = #{remindId,jdbcType=BIGINT} and read_flag=0
+    </update>
+
+    <delete id="deleteReadAll" parameterType="java.lang.Long">
+        delete from message where reminder_id = #{remindId,jdbcType=BIGINT} and read_flag=1
     </delete>
 
     <insert id="insert" parameterType="com.jxm.file.entity.Message">
                 insert into message (reminder_id, create_date,
-                                      who_name, file_name, message_type)
+                                      who_name, file_name, message_type,read_flag)
         values (#{reminderId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
-                #{whoName,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{messageType,jdbcType=INTEGER})
+                #{whoName,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{messageType,jdbcType=INTEGER},#{readFlag,jdbcType=INTEGER})
     </insert>
 
 </mapper>

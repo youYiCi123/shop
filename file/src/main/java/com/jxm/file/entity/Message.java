@@ -15,4 +15,5 @@ public class Message {
     private String whoName;
     private String fileName;
     private Integer messageType;
+    private Integer readFlag;
 }

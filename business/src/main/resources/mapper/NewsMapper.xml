@@ -30,7 +30,7 @@
     </delete>
 
     <select id="getNewsByDateAndKeyword" resultType="com.jxm.business.model.NewsPostParam">
-        select id, theme,created_time,news_type,created_admin_id,created_admin_name,update_time from news_brief
+        select id, theme,created_time,update_time,news_type,created_admin_id,created_admin_name,update_time from news_brief
         <where>
             <if test="keyword!=null and keyword!=''">
                 theme like concat('%', #{keyword}, '%')
@@ -70,6 +70,9 @@
             <if test="createdTime != null">
                 created_time,
             </if>
+            <if test="createdTime != null">
+                update_time,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -86,6 +89,9 @@
             </if>
             <if test="createdAdminName != null">
                 #{createdAdminName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
             </if>
             <if test="createdTime != null">
                 #{createdTime,jdbcType=TIMESTAMP},

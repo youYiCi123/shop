@@ -368,9 +368,10 @@ public class FileController {
             message.setMessageType(3);
             message.setCreateDate(new Date());
             message.setReminderId(leaderId);
+            message.setReadFlag(0);
             messageService.insert(message);
         }
-        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), userDepDto);
+        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(),fileChunkMergePO.getWaterMarkFlag() , userDepDto);
         return CommonResult.success();
     }
 

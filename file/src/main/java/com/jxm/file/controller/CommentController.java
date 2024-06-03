@@ -92,6 +92,7 @@ public class CommentController {
             message.setWhoName(userDepDto.getNickName());
             message.setFileName(iUserFileService.getFileNameById(articleId));
             message.setMessageType(2);
+            message.setReadFlag(0);
             messageService.insert(message);
         } else {
             //当前评论为顶级评论
@@ -109,6 +110,7 @@ public class CommentController {
         message.setWhoName(userDepDto.getNickName());
         message.setFileName(iUserFileService.getFileNameById(comment.getJumpId()));
         message.setMessageType(1);
+        message.setReadFlag(0);
         messageService.insert(message);
         if (userDepDto.getUserId().equals(authorId)) {
             comment.setAdminComment(true);

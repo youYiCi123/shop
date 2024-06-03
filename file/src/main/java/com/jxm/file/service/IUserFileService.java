@@ -104,7 +104,7 @@ public interface IUserFileService {
 
     CheckFileChunkUploadVO checkUploadWithChunk(Long userId, String identifier);
 
-    void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, UserDepDto userDepDto);
+    void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize,String waterMarkFlag, UserDepDto userDepDto);
 
     /**
      * 获取企业文件类型数量信息

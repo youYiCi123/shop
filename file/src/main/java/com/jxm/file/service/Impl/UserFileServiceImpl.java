@@ -682,12 +682,16 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param totalSize
      */
     @Override
-    public void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize, UserDepDto userDepDto) {
+    public void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize,String waterMarkFlag, UserDepDto userDepDto) {
         RPanFile rPanFile = iFileService.mergeChunks(identifier, totalSize, userDepDto.getUserId(), filename);
+        Integer waterMarkFlag1=0;
+        if(waterMarkFlag.equals("true")){
+            waterMarkFlag1=1;
+        }
         if(pageType==1){//企业
-            saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),1L);
+            saveUserFileWithWaterMark(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),waterMarkFlag1,1L);
         }else{//部门
-            saveUserFile(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),userDepDto.getDepId());
+            saveUserFileWithWaterMark(parentId, filename, FileConstant.FolderFlagEnum.NO, FileTypeContext.getFileTypeCode(filename), rPanFile.getFileId(), userDepDto.getUserId(),userDepDto.getNickName(), rPanFile.getFileSizeDesc(),waterMarkFlag1,userDepDto.getDepId());
         }
     }
 
@@ -719,7 +723,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param fileSizeDesc
      * @return
      */
-    private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, String nickName,Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc) {
+    private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, String nickName,Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc,Integer waterMarkFlag) {
         RPanUserFile rPanUserFile = new RPanUserFile();
         long nextId = new UniqueIdGenerator(1, 1).nextId();
         rPanUserFile.setUserId(userId);
@@ -736,6 +740,7 @@ public class UserFileServiceImpl implements IUserFileService {
         rPanUserFile.setUpdateUser(userId);
         rPanUserFile.setUpdateTime(new Date());
         rPanUserFile.setDepId(depId);
+        rPanUserFile.setWaterMaterFlag(waterMarkFlag);
         handleDuplicateFileName(rPanUserFile);//重复文件重命名
         uploadLog(nextId,userId);
         return rPanUserFile;
@@ -761,16 +766,15 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 创建部门时创建
-     * @param parentId
-     * @param filename
-     * @param folderFlag
-     * @param fileType
-     * @param realFileId
-     * @param userId
-     * @param fileSizeDesc
      */
     private void saveUserFile(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId,String nickName, String fileSizeDesc, Long depId) {
-        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId,nickName, depId,filename, folderFlag, fileType, realFileId, fileSizeDesc)) != CommonConstant.ONE_INT) {
+        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId,nickName, depId,filename, folderFlag, fileType, realFileId, fileSizeDesc,0)) != CommonConstant.ONE_INT) {
+            Asserts.fail("保存文件信息失败");
+        }
+    }
+
+    private void saveUserFileWithWaterMark(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId,String nickName, String fileSizeDesc, Integer waterMarkFlag,Long depId) {
+        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId,nickName, depId,filename, folderFlag, fileType, realFileId, fileSizeDesc,waterMarkFlag)) != CommonConstant.ONE_INT) {
             Asserts.fail("保存文件信息失败");
         }
     }
