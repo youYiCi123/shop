@@ -15,5 +15,7 @@ public class SurveySubmitDto implements Serializable {
 
     private Integer tempType;
 
+    private String anonymousFlag;
+
     private TempValueSubmitSingerDto[] tempValueSubmitSingerDtos;
 }

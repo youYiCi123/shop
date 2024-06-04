@@ -635,7 +635,6 @@ public class UserFileServiceImpl implements IUserFileService {
     @Override
     public boolean secUpload(Integer pageType,Long parentId, String filename, String identifier, Object loginUser) {
         String jsonStr = JSONUtil.toJsonStr(loginUser);
-        //为什么
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         List<RPanFile> rPanFileList = iFileService.selectByIdentifier(identifier);
         if (CollectionUtils.isEmpty(rPanFileList)) {
@@ -1127,11 +1126,6 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 保存复制文件
-     *
-     * @param fileIds
-     * @param targetParentId
-     * @param depId
-     * @return
      */
     private void doCopyUserFiles(String fileIds, Long targetParentId, Long depId,Long userId) {
         // 查询所有要被复制的文件信息

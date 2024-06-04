@@ -385,7 +385,7 @@ public class FileController {
         if (iUserFileService.secUpload(fileSecUploadPO.getPageType(), fileSecUploadPO.getParentId(), fileSecUploadPO.getFilename(), fileSecUploadPO.getIdentifier(), loginUser)) {
             return CommonResult.success();
         }
-        return CommonResult.failed("文件唯一标识不存在，请执行物理上传");
+        return CommonResult.success("文件唯一标识不存在，请执行物理上传");
     }
 
     @ApiOperation(

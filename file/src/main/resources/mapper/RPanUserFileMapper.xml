@@ -206,15 +206,14 @@
         where file_id = #{fileId,jdbcType=BIGINT}
     </update>
 
-    <update id="deleteBatchReal" parameterType="java.lang.Long">
-        update r_pan_user_file
-        set del_flag=1
+    <delete id="deleteBatchReal" parameterType="java.lang.Long">
+        delete from r_pan_user_file
         where
         file_id in
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
-    </update>
+    </delete>
 
     <update id="passBatch" parameterType="java.lang.Long">
         update  r_pan_user_file

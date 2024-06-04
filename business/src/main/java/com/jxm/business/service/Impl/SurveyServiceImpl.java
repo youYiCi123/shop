@@ -34,7 +34,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public List<SurveyUserParam> getSurveyBySearch(String startDate, String endDate, String keyword, Long tempId) {
-        return surveyUserMapper.getSurveyBySearch(startDate,endDate,keyword,tempId);
+        return surveyUserMapper.getSurveyBySearch(startDate, endDate, keyword, tempId);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class SurveyServiceImpl implements SurveyService {
 
         //如果提交过了则不提交
         SurveyUserParam tempUserParam = surveyUserMapper.selectByTempAndUser(surveySubmitDto.getTempId(), userDepDto.getUserId());
-        if(tempUserParam!=null){
+        if (tempUserParam != null) {
             return -2;
         }
         //填写用户和问卷关联信息
@@ -56,7 +56,11 @@ public class SurveyServiceImpl implements SurveyService {
         tempUserParam1.setTempId(surveySubmitDto.getTempId());
         tempUserParam1.setTempName(surveySubmitDto.getTempName());
         tempUserParam1.setUserId(userDepDto.getUserId());
-        tempUserParam1.setUserName(userDepDto.getNickName());
+        if (surveySubmitDto.getAnonymousFlag() == "true") {
+                tempUserParam1.setUserName("匿名");
+        } else {
+            tempUserParam1.setUserName(userDepDto.getNickName());
+        }
         tempUserParam1.setCreateTime(new Date());
         surveyUserMapper.add(tempUserParam1);
         //填写问卷信息
