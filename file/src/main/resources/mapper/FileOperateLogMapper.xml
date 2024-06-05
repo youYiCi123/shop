@@ -6,12 +6,13 @@
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
         <result column="operate" jdbcType="VARCHAR" property="operate"/>
         <result column="file_id" jdbcType="BIGINT" property="fileId"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
         <result column="extend_field" jdbcType="VARCHAR" property="extendField"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, user_id, operate, file_id,extend_field, create_time
+        id, user_id, operate, file_id,file_name,extend_field, create_time
     </sql>
 
     <select id="getUserUploadCount" resultType="com.jxm.file.dto.userIdUploadDto">
@@ -38,6 +39,25 @@
         order by create_time desc
     </select>
 
+    <select id="getMyUploadFileStatus" resultType="com.jxm.file.entity.FileOperateLog">
+        select
+        <include refid="Base_Column_List"/>
+        from file_operate_log
+        <where>
+            operate="上传"
+            <if test="userId!=null and userId!=''">
+               and user_id = #{userId}
+            </if>
+            <if test="keyword!=null and keyword!=''">
+                and file_name like  concat('%', #{keyword}, '%')
+            </if>
+            <if test="startDate!=null and startDate!='' and endDate!=null and endDate!=''">
+                and create_time between #{startDate} and #{endDate}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
     <insert id="insert">
         insert into file_operate_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -52,7 +72,10 @@
                 extend_field,
             </if>
             <if test="fileId != null">
-                file_id
+                file_id,
+            </if>
+            <if test="fileName != null">
+                file_name
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -67,7 +90,10 @@
                 #{extendField,jdbcType=VARCHAR},
             </if>
             <if test="fileId != null">
-                #{fileId,jdbcType=BIGINT}
+                #{fileId,jdbcType=BIGINT},
+            </if>
+            <if test="fileName != null">
+                #{fileName,jdbcType=VARCHAR}
             </if>
         </trim>
     </insert>

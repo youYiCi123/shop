@@ -361,18 +361,18 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
-    public void uploadLog(Long fileId, Long userId) {
-        fileOperateLogMapper.insert(fileId,userId,"上传","");
+    public void uploadLog(Long fileId,String fileName, Long userId) {
+        fileOperateLogMapper.insert(fileId,fileName,userId,"上传","");
     }
 
     @Override
-    public void downloadLog(Long fileId, Long userId,String waterMark) {
-        fileOperateLogMapper.insert(fileId,userId,"下载",waterMark);
+    public void downloadLog(Long fileId,String fileName, Long userId,String waterMark) {
+        fileOperateLogMapper.insert(fileId,fileName,userId,"下载",waterMark);
     }
 
     @Override
-    public void deleteLog(Long fileId, Long userId) {
-        fileOperateLogMapper.insert(fileId,userId,"删除","");
+    public void deleteLog(Long fileId,String fileName, Long userId) {
+        fileOperateLogMapper.insert(fileId,fileName,userId,"删除","");
     }
 
     /**
@@ -741,7 +741,7 @@ public class UserFileServiceImpl implements IUserFileService {
         rPanUserFile.setDepId(depId);
         rPanUserFile.setWaterMaterFlag(waterMarkFlag);
         handleDuplicateFileName(rPanUserFile);//重复文件重命名
-        uploadLog(nextId,userId);
+        uploadLog(nextId,filename,userId);
         return rPanUserFile;
     }
 

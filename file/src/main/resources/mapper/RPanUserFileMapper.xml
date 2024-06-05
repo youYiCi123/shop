@@ -24,7 +24,7 @@
         <result column="dep_id" jdbcType="VARCHAR" property="depId"/>
     </resultMap>
     <sql id="Base_Column_List">
-        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag, create_user, create_time, update_user, update_time,dep_id
+        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select

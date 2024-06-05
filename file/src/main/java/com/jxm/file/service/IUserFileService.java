@@ -66,11 +66,11 @@ public interface IUserFileService {
 
     void download(Long fileId, String waterMark,HttpServletResponse response);
 
-    void uploadLog(Long fileId,Long userId);
+    void uploadLog(Long fileId,String fileName,Long userId);
 
-    void downloadLog(Long fileId,Long userId,String waterMark);
+    void downloadLog(Long fileId,String fileName,Long userId,String waterMark);
 
-    void deleteLog(Long fileId,Long userId);
+    void deleteLog(Long fileId,String fileName,Long userId);
 
     List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId);
 

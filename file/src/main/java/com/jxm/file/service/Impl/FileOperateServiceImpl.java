@@ -2,10 +2,7 @@ package com.jxm.file.service.Impl;
 
 import com.github.pagehelper.PageHelper;
 import com.jxm.common.api.CommonPage;
-import com.jxm.file.dto.FileOperateLogDetail;
-import com.jxm.file.dto.UmsAdminConcat;
-import com.jxm.file.dto.UserUploadCountDto;
-import com.jxm.file.dto.userIdUploadDto;
+import com.jxm.file.dto.*;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.feign.UpstageService;
@@ -69,10 +66,7 @@ public class FileOperateServiceImpl implements FileOperateService {
             if(adminConcat!=null){
                 fileOperateLogDetail.setUserName(adminConcat.getNickName());
             }
-            RPanUserFile rPanFile = rPanUserFileMapper.selectByPrimaryKey(t.getFileId());
-            if(rPanFile!=null){
-                fileOperateLogDetail.setFileName(rPanFile.getFilename());
-            }
+            fileOperateLogDetail.setFileName(t.getFileName());
             fileOperateLogDetails.add(fileOperateLogDetail);
         });
         CommonPage<FileOperateLogDetail> fileOperateLogDetailCommonPage=new CommonPage<>();
@@ -82,6 +76,42 @@ public class FileOperateServiceImpl implements FileOperateService {
         fileOperateLogDetailCommonPage.setPageSize(fileOperateLogCommonPage.getPageSize());
         fileOperateLogDetailCommonPage.setTotalPage(fileOperateLogCommonPage.getTotalPage());
         return fileOperateLogDetailCommonPage;
+    }
+
+    @Override
+    public CommonPage<MyUploadFileStatus> getMyUploadFileStatus(String startDate, String endDate, Long userId,String keyword, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<FileOperateLog> fileOperateLogs=fileOperateLogMapper.getMyUploadFileStatus(startDate,endDate,userId,keyword);
+        CommonPage<FileOperateLog> fileOperateLogCommonPage = CommonPage.restPage(fileOperateLogs);
+        List<MyUploadFileStatus> myUploadFileStatuses=new ArrayList<>();
+        fileOperateLogCommonPage.getList().stream().forEach(t->{
+            MyUploadFileStatus myUploadFileStatus = new MyUploadFileStatus();
+            myUploadFileStatus.setFileId(t.getFileId());
+            myUploadFileStatus.setFileName(t.getFileName());
+            myUploadFileStatus.setCreateTime(t.getCreateTime());
+            RPanUserFile rPanFile = rPanUserFileMapper.selectByPrimaryKey(t.getFileId());
+            /**  状态 0 待审核   rPanFile.passFlag==0
+             *       1 审核通过  rPanFile.passFlag==1
+             *       2 审核未通过/已删除 rPanFile==null
+             *       **/
+            if(rPanFile!=null){
+                if(rPanFile.getPassFlag()==1){
+                    myUploadFileStatus.setStatus(1);
+                }else{
+                    myUploadFileStatus.setStatus(0);
+                }
+            }else{
+                myUploadFileStatus.setStatus(2);
+            }
+            myUploadFileStatuses.add(myUploadFileStatus);
+        });
+        CommonPage<MyUploadFileStatus> myUploadFileStatusCommonPage=new CommonPage<>();
+        myUploadFileStatusCommonPage.setList(myUploadFileStatuses);
+        myUploadFileStatusCommonPage.setTotal(fileOperateLogCommonPage.getTotal());
+        myUploadFileStatusCommonPage.setPageNum(fileOperateLogCommonPage.getPageNum());
+        myUploadFileStatusCommonPage.setPageSize(fileOperateLogCommonPage.getPageSize());
+        myUploadFileStatusCommonPage.setTotalPage(fileOperateLogCommonPage.getTotalPage());
+        return myUploadFileStatusCommonPage;
     }
 
     @Override

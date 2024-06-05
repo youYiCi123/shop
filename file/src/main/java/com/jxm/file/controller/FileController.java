@@ -5,6 +5,7 @@ import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.service.RedisService;
 import com.jxm.file.dto.FileOperateLogDetail;
+import com.jxm.file.dto.MyUploadFileStatus;
 import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.dto.UserUploadCountDto;
 import com.jxm.file.entity.FileOperateLog;
@@ -73,8 +74,8 @@ public class FileController {
     @RequestMapping(value = "/searchForName", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<RPanUserFileDisplayVO>> searchForName(@RequestParam(value = "pageType", required = false) Long pageType,
-                                                                         @RequestParam(value = "keyword", required = false) String keyword) throws ParseException {
-        List<RPanUserFileDisplayVO> list = iUserFileService.searchForName(pageType, keyword,getLoginDepId());
+                                                                   @RequestParam(value = "keyword", required = false) String keyword) throws ParseException {
+        List<RPanUserFileDisplayVO> list = iUserFileService.searchForName(pageType, keyword, getLoginDepId());
         return CommonResult.success(list);
     }
 
@@ -86,8 +87,8 @@ public class FileController {
     @RequestMapping(value = "/filesFromRecycleBin", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<RPanUserFileDisplayVO>> filesFromRecycleBin(
-                                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) throws ParseException {
         List<RPanUserFileDisplayVO> list = iUserFileService.filesFromRecycleBin(pageNum, pageSize, getLoginUserId());
         return CommonResult.success(CommonPage.restPage(list));
@@ -117,16 +118,37 @@ public class FileController {
     @RequestMapping(value = "/filesOperateLogs/select", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<FileOperateLogDetail>> filesOperateLogs(@RequestParam(defaultValue = "") String[] date,
-                                                                     @RequestParam(value = "userId", required = false) Long userId,
-                                                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+                                                                           @RequestParam(value = "userId", required = false) Long userId,
+                                                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         String startDate = null;
         String endDate = null;
         if (date.length == 2) {
             startDate = date[0];
             endDate = date[1];
         }
-        CommonPage<FileOperateLogDetail> list = fileOperateService.getFileOperateLog(startDate,endDate,userId, pageNum, pageSize);
+        CommonPage<FileOperateLogDetail> list = fileOperateService.getFileOperateLog(startDate, endDate, userId, pageNum, pageSize);
+        return CommonResult.success(list);
+    }
+
+    @ApiOperation(
+            value = "获取我的上传文件列表",
+            notes = "该接口提供了获取我的上传文件的功能"
+    )
+    @RequestMapping(value = "/myUploadFileStatus/select", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<CommonPage<MyUploadFileStatus>> getMyUploadFileStatus(@RequestParam(defaultValue = "") String[] date,
+                                                                              @RequestParam(value = "keyword", required = false) String keyword,
+                                                                              @RequestParam(value = "userId", required = false) Long userId,
+                                                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        String startDate = null;
+        String endDate = null;
+        if (date.length == 2) {
+            startDate = date[0];
+            endDate = date[1];
+        }
+        CommonPage<MyUploadFileStatus> list = fileOperateService.getMyUploadFileStatus(startDate, endDate, userId, keyword,pageNum, pageSize);
         return CommonResult.success(list);
     }
 
@@ -134,8 +156,8 @@ public class FileController {
     @ResponseBody
     public CommonResult deleteLog(@PathVariable Long id) {
         //删除培训信息
-        int count=fileOperateService.deleteLog(id);
-        if(count<0)
+        int count = fileOperateService.deleteLog(id);
+        if (count < 0)
             return CommonResult.failed("删除培训信息错误");
         return CommonResult.success();
     }
@@ -143,9 +165,9 @@ public class FileController {
     @RequestMapping(value = "/filesOperateLogs/deleteBatch", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult deleteBatchLog(@RequestBody Long[] multipleSelectionId) {
-        List<Long> idList= Arrays.stream(multipleSelectionId).collect(Collectors.toList());
-        int count=fileOperateService.deleteBatchLog(idList);
-        if(count<0)
+        List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
+        int count = fileOperateService.deleteBatchLog(idList);
+        if (count < 0)
             return CommonResult.failed("删除培训信息错误");
         return CommonResult.success();
     }
@@ -211,11 +233,12 @@ public class FileController {
         //文件创建人本人、文件创建人的部门长,才可以删除文件
         Long createUserId = iUserFileService.getUserByFileId(fileId);
         Long depHeadId = upstageService.selectDepHeadIdByUser(createUserId).getData();
-        if(userId.equals(createUserId)||userId.equals(depHeadId)){
-        iUserFileService.delete(fileId,userId);
-        iUserFileService.deleteLog(fileId,userId);
-        return CommonResult.success();
-        }else{
+        if (userId.equals(createUserId) || userId.equals(depHeadId)) {
+            iUserFileService.delete(fileId, userId);
+            String fileName = iUserFileService.getFileNameById(fileId);
+            iUserFileService.deleteLog(fileId, fileName, userId);
+            return CommonResult.success();
+        } else {
             return CommonResult.failed("文件上传人本人或其部门长,才可该删除文件");
         }
     }
@@ -282,7 +305,6 @@ public class FileController {
     }
 
 
-
     @ApiOperation(value = "审核")
     @RequestMapping(value = "/file/pass/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
@@ -299,7 +321,7 @@ public class FileController {
     @ApiOperation("批量恢复文件")
     @RequestMapping(value = "/file/recovery/batch", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult recoveryBatch(@RequestBody Long[] multipleSelectionId){
+    public CommonResult recoveryBatch(@RequestBody Long[] multipleSelectionId) {
         List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
         int count = iUserFileService.recoveryBatch(idList);
         if (count > 0) {
@@ -311,7 +333,7 @@ public class FileController {
     @ApiOperation(value = "恢复文件 回收站")
     @RequestMapping(value = "/file/recovery/fileById/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult recoveryFile(@PathVariable("id") Long id){
+    public CommonResult recoveryFile(@PathVariable("id") Long id) {
         int count = iUserFileService.recoveryFile(id);
         if (count == 1) {
             return CommonResult.success(null);
@@ -361,7 +383,7 @@ public class FileController {
         String jsonStr = JSONUtil.toJsonStr(getLoginUser());
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         Long leaderId = upstageService.selectDepHeadIdByUser(userDepDto.getUserId()).getData();
-        if(!leaderId.equals(userDepDto.getUserId())){
+        if (!leaderId.equals(userDepDto.getUserId())) {
             Message message = new Message();
             message.setWhoName(userDepDto.getNickName());
             message.setFileName(fileChunkMergePO.getFilename());
@@ -371,7 +393,7 @@ public class FileController {
             message.setReadFlag(0);
             messageService.insert(message);
         }
-        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(),fileChunkMergePO.getWaterMarkFlag() , userDepDto);
+        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), fileChunkMergePO.getWaterMarkFlag(), userDepDto);
         return CommonResult.success();
     }
 
@@ -398,14 +420,15 @@ public class FileController {
                          @RequestParam(value = "waterMark", required = false) String waterMark,
                          HttpServletResponse response) {
         iUserFileService.download(fileId, waterMark, response);
-        iUserFileService.downloadLog(fileId, userId,waterMark);
+        String fileName = iUserFileService.getFileNameById(fileId);
+        iUserFileService.downloadLog(fileId,fileName,userId, waterMark);
     }
 
     @ApiOperation("获取前十分享用户数量信息")
     @RequestMapping(value = "file/required/getUserUploadCount", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<List<UserUploadCountDto>> getUserUploadCount(){
-        return  CommonResult.success(fileOperateService.getUserUploadCount());
+    public CommonResult<List<UserUploadCountDto>> getUserUploadCount() {
+        return CommonResult.success(fileOperateService.getUserUploadCount());
     }
 
     private Object getLoginUser() throws ParseException {
@@ -535,7 +558,7 @@ public class FileController {
     public void preview(@NotNull(message = "文件id不能为空") @RequestParam(value = "fileId", required = false) Long fileId,
                         @RequestParam(value = "userName", required = false) String userName,
                         HttpServletResponse response) {
-        iUserFileService.preview(fileId,userName, response);
+        iUserFileService.preview(fileId, userName, response);
     }
 
     @ApiOperation(
@@ -546,7 +569,7 @@ public class FileController {
     public void previewByFilePath(@RequestParam(value = "filePath") String filePath,
                                   HttpServletResponse response,
                                   @RequestParam(value = "filePreviewContentType") String filePreviewContentType) {
-        iUserFileService.preview(filePath, "",response, filePreviewContentType);
+        iUserFileService.preview(filePath, "", response, filePreviewContentType);
     }
 
     @GetMapping("image/{fileName}")
