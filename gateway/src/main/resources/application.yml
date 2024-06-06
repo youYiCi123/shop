@@ -78,6 +78,7 @@ secure:
       - "/file-service/file/download"
       - "/business-service/excel/download/**"
       - "/upstage-service/avatar/profile/**"
+      - "/file-service/depToEnterprise"
 
 
 

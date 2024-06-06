@@ -589,4 +589,18 @@ public class FileController {
         out.flush();
     }
 
+    @ApiOperation(
+            value = "迁移文件(从部门到企业)",
+            notes = "该接口提供了迁移文件(从部门到企业)的功能"
+    )
+    @GetMapping("/depToEnterprise")
+    public CommonResult depToEnterprise(@NotNull(message = "请选择要转移的文件") @RequestParam(value = "fileId", required = false) Long fileId,
+                                @RequestParam(value = "userId", required = false) Long userId,
+                                @RequestParam(value = "targetParentId", required = false) Long targetParentId) {
+        iUserFileService.depToEnterprise(fileId,userId,targetParentId);
+        return CommonResult.success();
+        //String fileName = iUserFileService.getFileNameById(fileId);
+       // iUserFileService.downloadLog(fileId,fileName,userId, "");   //记录迁移文件操作
+    }
+
 }

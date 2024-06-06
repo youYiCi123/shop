@@ -113,4 +113,8 @@ public interface IUserFileService {
 
     String getFileNameById(Long fileId);
 
+    //获取所有到期文件
+    void getALLExpireFile();
+
+    void depToEnterprise(Long fileId,Long userId, Long targetParentId);
 }

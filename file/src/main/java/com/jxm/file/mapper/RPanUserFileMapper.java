@@ -110,4 +110,6 @@ public interface RPanUserFileMapper {
 
     String getFileNameById(Long fileId);
 
+    //获取所有到期文件id
+    List<Long> selectExpireFileId();
 }

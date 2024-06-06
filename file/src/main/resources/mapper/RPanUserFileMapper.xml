@@ -24,7 +24,7 @@
         <result column="dep_id" jdbcType="VARCHAR" property="depId"/>
     </resultMap>
     <sql id="Base_Column_List">
-        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id
+        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id,pass_user_id,pass_user_name,pass_time
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -33,16 +33,17 @@
         where file_id = #{fileId,jdbcType=BIGINT}
     </select>
     <insert id="insert" parameterType="com.jxm.file.entity.RPanUserFile">
-        insert into r_pan_user_file (file_id, user_id, parent_id,
+        insert into r_pan_user_file (file_id, user_id, user_name,parent_id,
           real_file_id, filename, folder_flag,
           file_size_desc, file_type, del_flag,
           create_user, create_time, update_user,
-          update_time,dep_id)
-        values (#{fileId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT},
+          update_time,dep_id,pass_flag,pass_user_id,pass_user_name,pass_time)
+        values (#{fileId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR},#{parentId,jdbcType=BIGINT},
           #{realFileId,jdbcType=BIGINT}, #{filename,jdbcType=VARCHAR}, #{folderFlag,jdbcType=BIT},
           #{fileSizeDesc,jdbcType=VARCHAR}, #{fileType,jdbcType=BIT}, #{delFlag,jdbcType=BIT},
           #{createUser,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT},
-          #{updateTime,jdbcType=TIMESTAMP},#{depId,jdbcType=VARCHAR})
+          #{updateTime,jdbcType=TIMESTAMP},#{depId,jdbcType=VARCHAR}, #{passFlag,jdbcType=BIT},#{passUserId},
+          #{passUserName},#{passTime})
     </insert>
     <insert id="insertSelective" parameterType="com.jxm.file.entity.RPanUserFile">
         insert into r_pan_user_file
@@ -459,12 +460,13 @@
     </select>
 
     <insert id="insertBatch" parameterType="list">
-        INSERT INTO r_pan_user_file (user_id, parent_id, file_id, real_file_id, filename, folder_flag, file_size_desc,
-        file_type, del_flag, create_user, create_time, update_user, update_time,dep_id)
+        INSERT INTO r_pan_user_file (user_id, user_name,parent_id, file_id, real_file_id, filename, folder_flag, file_size_desc,
+        file_type, del_flag, create_user, create_time, update_user, update_time,dep_id,pass_user_id,pass_user_name,pass_time)
         VALUES
         <foreach collection="recordList" item="item" separator=",">
             (
             #{item.userId},
+            #{item.userName},
             #{item.parentId},
             #{item.fileId},
             #{item.realFileId},
@@ -477,7 +479,10 @@
             #{item.createTime},
             #{item.updateUser},
             #{item.updateTime},
-            #{item.depId}
+            #{item.depId},
+            #{item.passUserId},
+            #{item.passUserName},
+            #{item.passTime}
             )
         </foreach>
 
@@ -689,6 +694,12 @@
             r_pan_user_file
         WHERE
             file_id = #{fileId}
+    </select>
+
+    <select id="selectExpireFileId" resultType="java.lang.Long">
+        select file_id
+        from r_pan_user_file
+        where DATEDIFF(NOW(),update_time)=15 and del_flag=1
     </select>
 
 </mapper>
