@@ -3,11 +3,13 @@ package com.jxm.file.service;
 
 import com.jxm.file.dto.DashboardUserFileParam;
 import com.jxm.file.dto.FileOperateLogDetail;
+import com.jxm.file.dto.UmsAdminConcat;
 import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.vo.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,11 +28,11 @@ public interface IUserFileService {
 
     List<RPanUserFileDisplayVO> filesFromRecycleBin(Integer pageNum,Integer pageSize,Long userId);
 
-    List<RPanUserFileDisplayVO> list( Long pageType,Long parentId, String fileTypes, Long depId);
+    List<RPanUserFileDisplayVO> list( Long pageType,Long parentId, String fileTypes,Object loginUser);
 
     List<RPanUserFileVO> list(String fileIds);
 
-    void createFolder(Boolean isPageType,Long parentId, String folderName, Object loginUser);
+    void createFolder(Boolean isPageType,Long parentId, String folderName,Integer folderType,String participants, Object loginUser);
 
     void createDepRootFolder(Long parentId, String folderName, Long userId,Long depId);
 
@@ -72,7 +74,11 @@ public interface IUserFileService {
 
     void deleteLog(Long fileId,String fileName,Long userId);
 
-    List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId);
+    List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Object loginUser);
+
+    List<UmsAdminConcat> getTeamUser(Long folderId);
+
+    int updateTeamUser(String[] teamUsers,Long folderId);
 
     void transfer(String fileIds, Long targetParentId, Long depId);
 
@@ -82,7 +88,7 @@ public interface IUserFileService {
 
     RPanUserFileDisplayVO detail(Long fileId, Long userId);
 
-    List<BreadcrumbVO> getBreadcrumbs(Long fileId, Long depId);
+    List<BreadcrumbVO> getBreadcrumbs(Long fileId, Object loginUser);
 
     void preview(Long fileId,String userName, HttpServletResponse response);
 

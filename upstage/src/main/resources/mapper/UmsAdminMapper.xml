@@ -167,8 +167,15 @@
     </foreach>
   </insert>
 
-  <select id="details" parameterType="java.lang.Long" resultType="com.jxm.upstage.dto.DepUser">
-    select nick_name,username,duty
+  <resultMap id="ColleageMap" type="com.jxm.upstage.dto.DepUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="duty" jdbcType="VARCHAR" property="duty" />
+  </resultMap>
+
+  <select id="details" resultMap="ColleageMap">
+    select id,nick_name,username,duty
     from ums_admin
     where dep_id= #{depId,jdbcType=BIGINT}
   </select>

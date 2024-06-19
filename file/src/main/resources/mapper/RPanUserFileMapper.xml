@@ -22,9 +22,11 @@
         <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="dep_id" jdbcType="VARCHAR" property="depId"/>
+        <result column="folder_type" jdbcType="BIT" property="folderType"/>
+        <result column="participants" jdbcType="VARCHAR" property="participants"/>
     </resultMap>
     <sql id="Base_Column_List">
-        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id,pass_user_id,pass_user_name,pass_time
+        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id,pass_user_id,pass_user_name,pass_time,folder_type,participants
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -94,6 +96,12 @@
             <if test="depId != null">
                 dep_id,
             </if>
+            <if test="folderType != null">
+                folder_type,
+            </if>
+            <if test="participants != null">
+                participants,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             NOW(),
@@ -141,6 +149,12 @@
             </if>
             <if test="depId != null">
                 #{depId,jdbcType=VARCHAR},
+            </if>
+            <if test="folderType != null">
+                #{folderType,jdbcType=INTEGER},
+            </if>
+            <if test="participants != null">
+                #{participants,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -238,6 +252,13 @@
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
+    </update>
+
+    <update id="updateTeamUser">
+        update  r_pan_user_file
+        set participants=#{participants}
+        where
+        file_id =#{folderId}
     </update>
 
     <!--===================================================================自定义===================================================================-->
@@ -359,7 +380,8 @@
         a1.pass_time AS passTime,
         a1.update_time AS updateTime,
         a1.user_name AS creatName,
-        a1.pass_user_name AS passUserName
+        a1.pass_user_name AS passUserName,
+        a1.folder_type AS parentFolderType
         FROM
         r_pan_user_file a1
         WHERE
@@ -441,10 +463,24 @@
         FROM
         r_pan_user_file
         WHERE
-        dep_id = #{rootFileId}
+        <if test="depId != '1'.toString()">
+            ((dep_id = #{depId} and folder_type=0)or(participants like concat('%', #{userId}, '%')))
+        </if>
+        <if test="depId == '1'.toString()">
+         dep_id = #{depId}
+        </if>
         AND del_flag = 0
         AND folder_flag = 1
         AND pass_flag=1
+    </select>
+
+    <select id="getTeamUserById" resultType="java.lang.String">
+        SELECT
+        participants
+        FROM
+        r_pan_user_file
+        WHERE
+        file_id =#{folderId}
     </select>
 
     <select id="selectListByFileIdList" resultMap="BaseResultMap">
@@ -638,6 +674,7 @@
         r_pan_user_file
         WHERE dep_id = #{depId}
         AND del_flag = 0
+        AND folder_type=0
         AND parent_id = 0
         AND folder_flag = 1
     </select>

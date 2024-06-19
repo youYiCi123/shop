@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -34,6 +35,15 @@ public class CreateFolderPO implements Serializable {
     @ApiModelProperty(value = "页面类型", required = true)
     private boolean pageType;
 
+    @ApiModelProperty(value = "文件夹类型", required = true)
+    private Integer folderType;
+
+    @ApiModelProperty(value = "本部门参与人员", required = true)
+    private List<Long> thisDepParticipants;
+
+    @ApiModelProperty(value = "跨部门参与人员", required = true)
+    private List<Long> crossDepParticipants;
+
     public Long getParentId() {
         return parentId;
     }
@@ -58,12 +68,39 @@ public class CreateFolderPO implements Serializable {
         this.pageType = pageType;
     }
 
+    public Integer getFolderType() {
+        return folderType;
+    }
+
+    public void setFolderType(Integer folderType) {
+        this.folderType = folderType;
+    }
+
+    public List<Long> getThisDepParticipants() {
+        return thisDepParticipants;
+    }
+
+    public void setThisDepParticipants(List<Long> thisDepParticipants) {
+        this.thisDepParticipants = thisDepParticipants;
+    }
+
+    public List<Long> getCrossDepParticipants() {
+        return crossDepParticipants;
+    }
+
+    public void setCrossDepParticipants(List<Long> crossDepParticipants) {
+        this.crossDepParticipants = crossDepParticipants;
+    }
+
     @Override
     public String toString() {
         return "CreateFolderPO{" +
                 "parentId=" + parentId +
                 ", folderName='" + folderName + '\'' +
                 ", pageType=" + pageType +
+                ", folderType=" + folderType +
+                ", thisDepParticipants=" + thisDepParticipants +
+                ", crossDepParticipants=" + crossDepParticipants +
                 '}';
     }
 }

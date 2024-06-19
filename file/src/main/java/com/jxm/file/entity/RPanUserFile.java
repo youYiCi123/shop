@@ -109,6 +109,10 @@ public class RPanUserFile implements Serializable {
      */
     private Date passTime;
 
+    private Integer folderType;
+
+    private String participants;
+
     public Long getFileId() {
         return fileId;
     }
@@ -269,6 +273,22 @@ public class RPanUserFile implements Serializable {
         this.passTime = passTime;
     }
 
+    public Integer getFolderType() {
+        return folderType;
+    }
+
+    public void setFolderType(Integer folderType) {
+        this.folderType = folderType;
+    }
+
+    public String getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(String participants) {
+        this.participants = participants;
+    }
+
     @Override
     public String toString() {
         return "RPanUserFile{" +
@@ -292,6 +312,8 @@ public class RPanUserFile implements Serializable {
                 ", passUserId=" + passUserId +
                 ", passUserName='" + passUserName + '\'' +
                 ", passTime=" + passTime +
+                ", folderType=" + folderType +
+                ", participants='" + participants + '\'' +
                 '}';
     }
 }

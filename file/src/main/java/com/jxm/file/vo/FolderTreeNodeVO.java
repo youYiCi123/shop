@@ -47,6 +47,9 @@ public class FolderTreeNodeVO implements Serializable {
     @ApiModelProperty("父文件夹ID")
     private Long parentId;
 
+    @ApiModelProperty("文件夹类型")
+    private Integer folderType;
+
     /**
      * 拼装树节点
      *
@@ -57,6 +60,7 @@ public class FolderTreeNodeVO implements Serializable {
         FolderTreeNodeVO folderTreeNode = new FolderTreeNodeVO();
         folderTreeNode.setLabel(rPanUserFile.getFilename());
         folderTreeNode.setId(rPanUserFile.getFileId());
+        folderTreeNode.setFolderType(rPanUserFile.getFolderType());
         folderTreeNode.setChildren(Lists.newArrayList());
         folderTreeNode.setParentId(rPanUserFile.getParentId());
         return folderTreeNode;
@@ -97,6 +101,14 @@ public class FolderTreeNodeVO implements Serializable {
         this.parentId = parentId;
     }
 
+    public Integer getFolderType() {
+        return folderType;
+    }
+
+    public void setFolderType(Integer folderType) {
+        this.folderType = folderType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -105,12 +117,13 @@ public class FolderTreeNodeVO implements Serializable {
         return Objects.equals(label, that.label) &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(children, that.children) &&
-                Objects.equals(parentId, that.parentId);
+                Objects.equals(parentId, that.parentId) &&
+                Objects.equals(folderType, that.folderType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(label, id, children, parentId);
+        return Objects.hash(label, id, children, parentId, folderType);
     }
 
     @Override
@@ -120,7 +133,7 @@ public class FolderTreeNodeVO implements Serializable {
                 ", id=" + id +
                 ", children=" + children +
                 ", parentId=" + parentId +
+                ", folderType=" + folderType +
                 '}';
     }
-
 }

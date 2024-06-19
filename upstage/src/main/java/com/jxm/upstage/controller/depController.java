@@ -7,7 +7,9 @@ import com.jxm.upstage.dto.DepParam;
 import com.jxm.upstage.dto.DepUser;
 import com.jxm.upstage.dto.depUserRelation;
 import com.jxm.upstage.model.Dep;
+import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.service.DepService;
+import com.jxm.upstage.service.UmsAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,9 @@ import java.util.stream.Collectors;
 @Api(tags = "depController", description = "部门管理")
 @RequestMapping("/dep")
 public class depController {
+
+    @Autowired
+    private UmsAdminService adminService;
 
    @Autowired
     private DepService depService;
@@ -73,6 +79,15 @@ public class depController {
                                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         List<DepUser> depUserList = depService.details(deptId, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(depUserList));
+    }
+
+    @ApiOperation("根据登录用户所在部门的所有成员")
+    @RequestMapping(value = "/getColleague", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<DepUser>> getColleague() throws ParseException {
+        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        List<DepUser> depUserList = depService.details(umsAdmin.getDepId(),30,1);
+        return CommonResult.success(depUserList);
     }
 
     @ApiOperation("修改指定部门信息")

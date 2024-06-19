@@ -41,6 +41,7 @@ public interface RPanUserFileMapper {
     List<RPanUserFileDisplayVO> filesFromRecycleBin(@Param("userId") Long userId);
 
     List<RPanUserFileDisplayVO> selectRPanUserFileVOListByUserId(@Param("depId") Long depId,
+                                                                 @Param("userId") Long userId,
                                                                  @Param("passFlag") Integer passFlag,
                                                                  @Param("fileTypeArray") List<Integer> fileTypeArray,
                                                                  @Param("parentId") Long parentId,
@@ -74,7 +75,11 @@ public interface RPanUserFileMapper {
 
     int recoveryFile(@Param("id") Long id);
 
-    List<RPanUserFile> selectFolderListByUserId(@Param("rootFileId") Long rootFileId);
+    String getTeamUserById(@Param("folderId") Long folderId);
+
+    int updateTeamUser(@Param("folderId") Long folderId,@Param("participants") String participants);
+
+    List<RPanUserFile> selectFolderListByUserId(@Param("depId") Long depId,@Param("userId") Long userId);
 
     List<RPanUserFile> selectListByFileIdList(@Param("idList") List<Long> idList);
 

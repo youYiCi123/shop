@@ -92,6 +92,9 @@ public class UserFileServiceImpl implements IUserFileService {
     @Qualifier(value = "localStorageConfig")
     private LocalStorageConfig localStorageConfig;
 
+    @Autowired
+    private UpstageService upstageService;
+
     @Override
     public List<RPanUserFileDisplayVO> searchForName(Long pageType, String keyword, Long depId) {
         List<RPanUserFileDisplayVO> rPanUserFileDisplayVOS = new ArrayList<>();
@@ -140,15 +143,12 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 获取文件列表
-     *
-     * @param parentId
-     * @param fileTypes
-     * @param depId
-     * @return
      */
     @Override
-    public List<RPanUserFileDisplayVO> list(Long pageType, Long parentId, String fileTypes, Long depId) {
-        return list(pageType, parentId, fileTypes, depId, FileConstant.DelFlagEnum.NO.getCode());
+    public List<RPanUserFileDisplayVO> list(Long pageType, Long parentId, String fileTypes, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        return list(pageType, parentId, fileTypes, userDepDto.getDepId(),userDepDto.getUserId(),FileConstant.DelFlagEnum.NO.getCode());
     }
 
     /**
@@ -160,7 +160,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param delFlag
      * @return
      */
-    public List<RPanUserFileDisplayVO> list(Long pageType, Long parentId, String fileTypes, Long depId, Integer delFlag) {
+    public List<RPanUserFileDisplayVO> list(Long pageType, Long parentId, String fileTypes, Long depId,Long userId, Integer delFlag) {
         List<Integer> fileTypeArray = null;
         if (Objects.equals(CommonConstant.ZERO_LONG, parentId)) {
             return Lists.newArrayList();
@@ -169,13 +169,13 @@ public class UserFileServiceImpl implements IUserFileService {
             fileTypeArray = StringListUtil.string2IntegerList(fileTypes);
         }
         if (Objects.equals(1L, pageType)) {//企业文件预览
-            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(1L, 1, fileTypeArray, parentId, delFlag);
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(1L,userId, 1, fileTypeArray, parentId, delFlag);
         } else if (Objects.equals(2L, pageType)) {//部门文件预览
-            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, 1, fileTypeArray, parentId, delFlag);
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId,userId ,1, fileTypeArray, parentId, delFlag);
         } else if (Objects.equals(3L, pageType)) {//企业文件审核
-            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(1L, 0, fileTypeArray, parentId, delFlag);
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(1L,userId, 0, fileTypeArray, parentId, delFlag);
         } else {//部门文件审核
-            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId, 0, fileTypeArray, parentId, delFlag);
+            return rPanUserFileMapper.selectRPanUserFileVOListByUserId(depId,userId,0, fileTypeArray, parentId, delFlag);
         }
     }
 
@@ -194,13 +194,13 @@ public class UserFileServiceImpl implements IUserFileService {
      * 创建文件夹
      */
     @Override
-    public void createFolder(Boolean isPageType, Long parentId, String folderName, Object loginUser) {
+    public void createFolder(Boolean isPageType, Long parentId, String folderName,Integer folderType,String participants,Object loginUser) {
         String jsonStr = JSONUtil.toJsonStr(loginUser);
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         if (isPageType) {
-            saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userDepDto.getUserId(), userDepDto.getNickName(), null, userDepDto.getDepId());
+            saveFolder(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userDepDto.getUserId(), userDepDto.getNickName(), null, userDepDto.getDepId(),folderType,participants);
         } else {
-            saveUserFile(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userDepDto.getUserId(), userDepDto.getNickName(), null, 1L);
+            saveFolder(parentId, folderName, FileConstant.FolderFlagEnum.YES, null, null, userDepDto.getUserId(), userDepDto.getNickName(), null, 1L,folderType,participants);
         }
 
     }
@@ -388,14 +388,34 @@ public class UserFileServiceImpl implements IUserFileService {
      * 获取文件夹树
      */
     @Override
-    public List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Long depId) {
+    public List<FolderTreeNodeVO> getFolderTree(Long fileRootId,Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
         List<RPanUserFile> folderList = new ArrayList<>();
         if (fileRootId != 1L) {//部门文件
-            folderList = rPanUserFileMapper.selectFolderListByUserId(depId);
+            folderList = rPanUserFileMapper.selectFolderListByUserId(userDepDto.getDepId(),userDepDto.getUserId());
         } else {
-            folderList = rPanUserFileMapper.selectFolderListByUserId(1L);
+            folderList = rPanUserFileMapper.selectFolderListByUserId(1L,userDepDto.getUserId());
         }
         return assembleFolderTree(folderList);
+    }
+
+    @Override
+    public List<UmsAdminConcat> getTeamUser(Long folderId) {
+        String teamUser = rPanUserFileMapper.getTeamUserById(folderId);
+        String[] teamUserArray = teamUser.split(",");
+        List<UmsAdminConcat> umsAdminConcatList=new ArrayList<>();
+        Arrays.stream(teamUserArray).forEach(t->{
+            UmsAdminConcat adminConcat = upstageService.getUmsAdminConcat(Long.parseLong(t)).getData();
+            umsAdminConcatList.add(adminConcat);
+        });
+        return umsAdminConcatList;
+    }
+
+    @Override
+    public int updateTeamUser(String[] teamUsers, Long folderId) {
+        String participants = Arrays.stream(teamUsers).map(String::valueOf).collect(Collectors.joining(","));
+        return rPanUserFileMapper.updateTeamUser(folderId,participants);
     }
 
     /**
@@ -481,14 +501,12 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 获取面包屑列表
-     *
-     * @param fileId
-     * @param depId
-     * @return
      */
     @Override
-    public List<BreadcrumbVO> getBreadcrumbs(Long fileId, Long depId) {
-        List<RPanUserFile> rPanUserFileList = rPanUserFileMapper.selectFolderListByUserId(depId);
+    public List<BreadcrumbVO> getBreadcrumbs(Long fileId, Object loginUser) {
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        List<RPanUserFile> rPanUserFileList = rPanUserFileMapper.selectFolderListByUserId(userDepDto.getDepId(),userDepDto.getUserId());
         if (CollectionUtils.isEmpty(rPanUserFileList)) {
             return Lists.newArrayList();
         }
@@ -731,12 +749,16 @@ public class UserFileServiceImpl implements IUserFileService {
      * @param fileSizeDesc
      * @return
      */
-    private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, String nickName, Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc, Integer waterMarkFlag) {
+    private RPanUserFile assembleRPanUserFile(Long parentId, Long userId, String nickName, Long depId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, String fileSizeDesc, Integer waterMarkFlag,Integer folderType,String participants) {
         RPanUserFile rPanUserFile = new RPanUserFile();
         long nextId = new UniqueIdGenerator(1, 1).nextId();
         rPanUserFile.setUserId(userId);
         rPanUserFile.setUserName(nickName);
-        rPanUserFile.setParentId(parentId);
+        if(folderType!=0){
+            rPanUserFile.setParentId(0L);
+        }else{
+            rPanUserFile.setParentId(parentId);
+        }
         rPanUserFile.setFileId(nextId);
         rPanUserFile.setFilename(filename);
         rPanUserFile.setFileType(fileType);
@@ -749,6 +771,8 @@ public class UserFileServiceImpl implements IUserFileService {
         rPanUserFile.setUpdateTime(new Date());
         rPanUserFile.setDepId(depId);
         rPanUserFile.setWaterMaterFlag(waterMarkFlag);
+        rPanUserFile.setFolderType(folderType);
+        rPanUserFile.setParticipants(participants);
         handleDuplicateFileName(rPanUserFile);//重复文件重命名
         uploadLog(nextId, filename, userId);
         return rPanUserFile;
@@ -776,13 +800,22 @@ public class UserFileServiceImpl implements IUserFileService {
      * 创建部门时创建
      */
     private void saveUserFile(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId, String nickName, String fileSizeDesc, Long depId) {
-        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, nickName, depId, filename, folderFlag, fileType, realFileId, fileSizeDesc, 0)) != CommonConstant.ONE_INT) {
+        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, nickName, depId, filename, folderFlag, fileType, realFileId, fileSizeDesc, 0,0,"")) != CommonConstant.ONE_INT) {
+            Asserts.fail("保存文件信息失败");
+        }
+    }
+
+    /**
+     * 创建文件夹
+     */
+    private void saveFolder(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId, String nickName, String fileSizeDesc, Long depId,Integer folderType,String participants) {
+        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, nickName, depId, filename, folderFlag, fileType, realFileId, fileSizeDesc, 0,folderType,participants)) != CommonConstant.ONE_INT){
             Asserts.fail("保存文件信息失败");
         }
     }
 
     private void saveUserFileWithWaterMark(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long userId, String nickName, String fileSizeDesc, Integer waterMarkFlag, Long depId) {
-        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, nickName, depId, filename, folderFlag, fileType, realFileId, fileSizeDesc, waterMarkFlag)) != CommonConstant.ONE_INT) {
+        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, nickName, depId, filename, folderFlag, fileType, realFileId, fileSizeDesc, waterMarkFlag,0,"")) != CommonConstant.ONE_INT) {
             Asserts.fail("保存文件信息失败");
         }
     }

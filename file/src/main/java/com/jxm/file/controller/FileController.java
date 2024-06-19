@@ -4,10 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
 import com.jxm.common.service.RedisService;
-import com.jxm.file.dto.FileOperateLogDetail;
-import com.jxm.file.dto.MyUploadFileStatus;
-import com.jxm.file.dto.UserDepDto;
-import com.jxm.file.dto.UserUploadCountDto;
+import com.jxm.file.dto.*;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.Message;
 import com.jxm.file.entity.RPanUserFile;
@@ -22,11 +19,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -35,10 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -179,7 +170,7 @@ public class FileController {
                                                           @RequestParam(value = "parentId", required = false) Long parentId,
                                                           @RequestParam(name = "fileTypes", required = false, defaultValue = "-1") String fileTypes
     ) throws ParseException {
-        List<RPanUserFileDisplayVO> list = iUserFileService.list(pageType, parentId, fileTypes, getLoginDepId());
+        List<RPanUserFileDisplayVO> list = iUserFileService.list(pageType, parentId, fileTypes, getLoginUser());
         return CommonResult.success(list);
     }
 
@@ -189,7 +180,13 @@ public class FileController {
     )
     @PostMapping("file/folder")
     public CommonResult createFolder(@Validated @RequestBody CreateFolderPO createFolderPO) throws ParseException {
-        iUserFileService.createFolder(createFolderPO.isPageType(), createFolderPO.getParentId(), createFolderPO.getFolderName(), getLoginUser());
+        String participants = "";
+        if(createFolderPO.getFolderType()==1){
+            participants = createFolderPO.getThisDepParticipants().stream().map(String::valueOf).collect(Collectors.joining(","));
+        }else if(createFolderPO.getFolderType()==2){
+            participants = createFolderPO.getCrossDepParticipants().stream().map(String::valueOf).collect(Collectors.joining(","));
+        }
+        iUserFileService.createFolder(createFolderPO.isPageType(), createFolderPO.getParentId(), createFolderPO.getFolderName(),createFolderPO.getFolderType(),participants, getLoginUser());
         return CommonResult.success();
     }
 
@@ -456,9 +453,36 @@ public class FileController {
     )
     @GetMapping("file/folder/tree")
     public CommonResult<List<FolderTreeNodeVO>> getFolderTree(@RequestParam("fileRootId") Long fileRootId) throws ParseException {
-        return CommonResult.success(iUserFileService.getFolderTree(fileRootId, getLoginDepId()));
+        return CommonResult.success(iUserFileService.getFolderTree(fileRootId, getLoginUser()));
     }
 
+    @ApiOperation(
+            value = "获取小组成员",
+            notes = "该接口获取小组成员的功能"
+    )
+    @GetMapping("file/required/getTeamUser")
+    public CommonResult<List<UmsAdminConcat>> getTeamUser(@RequestParam("folderId") Long folderId){
+        return CommonResult.success(iUserFileService.getTeamUser(folderId));
+    }
+
+    @ApiOperation(value = "修改小组成员")
+    @RequestMapping(value = "file/required/updateTeamUser", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult updateTeamUser(@RequestParam(defaultValue = "") String[] teamUsers,@RequestParam("folderId") Long folderId) throws ParseException {
+        //小组创建人本人才可以添加修改人员信息
+        Long createUserId = iUserFileService.getUserByFileId(folderId);
+        String jsonStr = JSONUtil.toJsonStr(upstageService.getCurrentAdmin().getData());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        if (userDepDto.getUserId().equals(createUserId)) {
+            int count = iUserFileService.updateTeamUser(teamUsers, folderId);
+            if(count>0){
+                return CommonResult.success();
+            }
+            return CommonResult.failed();
+        } else {
+            return CommonResult.failed("小组创建人才可修改人员信息");
+        }
+    }
 
     @ApiOperation(
             value = "转移文件(批量)",
@@ -541,7 +565,7 @@ public class FileController {
     )
     @GetMapping("file/breadcrumbs")
     public CommonResult<List<BreadcrumbVO>> getBreadcrumbs(@NotNull(message = "文件id不能为空") @RequestParam(value = "fileId", required = false) Long fileId) throws ParseException {
-        return CommonResult.success(iUserFileService.getBreadcrumbs(fileId, getLoginDepId()));
+        return CommonResult.success(iUserFileService.getBreadcrumbs(fileId, getLoginUser()));
     }
 
     /**

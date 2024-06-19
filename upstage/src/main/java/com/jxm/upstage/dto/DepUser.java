@@ -1,5 +1,7 @@
 package com.jxm.upstage.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -7,6 +9,10 @@ import java.io.Serializable;
 public class DepUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "用户id")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
 
     @ApiModelProperty(value = "姓名")
     private String nickName;
@@ -16,6 +22,14 @@ public class DepUser implements Serializable {
 
     @ApiModelProperty(value = "职务")
     private String duty;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNickName() {
         return nickName;
@@ -44,7 +58,8 @@ public class DepUser implements Serializable {
     @Override
     public String toString() {
         return "DepUser{" +
-                "nickName='" + nickName + '\'' +
+                "id=" + id +
+                ", nickName='" + nickName + '\'' +
                 ", username='" + username + '\'' +
                 ", duty='" + duty + '\'' +
                 '}';

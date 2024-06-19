@@ -36,6 +36,12 @@ public class RPanUserFileDisplayVO implements Serializable {
 
 
     /**
+     * 父文件夹类型
+     */
+    @ApiModelProperty("父文件夹类型")
+    private String parentFolderType;
+
+    /**
      * 文件名称
      */
     @ApiModelProperty("文件名称")
