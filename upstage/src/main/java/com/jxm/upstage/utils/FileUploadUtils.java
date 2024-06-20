@@ -142,7 +142,7 @@ public class FileUploadUtils
     {
         int dirLastIndex = TianYiConfig.getProfile().length() + 1;
         String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
-        String pathFileName = "?filePath=/ruoyi/uploadPath/" + currentDir + "/" + fileName+"&filePreviewContentType=image/jpeg";
+        String pathFileName = "?filePath=/data/avatar/" + currentDir + "/" + fileName+"&filePreviewContentType=image/jpeg";
         return pathFileName;
     }
 

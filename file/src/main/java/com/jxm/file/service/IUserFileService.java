@@ -32,7 +32,7 @@ public interface IUserFileService {
 
     List<RPanUserFileVO> list(String fileIds);
 
-    void createFolder(Boolean isPageType,Long parentId, String folderName,Integer folderType,String participants, Object loginUser);
+    void createFolder(Boolean isPageType,String teamFlag,Long parentId, String folderName,Integer folderType,String participants, Object loginUser);
 
     void createDepRootFolder(Long parentId, String folderName, Long userId,Long depId);
 
@@ -96,7 +96,7 @@ public interface IUserFileService {
 
     void restoreUserFiles(String fileIds, HashMap<String, Integer> map);
 
-    void physicalDeleteUserFiles(String fileIds, Long depId);
+    void physicalDeleteUserFiles(Long fileId);
 
     List<RPanUserFileVO> allList(String fileIds);
 
@@ -110,7 +110,7 @@ public interface IUserFileService {
 
     CheckFileChunkUploadVO checkUploadWithChunk(Long userId, String identifier);
 
-    void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize,String waterMarkFlag, UserDepDto userDepDto);
+    void mergeChunks(Integer pageType,String filename, String identifier, Long parentId, Long totalSize,String waterMarkFlag,String teamFlag,UserDepDto userDepDto);
 
     /**
      * 获取企业文件类型数量信息

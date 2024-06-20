@@ -57,7 +57,7 @@
 
   <select id="getUmsAdminConcat" parameterType="java.lang.Long" resultType="com.jxm.upstage.dto.UmsAdminConcat">
     select
-    id,nick_name,email,phone
+    id,nick_name,email,phone,icon
     from ums_admin
     where id = #{id,jdbcType=BIGINT}
   </select>

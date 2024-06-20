@@ -33,6 +33,10 @@ public class FileChunkMergePO implements Serializable {
     @NotNull(message = "所在页面类型")
     private Integer pageType;
 
+    @ApiModelProperty(value = "是否为团队文件", required = true)
+    @NotNull(message = "团队文件标识")
+    private String teamFlag;
+
     @ApiModelProperty(value = "是否添加水印", required = true)
     @NotNull(message = "水印标识")
     private String waterMarkFlag;
@@ -88,6 +92,14 @@ public class FileChunkMergePO implements Serializable {
         this.waterMarkFlag = waterMarkFlag;
     }
 
+    public String getTeamFlag() {
+        return teamFlag;
+    }
+
+    public void setTeamFlag(String teamFlag) {
+        this.teamFlag = teamFlag;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,12 +110,13 @@ public class FileChunkMergePO implements Serializable {
                 Objects.equals(totalSize, that.totalSize) &&
                 Objects.equals(parentId, that.parentId) &&
                 Objects.equals(pageType, that.pageType) &&
+                Objects.equals(teamFlag, that.teamFlag) &&
                 Objects.equals(waterMarkFlag, that.waterMarkFlag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filename, identifier, totalSize, parentId, pageType, waterMarkFlag);
+        return Objects.hash(filename, identifier, totalSize, parentId, pageType, teamFlag, waterMarkFlag);
     }
 
     @Override
@@ -114,6 +127,7 @@ public class FileChunkMergePO implements Serializable {
                 ", totalSize=" + totalSize +
                 ", parentId=" + parentId +
                 ", pageType=" + pageType +
+                ", teamFlag='" + teamFlag + '\'' +
                 ", waterMarkFlag='" + waterMarkFlag + '\'' +
                 '}';
     }

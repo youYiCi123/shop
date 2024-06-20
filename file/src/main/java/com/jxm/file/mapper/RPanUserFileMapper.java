@@ -97,7 +97,7 @@ public interface RPanUserFileMapper {
 
     int updateUserFileDelFlagByFileIdListAndUserId(@Param("fileIdList") List<Long> fileIdList, @Param("userId") Long userId, @Param("depId") Long depId);
 
-    int physicalDeleteBatch(@Param("fileIdList") List<Long> fileIdList, @Param("depId") Long depId);
+    int physicalDeleteBatch(@Param("fileIdList") List<Long> fileIdList);
 
     int selectCountByRealFileId(@Param("realFileId") Long realFileId);
 

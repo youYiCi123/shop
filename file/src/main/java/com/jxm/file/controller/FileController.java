@@ -186,7 +186,7 @@ public class FileController {
         }else if(createFolderPO.getFolderType()==2){
             participants = createFolderPO.getCrossDepParticipants().stream().map(String::valueOf).collect(Collectors.joining(","));
         }
-        iUserFileService.createFolder(createFolderPO.isPageType(), createFolderPO.getParentId(), createFolderPO.getFolderName(),createFolderPO.getFolderType(),participants, getLoginUser());
+        iUserFileService.createFolder(createFolderPO.isPageType(),createFolderPO.getTeamFlag(), createFolderPO.getParentId(), createFolderPO.getFolderName(),createFolderPO.getFolderType(),participants, getLoginUser());
         return CommonResult.success();
     }
 
@@ -236,7 +236,7 @@ public class FileController {
             iUserFileService.deleteLog(fileId, fileName, userId);
             return CommonResult.success();
         } else {
-            return CommonResult.failed("文件上传人本人或其部门长,才可该删除文件");
+            return CommonResult.failed("创建人本人或其部门长,才可该删除文件");
         }
     }
 
@@ -390,7 +390,7 @@ public class FileController {
             message.setReadFlag(0);
             messageService.insert(message);
         }
-        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), fileChunkMergePO.getWaterMarkFlag(), userDepDto);
+        iUserFileService.mergeChunks(fileChunkMergePO.getPageType(), fileChunkMergePO.getFilename(), fileChunkMergePO.getIdentifier(), fileChunkMergePO.getParentId(), fileChunkMergePO.getTotalSize(), fileChunkMergePO.getWaterMarkFlag(),fileChunkMergePO.getTeamFlag(),userDepDto);
         return CommonResult.success();
     }
 

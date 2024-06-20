@@ -19,4 +19,7 @@ public class UmsAdminConcat {
 
     @ApiModelProperty(value = "手机号")
     private String phone;
+
+    @ApiModelProperty(value = "头像")
+    private String icon;
 }

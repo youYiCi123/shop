@@ -111,7 +111,7 @@ public class UserController {
     public CommonResult getMimeInfo() throws ParseException {
         UmsAdmin umsAdmin = adminService.getCurrentAdmin();
         Map<String, Object> data = new HashMap<>();
-        data.put("userId", umsAdmin.getId());
+        data.put("userId", umsAdmin.getId().toString());
         data.put("username", umsAdmin.getUsername());
         data.put("nickName", umsAdmin.getNickName());
         data.put("email", umsAdmin.getEmail());

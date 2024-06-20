@@ -102,6 +102,9 @@
             <if test="participants != null">
                 participants,
             </if>
+            <if test="passFlag != null">
+                pass_flag,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             NOW(),
@@ -155,6 +158,9 @@
             </if>
             <if test="participants != null">
                 #{participants,jdbcType=VARCHAR},
+            </if>
+            <if test="passFlag != null">
+                #{passFlag,jdbcType=BIT},
             </if>
         </trim>
     </insert>
@@ -632,7 +638,7 @@
     </update>
 
     <delete id="physicalDeleteBatch">
-        DELETE FROM r_pan_user_file WHERE dep_id = #{depId} AND file_id IN
+        DELETE FROM r_pan_user_file WHERE  file_id IN
         <foreach collection="fileIdList" open="(" close=")" item="item" separator=",">
             #{item}
         </foreach>

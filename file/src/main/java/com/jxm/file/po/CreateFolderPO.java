@@ -35,6 +35,9 @@ public class CreateFolderPO implements Serializable {
     @ApiModelProperty(value = "页面类型", required = true)
     private boolean pageType;
 
+    @ApiModelProperty(value = "是否为团队文件夹", required = true)
+    private String teamFlag;
+
     @ApiModelProperty(value = "文件夹类型", required = true)
     private Integer folderType;
 
@@ -68,6 +71,14 @@ public class CreateFolderPO implements Serializable {
         this.pageType = pageType;
     }
 
+    public String getTeamFlag() {
+        return teamFlag;
+    }
+
+    public void setTeamFlag(String teamFlag) {
+        this.teamFlag = teamFlag;
+    }
+
     public Integer getFolderType() {
         return folderType;
     }
@@ -98,6 +109,7 @@ public class CreateFolderPO implements Serializable {
                 "parentId=" + parentId +
                 ", folderName='" + folderName + '\'' +
                 ", pageType=" + pageType +
+                ", teamFlag='" + teamFlag + '\'' +
                 ", folderType=" + folderType +
                 ", thisDepParticipants=" + thisDepParticipants +
                 ", crossDepParticipants=" + crossDepParticipants +
