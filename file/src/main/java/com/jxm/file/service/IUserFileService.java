@@ -7,6 +7,7 @@ import com.jxm.file.dto.UmsAdminConcat;
 import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
+import com.jxm.file.entity.TeamUser;
 import com.jxm.file.vo.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,7 +73,14 @@ public interface IUserFileService {
 
     void downloadLog(Long fileId,String fileName,Long userId,String waterMark);
 
+    //文件页面的删除
     void deleteLog(Long fileId,String fileName,Long userId);
+
+    //审核页面的删除驳回
+    void updateFileReason(Long fileId,String reason);
+
+    //审核页面的删除驳回
+    void updateFilesReason(List<Long> fileId,String reason);
 
     List<FolderTreeNodeVO> getFolderTree(Long fileRootId, Object loginUser);
 
@@ -116,6 +124,10 @@ public interface IUserFileService {
      * 获取企业文件类型数量信息
      */
     List<DashboardUserFileParam> getTheNumberOfFileTypes();
+
+    TeamUser getNotice(Long teamId);
+
+    int editNotice(TeamUser teamUser);
 
     String getFileNameById(Long fileId);
 

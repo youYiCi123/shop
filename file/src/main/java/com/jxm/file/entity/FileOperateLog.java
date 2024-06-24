@@ -18,5 +18,6 @@ public class FileOperateLog {
     private Long fileId;
     private String fileName;
     private String extendField;
+    private String reason;
     private Date createTime;
 }

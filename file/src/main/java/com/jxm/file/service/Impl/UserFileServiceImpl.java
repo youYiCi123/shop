@@ -17,10 +17,12 @@ import com.jxm.file.dto.UserDepDto;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanFile;
 import com.jxm.file.entity.RPanUserFile;
+import com.jxm.file.entity.TeamUser;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.FileOperateLogMapper;
 import com.jxm.file.mapper.RPanFileMapper;
 import com.jxm.file.mapper.RPanUserFileMapper;
+import com.jxm.file.mapper.TeamUserMapper;
 import com.jxm.file.service.IFileService;
 import com.jxm.file.service.IUserFileService;
 import com.jxm.file.service.IUserSearchHistoryService;
@@ -95,6 +97,9 @@ public class UserFileServiceImpl implements IUserFileService {
 
     @Autowired
     private UpstageService upstageService;
+
+    @Autowired
+    private TeamUserMapper teamUserMapper;
 
     @Override
     public List<RPanUserFileDisplayVO> searchForName(Long pageType, String keyword, Long depId) {
@@ -380,6 +385,16 @@ public class UserFileServiceImpl implements IUserFileService {
     @Override
     public void deleteLog(Long fileId, String fileName, Long userId) {
         fileOperateLogMapper.insert(fileId, fileName, userId, "删除", "");
+    }
+
+    @Override
+    public void updateFileReason(Long fileId, String reason) {
+        fileOperateLogMapper.updateFileReason(fileId,reason);
+    }
+
+    @Override
+    public void updateFilesReason(List<Long> fileIds, String reason) {
+        fileOperateLogMapper.updateFilesReason(fileIds,reason);
     }
 
     /**
@@ -735,6 +750,21 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
+    public TeamUser getNotice(Long teamId) {
+        return teamUserMapper.select(teamId);
+    }
+
+    @Override
+    public int editNotice(TeamUser teamUser) {
+        TeamUser teamUser1 = teamUserMapper.select(teamUser.getTeamId());
+        if(teamUser1==null){
+            return  teamUserMapper.insert(teamUser);
+        }else{
+            return teamUserMapper.update(teamUser);
+        }
+    }
+
+    @Override
     public String getFileNameById(Long fileId) {
         return rPanUserFileMapper.getFileNameById(fileId);
     }
@@ -760,8 +790,10 @@ public class UserFileServiceImpl implements IUserFileService {
         rPanUserFile.setUserName(nickName);
         if(folderType!=0){
             rPanUserFile.setParentId(0L);
+            rPanUserFile.setPassFlag(1);
         }else{
             rPanUserFile.setParentId(parentId);
+            rPanUserFile.setPassFlag(0);
         }
         if(teamFlag.equals("true")){
             rPanUserFile.setPassFlag(1);

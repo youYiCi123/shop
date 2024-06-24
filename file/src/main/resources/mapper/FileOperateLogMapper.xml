@@ -5,6 +5,7 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
         <result column="operate" jdbcType="VARCHAR" property="operate"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
         <result column="file_id" jdbcType="BIGINT" property="fileId"/>
         <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
         <result column="extend_field" jdbcType="VARCHAR" property="extendField"/>
@@ -12,7 +13,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, user_id, operate, file_id,file_name,extend_field, create_time
+        id, user_id, operate,reason,file_id,file_name,extend_field, create_time
     </sql>
 
     <select id="getUserUploadCount" resultType="com.jxm.file.dto.userIdUploadDto">
@@ -111,4 +112,14 @@
         </foreach>
     </delete>
 
+    <update id="updateFileReason">
+        update file_operate_log set reason=#{reason} where file_id=#{fileId}
+    </update>
+
+    <update id="updateFilesReason">
+         update file_operate_log set reason=#{reason} where file_id in
+        <foreach collection="fileIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

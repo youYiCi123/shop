@@ -13,6 +13,10 @@ public interface FileOperateLogMapper {
 
     int insert(Long fileId,String fileName,Long userId,String operate,String extendField);
 
+    void updateFileReason(Long fileId, String reason);
+
+    void updateFilesReason(List<Long> fileIds, String reason);
+
     List<FileOperateLog> selectFileOperateLog(String startDate, String endDate,Long userId);
 
     List<FileOperateLog> getMyUploadFileStatus(String startDate, String endDate,Long userId,String keyword);

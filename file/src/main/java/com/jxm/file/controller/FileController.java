@@ -8,6 +8,7 @@ import com.jxm.file.dto.*;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.Message;
 import com.jxm.file.entity.RPanUserFile;
+import com.jxm.file.entity.TeamUser;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.RPanUserFileMapper;
 import com.jxm.file.po.*;
@@ -243,9 +244,10 @@ public class FileController {
     @ApiOperation("批量删除文件信息 --审核页面")
     @RequestMapping(value = "/file/delete/batch", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult deleteBatch(@RequestBody Long[] multipleSelectionId) {
+    public CommonResult deleteBatch(@RequestParam Long[] multipleSelectionId,@RequestParam String reason) {
         List<Long> idList = Arrays.stream(multipleSelectionId).collect(Collectors.toList());
         int count = iUserFileService.deleteBatch(idList);
+        iUserFileService.updateFilesReason(idList,reason);
         if (count > 0) {
             return CommonResult.success(count);
         }
@@ -253,10 +255,11 @@ public class FileController {
     }
 
     @ApiOperation(value = "删除文件--审核页面")
-    @RequestMapping(value = "/file/delete/fileById/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/file/delete/fileById", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult deleteFile(@PathVariable("id") Long id) {
+    public CommonResult deleteFile(@RequestParam("id") Long id, @RequestParam String reason) {
         int count = iUserFileService.deleteFile(id);
+        iUserFileService.updateFileReason(id,reason);
         if (count == 1) {
             return CommonResult.success(null);
         } else {
@@ -521,6 +524,25 @@ public class FileController {
     public CommonResult getTheNumberOfFileTypes() {
         return CommonResult.success(iUserFileService.getTheNumberOfFileTypes());
     }
+
+    @ApiOperation(
+            value = "提供获取团队公告的功能",
+            notes = "该接口获取团队公告的功能"
+    )
+    @GetMapping("file/required/getNotice")
+    public CommonResult getNotice(Long teamId) {
+        return CommonResult.success(iUserFileService.getNotice(teamId));
+    }
+
+    @ApiOperation(
+            value = "提供编辑团队公告的功能",
+            notes = "该接口编辑团队公告的功能"
+    )
+    @PostMapping("file/required/editNotice")
+    public CommonResult editNotice(TeamUser teamUser) {
+        return CommonResult.success(iUserFileService.editNotice(teamUser));
+    }
+
 
     /**
      * 通过文件名搜索文件列表

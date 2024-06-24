@@ -101,6 +101,7 @@ public class FileOperateServiceImpl implements FileOperateService {
                     myUploadFileStatus.setStatus(0);
                 }
             }else{
+                myUploadFileStatus.setReason(t.getReason());
                 myUploadFileStatus.setStatus(2);
             }
             myUploadFileStatuses.add(myUploadFileStatus);
