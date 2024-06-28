@@ -819,15 +819,6 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 保存用户文件信息
-     *
-     * @param parentId
-     * @param filename
-     * @param folderFlag
-     * @param fileType
-     * @param realFileId
-     * @param depId
-     * @param fileSizeDesc
-     * @return
      */
 //    private void saveUserFile(Long parentId, String filename, FileConstant.FolderFlagEnum folderFlag, Integer fileType, Long realFileId, Long depId,String fileSizeDesc) {
 //        if (rPanUserFileMapper.insertSelective(assembleRPanUserFile(parentId, userId, depId,filename, folderFlag, fileType, realFileId, fileSizeDesc)) != CommonConstant.ONE_INT) {

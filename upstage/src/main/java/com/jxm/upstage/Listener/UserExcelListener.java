@@ -60,7 +60,7 @@ public class UserExcelListener extends AnalysisEventListener<ExcelUser> {
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
         currentRow=context.readRowHolder().getRowIndex();
         if(currentRow==0){
-            if( !headMap.get(0).equals("合肥天一生物技术研究所有限责任公司"))            //excel第一行表头数据内容
+            if( !headMap.get(0).equals("合肥天一生物技术研究所有限责任公司"))//excel第一行表头数据内容
                 throw new ExcelAnalysisException("解析excel出错，请传入正确格式的excel");
         }else {
             Map<Integer, String> head = new HashMap<>();

@@ -67,8 +67,8 @@ public class ExportExcelHandleServiceImpl implements ExportExcelHandleService {
             boolean addFlag = false;
             for (ExcelUser userExportExcelModel : userExportExcelModels) {
 
-                if(!Pattern.matches(REGEX_MOBILE, userExportExcelModel.getPhoneNumber())||!Pattern.matches(REGEX_EMAIL, userExportExcelModel.getEmail()))
-                    continue;
+//                if(!Pattern.matches(REGEX_MOBILE, userExportExcelModel.getPhoneNumber()))
+//                    continue;
 
                 if (allUserPhone.size() == 0) {
                     addFlag = true;
