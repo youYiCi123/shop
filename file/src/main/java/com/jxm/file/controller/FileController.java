@@ -222,8 +222,8 @@ public class FileController {
     }
 
     @ApiOperation(
-            value = "删除文件(批量)",
-            notes = "该接口提供了删除文件(批量)的功能"
+            value = "删除文件(单个)",
+            notes = "该接口提供了删除文件(单个)的功能"
     )
     @PostMapping("/file/delete")
     public CommonResult delete(Long fileId) throws ParseException {
@@ -238,6 +238,38 @@ public class FileController {
             return CommonResult.success();
         } else {
             return CommonResult.failed("创建人本人或其部门长,才可该删除文件");
+        }
+    }
+
+    @ApiOperation(
+            value = "删除文件(批量)----预览页面",
+            notes = "该接口提供了删除文件(批量)的功能"
+    )
+    @PostMapping("/file/delete/multiply")
+    public CommonResult deleteMultiply(@RequestBody List<FileSimplifyDto> multiplyFileList) throws ParseException {
+        Long userId = getLoginUserId();
+        //存储未能被删除的文件（权限或其它原因）
+        String tempFileStr = "";
+        for(FileSimplifyDto t :multiplyFileList){
+            //文件创建人本人、文件创建人的部门长,才可以删除文件
+            Long createUserId = iUserFileService.getUserByFileId(t.getId());
+            Long depHeadId = upstageService.selectDepHeadIdByUser(createUserId).getData();
+            if (userId.equals(createUserId) || userId.equals(depHeadId)) {//todo 此处应该优化
+                iUserFileService.delete(t.getId(), userId);
+                String fileName = iUserFileService.getFileNameById(t.getId());
+                iUserFileService.deleteLog(t.getId(), fileName, userId);
+            } else {
+                if(tempFileStr.equals("")){
+                    tempFileStr += t.getName();
+                }else{
+                    tempFileStr += ","+t.getName();
+                }
+            }
+        }
+        if(tempFileStr.equals("")){
+            return CommonResult.success();
+        }else{
+            return CommonResult.failed("下列文件不具备删除权限："+tempFileStr);
         }
     }
 

@@ -10,10 +10,7 @@ import com.jxm.common.generator.UniqueIdGenerator;
 import com.jxm.file.bo.FilePositionBO;
 import com.jxm.file.constant.CommonConstant;
 import com.jxm.file.constant.FileConstant;
-import com.jxm.file.dto.DashboardUserFileParam;
-import com.jxm.file.dto.FileOperateLogDetail;
-import com.jxm.file.dto.UmsAdminConcat;
-import com.jxm.file.dto.UserDepDto;
+import com.jxm.file.dto.*;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanFile;
 import com.jxm.file.entity.RPanUserFile;
@@ -159,16 +156,10 @@ public class UserFileServiceImpl implements IUserFileService {
 
     /**
      * 获取文件列表
-     *
-     * @param parentId
-     * @param fileTypes
-     * @param depId
-     * @param delFlag
-     * @return
      */
     public List<RPanUserFileDisplayVO> list(Long pageType, Long parentId, String fileTypes, Long depId,Long userId, Integer delFlag) {
         List<Integer> fileTypeArray = null;
-        if (Objects.equals(CommonConstant.ZERO_LONG, parentId)) {
+        if (Objects.equals(CommonConstant.ZERO_LONG, parentId)||Objects.equals(-1L, parentId)) {
             return Lists.newArrayList();
         }
         if (!Objects.equals(fileTypes, FileConstant.ALL_FILE_TYPE)) {
@@ -368,6 +359,9 @@ public class UserFileServiceImpl implements IUserFileService {
             Asserts.fail("不能选择文件夹下载");
         }
         RPanUserFile rPanUserFile = rPanUserFileMapper.selectByPrimaryKey(fileId);
+        if(rPanUserFile.getWaterMaterFlag().equals(1)&&waterMark.equals("")){
+            Asserts.fail("请输入水印内容");
+        }
         RPanFile rPanFile = iFileService.getFileDetail(rPanUserFile.getRealFileId());
         doDownload(rPanFile.getRealPath(), response, rPanUserFile.getFilename(), waterMark);
     }

@@ -26,7 +26,7 @@
         <result column="participants" jdbcType="VARCHAR" property="participants"/>
     </resultMap>
     <sql id="Base_Column_List">
-        file_id, user_id, user_name,parent_id, real_file_id, filename, folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id,pass_user_id,pass_user_name,pass_time,folder_type,participants
+        file_id, user_id, user_name,parent_id, real_file_id, filename, water_mater_flag,folder_flag, file_size_desc, file_type, del_flag,pass_flag, create_user, create_time, update_user, update_time,dep_id,pass_user_id,pass_user_name,pass_time,folder_type,participants
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select

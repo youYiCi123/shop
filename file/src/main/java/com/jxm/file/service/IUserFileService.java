@@ -1,10 +1,7 @@
 package com.jxm.file.service;
 
 
-import com.jxm.file.dto.DashboardUserFileParam;
-import com.jxm.file.dto.FileOperateLogDetail;
-import com.jxm.file.dto.UmsAdminConcat;
-import com.jxm.file.dto.UserDepDto;
+import com.jxm.file.dto.*;
 import com.jxm.file.entity.FileOperateLog;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.entity.TeamUser;
