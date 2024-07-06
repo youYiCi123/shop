@@ -187,6 +187,7 @@ public class FileController {
         }else if(createFolderPO.getFolderType()==2){
             participants = createFolderPO.getCrossDepParticipants().stream().map(String::valueOf).collect(Collectors.joining(","));
         }
+        // todo 获取父系文件夹
         iUserFileService.createFolder(createFolderPO.isPageType(),createFolderPO.getTeamFlag(), createFolderPO.getParentId(), createFolderPO.getFolderName(),createFolderPO.getFolderType(),participants, getLoginUser());
         return CommonResult.success();
     }
