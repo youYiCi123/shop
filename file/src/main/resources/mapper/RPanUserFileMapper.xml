@@ -469,7 +469,7 @@
         r_pan_user_file
         WHERE
         <if test="depId != '1'.toString()">
-            ((parent_id !=0 and folder_type=0)or(parent_id=0 and dep_id = #{depId})or(participants like concat('%', #{userId}, '%')))
+            ((parent_id !=0 and folder_type=0 and dep_id!=1)or(parent_id=0 and dep_id = #{depId} and folder_type=0)or(participants like concat('%', #{userId}, '%')))
         </if>
         <if test="depId == '1'.toString()">
          dep_id = #{depId}

@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * 用户搜索历史数据层
- * Created by RubinChu on 2021/1/22 下午 4:11
  */
 @Repository(value = "rPanUserSearchHistoryMapper")
 public interface RPanUserSearchHistoryMapper {
