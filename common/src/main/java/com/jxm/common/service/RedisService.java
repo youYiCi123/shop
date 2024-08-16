@@ -12,6 +12,11 @@ import java.util.concurrent.TimeUnit;
 public interface RedisService {
 
     /**
+     * 查找匹配key
+     */
+    List<String> scan(String pattern);
+
+    /**
      * 保存属性
      */
     void set(String key, Object value, long time);

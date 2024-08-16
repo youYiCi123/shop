@@ -1,6 +1,9 @@
 package com.jxm.upstage.service;
 
+import com.jxm.upstage.dto.OnlineUmsAdmin;
 import com.jxm.upstage.model.UmsAdmin;
+
+import java.util.List;
 
 /**
  * 后台用户缓存操作类
@@ -20,10 +23,14 @@ public interface UmsAdminCacheService {
     /**
      * 获取缓存后台用户信息
      */
-    UmsAdmin getAdmin(Long adminId);
+    OnlineUmsAdmin getAdmin(Long adminId);
 
+    /**
+     * 获取所有缓存的用户信息
+     */
+    List<OnlineUmsAdmin> getAll();
     /**
      * 设置缓存后台用户信息
      */
-    void setAdmin(UmsAdmin admin);
+    void setAdmin(OnlineUmsAdmin admin);
 }

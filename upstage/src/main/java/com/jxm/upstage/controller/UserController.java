@@ -95,7 +95,7 @@ public class UserController {
     @RequestMapping(value = "/getCurrentAdmin", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getCurrentAdmin() throws ParseException {
-        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        OnlineUmsAdmin umsAdmin = adminService.getCurrentAdmin();
         //获取所属部门长id
         Map<String, Object> data = new HashMap<>();
         data.put("userId", umsAdmin.getId());
@@ -109,7 +109,7 @@ public class UserController {
         @RequestMapping(value = "/getMimeInfo", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getMimeInfo() throws ParseException {
-        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        OnlineUmsAdmin umsAdmin = adminService.getCurrentAdmin();
         Map<String, Object> data = new HashMap<>();
         data.put("userId", umsAdmin.getId().toString());
         data.put("username", umsAdmin.getUsername());
@@ -131,7 +131,7 @@ public class UserController {
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getAdminInfo() throws ParseException {
-        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        OnlineUmsAdmin umsAdmin = adminService.getCurrentAdmin();
         Map<String, Object> data = new HashMap<>();
         data.put("id",String.valueOf(umsAdmin.getId()));
         data.put("nickName", umsAdmin.getNickName());

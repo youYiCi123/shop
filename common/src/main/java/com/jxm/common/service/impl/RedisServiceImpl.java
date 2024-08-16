@@ -2,11 +2,14 @@ package com.jxm.common.service.impl;
 
 import com.jxm.common.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,6 +19,23 @@ import java.util.concurrent.TimeUnit;
 public class RedisServiceImpl implements RedisService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    public List<String> scan(String pattern) {
+        ScanOptions options = ScanOptions.scanOptions().match(pattern).build();
+        RedisConnectionFactory factory = redisTemplate.getConnectionFactory();
+        RedisConnection rc = Objects.requireNonNull(factory).getConnection();
+        Cursor<byte[]> cursor = rc.scan(options);
+        List<String> result = new ArrayList<>();
+        while (cursor.hasNext()) {
+            result.add(new String(cursor.next()));
+        }
+        try {
+            RedisConnectionUtils.releaseConnection(rc, factory);
+        } catch (Exception e) {
+
+        }
+        return result;
+    }
 
     @Override
     public void set(String key, Object value, long time) {

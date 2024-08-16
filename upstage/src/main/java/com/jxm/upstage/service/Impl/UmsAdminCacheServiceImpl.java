@@ -1,12 +1,18 @@
 package com.jxm.upstage.service.Impl;
 
 import com.jxm.common.service.RedisService;
+import com.jxm.upstage.common.StringUtils;
+import com.jxm.upstage.dto.OnlineUmsAdmin;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.service.UmsAdminCacheService;
 import com.jxm.upstage.service.UmsAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * UmsAdminCacheService实现类
@@ -40,13 +46,28 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     }
 
     @Override
-    public UmsAdmin getAdmin(Long adminId) {
+    public OnlineUmsAdmin getAdmin(Long adminId) {
         String key = REDIS_DATABASE + ":" + REDIS_KEY_ADMIN + ":" + adminId;
-        return (UmsAdmin) redisService.get(key);
+        return (OnlineUmsAdmin) redisService.get(key);
+    }
+
+    /**
+     * 查询全部数据，不分页
+     */
+    public List<OnlineUmsAdmin> getAll(){
+        List<String> keys = redisService.scan(REDIS_DATABASE + ":" + REDIS_KEY_ADMIN + ":" + "*");
+        Collections.reverse(keys);
+        List<OnlineUmsAdmin> onlineUserDtos = new ArrayList<>();
+        for (String key : keys) {
+            OnlineUmsAdmin onlineUserDto = (OnlineUmsAdmin) redisService.get(key);
+            onlineUserDtos.add(onlineUserDto);
+        }
+        onlineUserDtos.sort((o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
+        return onlineUserDtos;
     }
 
     @Override
-    public void setAdmin(UmsAdmin admin) {
+    public void setAdmin(OnlineUmsAdmin admin) {
         String key = REDIS_DATABASE + ":" + REDIS_KEY_ADMIN + ":" + admin.getId();
         redisService.set(key, admin, REDIS_EXPIRE);
     }

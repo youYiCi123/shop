@@ -1,11 +1,14 @@
 package com.jxm.file.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 public class MyUploadFileStatus {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long fileId;
     private String fileName;
     private Date createTime;

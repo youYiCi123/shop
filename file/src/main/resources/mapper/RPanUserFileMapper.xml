@@ -404,6 +404,9 @@
             </foreach>
         </if>
         AND a1.del_flag = #{delFlag}
+        ORDER BY
+        a1.folder_flag DESC,
+        a1.create_time DESC
     </select>
 
     <select id="selectByFileId" resultMap="BaseResultMap">

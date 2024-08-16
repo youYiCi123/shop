@@ -112,6 +112,13 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     @Override
+    public List<OnlineUmsAdmin> onlineUserList(Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<OnlineUmsAdmin> onlineUmsAdmins = getCacheService().getAll();
+        return onlineUmsAdmins;
+    }
+
+    @Override
     public UmsAdmin getItem(Long id) {
         return adminMapper.selectByPrimaryKey(id);
     }
@@ -256,7 +263,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     @Override
-    public UmsAdmin getCurrentAdmin() throws ParseException {
+    public OnlineUmsAdmin getCurrentAdmin() throws ParseException {
         String token = request.getHeader(AuthConstant.JWT_TOKEN_HEADER);
         if(StrUtil.isEmpty(token)){
             Asserts.fail(ResultCode.UNAUTHORIZED);
@@ -266,19 +273,29 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         String userStr = jwsObject.getPayload().toString();
         UserDto userDto = JSONUtil.toBean(userStr, UserDto.class);
 
-        UmsAdmin admin = getCacheService().getAdmin(userDto.getId());
-        if(admin!=null){
-            return admin;
+        //UmsAdmin admin = getCacheService().getAdmin(userDto.getId());
+        OnlineUmsAdmin onlineAdmin = getCacheService().getAdmin(userDto.getId());
+        if(onlineAdmin!=null){
+            return onlineAdmin;
         }else{
-            admin = adminMapper.selectByPrimaryKey(userDto.getId());
-            getCacheService().setAdmin(admin);
-            return admin;
+            OnlineUmsAdmin onlineAdmin1=new OnlineUmsAdmin();
+            UmsAdmin admin = adminMapper.selectByPrimaryKey(userDto.getId());
+            BeanUtils.copyProperties(admin,onlineAdmin1);
+            String ip = com.jxm.upstage.common.StringUtils.getIp(request);
+            String browser = com.jxm.upstage.common.StringUtils.getBrowser(request);
+            String address = com.jxm.upstage.common.StringUtils.getCityInfo(ip);
+            onlineAdmin1.setBrowser(browser);
+            onlineAdmin1.setIp(ip);
+            onlineAdmin1.setLoginAddress(address);
+            onlineAdmin1.setLoginTime(new Date());
+            getCacheService().setAdmin(onlineAdmin1);
+            return onlineAdmin1;
         }
     }
 
     @Override
     public FileUserBrief getUserFileBrief() throws ParseException{
-        UmsAdmin umsAdmin = getCurrentAdmin();
+        OnlineUmsAdmin umsAdmin = getCurrentAdmin();
         CommonResult restResult =fileService.getUserTopFileInfo(umsAdmin.getDepId());
         if(ResultCode.SUCCESS.getCode()==restResult.getCode()&&restResult.getData()!=null){
             String jsonStr = JSONUtil.toJsonStr(restResult.getData());
@@ -292,7 +309,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
      * 拼装用户信息返回实体
      * @return
      */
-    private FileUserBrief assembleRPanUserVO(UmsAdmin umsAdmin, UserFile userFile) {
+    private FileUserBrief assembleRPanUserVO(OnlineUmsAdmin umsAdmin, UserFile userFile) {
         FileUserBrief fileUserBrief = new FileUserBrief();
         fileUserBrief.setUsername(umsAdmin.getUsername());
         if(ObjectUtil.isNotNull(userFile)) {

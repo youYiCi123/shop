@@ -39,6 +39,7 @@ public interface UmsAdminService {
      */
     List<UmsAdmin> list(String keyword, Long depId,Integer pageSize, Integer pageNum);
 
+    List<OnlineUmsAdmin> onlineUserList(Integer pageSize, Integer pageNum);
     /**
      * 根据用户id获取用户
      */
@@ -85,7 +86,7 @@ public interface UmsAdminService {
     /**
      * 获取当前登录后台用户
      */
-    UmsAdmin getCurrentAdmin() throws ParseException;
+    OnlineUmsAdmin getCurrentAdmin() throws ParseException;
 
     /**
      * 获取登录用户文件File根信息

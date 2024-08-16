@@ -1342,7 +1342,7 @@ public class UserFileServiceImpl implements IUserFileService {
         newRPanUserFile.setFileSizeDesc(rPanUserFile.getFileSizeDesc());
         newRPanUserFile.setFileType(rPanUserFile.getFileType());
         newRPanUserFile.setFolderFlag(rPanUserFile.getFolderFlag());
-        newRPanUserFile.setPassFlag(1);
+        newRPanUserFile.setPassFlag(0);
         newRPanUserFile.setRealFileId(realFileId);
         newRPanUserFile.setUpdateTime(new Date());
         newRPanUserFile.setUpdateUser(userId);

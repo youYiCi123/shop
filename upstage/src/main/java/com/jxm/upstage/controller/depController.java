@@ -2,10 +2,7 @@ package com.jxm.upstage.controller;
 
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
-import com.jxm.upstage.dto.DepIdToName;
-import com.jxm.upstage.dto.DepParam;
-import com.jxm.upstage.dto.DepUser;
-import com.jxm.upstage.dto.depUserRelation;
+import com.jxm.upstage.dto.*;
 import com.jxm.upstage.model.Dep;
 import com.jxm.upstage.model.UmsAdmin;
 import com.jxm.upstage.service.DepService;
@@ -85,7 +82,7 @@ public class depController {
     @RequestMapping(value = "/getColleague", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<DepUser>> getColleague() throws ParseException {
-        UmsAdmin umsAdmin = adminService.getCurrentAdmin();
+        OnlineUmsAdmin umsAdmin = adminService.getCurrentAdmin();
         List<DepUser> depUserList = depService.details(umsAdmin.getDepId(),30,1);
         return CommonResult.success(depUserList);
     }
