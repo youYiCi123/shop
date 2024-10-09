@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * 存储管理器
@@ -60,8 +61,8 @@ public class StorageManager implements StorageProcessor {
      * @throws IOException
      */
     @Override
-    public void read2OutputStream(String filePath, String waterMark,OutputStream outputStream) throws IOException {
-        storageProcessorSelector.select().read2OutputStream(filePath, waterMark,outputStream);
+    public void read2OutputStream(String filePath, String waterMark, List<Integer> pagesToWatermark, Integer readFlag, OutputStream outputStream) throws IOException {
+        storageProcessorSelector.select().read2OutputStream(filePath, waterMark,pagesToWatermark,readFlag,outputStream);
     }
 
     /**

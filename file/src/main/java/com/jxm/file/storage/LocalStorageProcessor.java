@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,10 +71,10 @@ public class LocalStorageProcessor extends AbstractStorageProcessor {
      * 读取文件为输入流
      */
     @Override
-    public void read2OutputStream(String filePath, String waterMark,OutputStream outputStream) throws IOException {
+    public void read2OutputStream(String filePath, String waterMark,List<Integer> pagesToWatermark,Integer readFlag,OutputStream outputStream) throws IOException {
         File file = new File(filePath);
         String fileName = FileUtil.getFilename(filePath);
-        FileUtil.writeFileToStream(new FileInputStream(file), outputStream, file.length(),fileName,waterMark);
+        FileUtil.writeFileToStream(new FileInputStream(file), outputStream, file.length(),fileName,waterMark,pagesToWatermark,readFlag);
     }
 
     /**

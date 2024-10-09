@@ -7,6 +7,7 @@ import com.jxm.file.storage.exception.StorageParamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * 存储处理器顶级接口
@@ -47,7 +48,7 @@ public interface StorageProcessor {
      * @param outputStream 输出流
      * @throws IOException
      */
-    void read2OutputStream(String filePath, String waterMark,OutputStream outputStream) throws IOException;
+    void read2OutputStream(String filePath, String waterMark, List<Integer> pagesToWatermark, Integer readFlag, OutputStream outputStream) throws IOException;
 
     /**
      * 删除文件

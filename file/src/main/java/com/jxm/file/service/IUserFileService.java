@@ -3,6 +3,7 @@ package com.jxm.file.service;
 
 import com.jxm.file.dto.*;
 import com.jxm.file.entity.FileOperateLog;
+import com.jxm.file.entity.FileUserAuth;
 import com.jxm.file.entity.RPanUserFile;
 import com.jxm.file.entity.TeamUser;
 import com.jxm.file.vo.*;
@@ -64,7 +65,7 @@ public interface IUserFileService {
 
     FileChunkUploadVO uploadWithChunk(MultipartFile file, Long userId, String identifier, Integer totalChunks, Integer chunkNumber, Long totalSize, String filename);
 
-    void download(Long fileId, String waterMark,HttpServletResponse response);
+    void download(Long fileId, String waterMark,List<Integer> pagesToWatermark,HttpServletResponse response);
 
     void uploadLog(Long fileId,String fileName,Long userId);
 
@@ -125,6 +126,10 @@ public interface IUserFileService {
     TeamUser getNotice(Long teamId);
 
     int editNotice(TeamUser teamUser);
+
+    FileUserAuth getUserFileAuth(Long fileId,Long userId);
+
+    int doUserFileAuth(FileUserAuth userFileAuth);
 
     String getFileNameById(Long fileId);
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxm.file.mapper.FileUserAuthMapper">
+
+
+    <select id="select" resultType="com.jxm.file.entity.FileUserAuth">
+        select
+        id,upload_file_flag,move_file_flag,file_manage_flag
+        from file_user_auth
+        where user_id = #{userId} and file_id=#{fileId}
+    </select>
+
+    <insert id="insert">
+        insert into file_user_auth
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="fileId != null">
+                file_id,
+            </if>
+            <if test="uploadFileFlag != null">
+                upload_file_flag,
+            </if>
+            <if test="moveFileFlag != null">
+                move_file_flag,
+            </if>
+            <if test="fileManageFlag != null">
+                file_manage_flag
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="fileId != null">
+                #{fileId,jdbcType=BIGINT},
+            </if>
+            <if test="uploadFileFlag != null">
+                #{uploadFileFlag,jdbcType=INTEGER},
+            </if>
+            <if test="moveFileFlag != null">
+                #{moveFileFlag,jdbcType=INTEGER},
+            </if>
+            <if test="fileManageFlag != null">
+                #{fileManageFlag,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update">
+        update file_user_auth set upload_file_flag=#{uploadFileFlag},move_file_flag=#{moveFileFlag},file_manage_flag=#{fileManageFlag} where user_id = #{userId} and file_id=#{fileId}
+    </update>
+
+</mapper>

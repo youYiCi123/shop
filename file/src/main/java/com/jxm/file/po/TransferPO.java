@@ -31,6 +31,10 @@ public class TransferPO implements Serializable {
     @NotNull(message = "请选择要转移到的文件夹")
     private Long targetParentId;
 
+    @ApiModelProperty(value = "顶级文件夹id", required = true)
+    @NotNull(message = "顶级文件夹id")
+    private Long topFileId;
+
     public TransferPO() {
     }
 
@@ -50,18 +54,27 @@ public class TransferPO implements Serializable {
         this.targetParentId = targetParentId;
     }
 
+    public Long getTopFileId() {
+        return topFileId;
+    }
+
+    public void setTopFileId(Long topFileId) {
+        this.topFileId = topFileId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransferPO that = (TransferPO) o;
         return Objects.equals(fileIds, that.fileIds) &&
-                Objects.equals(targetParentId, that.targetParentId);
+                Objects.equals(targetParentId, that.targetParentId) &&
+                Objects.equals(topFileId, that.topFileId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileIds, targetParentId);
+        return Objects.hash(fileIds, targetParentId, topFileId);
     }
 
     @Override
@@ -69,7 +82,7 @@ public class TransferPO implements Serializable {
         return "TransferPO{" +
                 "fileIds='" + fileIds + '\'' +
                 ", targetParentId=" + targetParentId +
+                ", topFileId=" + topFileId +
                 '}';
     }
-
 }

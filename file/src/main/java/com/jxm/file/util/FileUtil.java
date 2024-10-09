@@ -10,7 +10,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 文件工具类
@@ -125,7 +127,7 @@ public class FileUtil {
     /**
      * 获取输入流写入输出流  并附上水印
      */
-    public static void writeFileToStream(FileInputStream fileInputStream, OutputStream outputStream, Long size,String fileName,String waterMark) throws IOException {
+    public static void writeFileToStream(FileInputStream fileInputStream, OutputStream outputStream, Long size,String fileName,String waterMark,List<Integer> pagesToWatermark,Integer readFlag) throws IOException {
         FileChannel fileChannel = null;
         WritableByteChannel writableByteChannel = null;
         try {
@@ -139,7 +141,7 @@ public class FileUtil {
                         WaterMarkUtils.setWordWaterMark(fileInputStream,outputStream,waterMark);
                         break;
                     case 5:    //pdf添加水印
-                        WaterMarkUtils.setPdfWatermark(fileInputStream,outputStream,waterMark);
+                        WaterMarkUtils.setPdfWatermark(fileInputStream,outputStream,waterMark,pagesToWatermark,readFlag);
                         break;
                     case 7:    //图片添加水印
                         WaterMarkUtils.setPictureWatermark(fileInputStream,outputStream,waterMark);

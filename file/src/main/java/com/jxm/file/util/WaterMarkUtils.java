@@ -4,7 +4,7 @@ package com.jxm.file.util;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.*;
-
+import java.util.List;
 import com.microsoft.schemas.office.office.CTLock;
 import com.microsoft.schemas.vml.*;
 import lombok.extern.slf4j.Slf4j;
@@ -280,7 +280,7 @@ public class WaterMarkUtils {
     /**
      * pdf设置文字水印
      */
-    public static void setPdfWatermark(FileInputStream fileInputStream, OutputStream outputStream, String markStr) {
+    public static void setPdfWatermark(FileInputStream fileInputStream, OutputStream outputStream, String markStr,List<Integer> pagesToWatermark,Integer readFlag) {
         PdfStamper stamper = null;
         int total = 0;
         PdfContentByte content;
@@ -316,26 +316,32 @@ public class WaterMarkUtils {
         textW = metrics.stringWidth(label.getText());
         PdfGState gs = new PdfGState();
         for (int i = 1; i < total; i++) {
-            //在内容上方加水印
-            content = stamper.getOverContent(i);
-            gs.setFillOpacity(alpha);
-            content.saveState();
-            content.setGState(gs);
-            content.beginText();
-//            content.setRGBColorFill(0, 0, 0);
-            content.setFontAndSize(base, 20);
-            // 获取每一页的高度、宽度
-            pageSizeWithRotation = reader.getPageSizeWithRotation(i);
-            float pageHeight = pageSizeWithRotation.getHeight();
-            float pageWidth = pageSizeWithRotation.getWidth();
+            // 检查当前页面是否在指定的页面列表中
+            if (readFlag.equals(1)||
+                    (pagesToWatermark.size()!=0&&readFlag.equals(0)&&pagesToWatermark.get(1)==null)||
+                    (pagesToWatermark.size()!=0&&pagesToWatermark.get(1) != null &&readFlag.equals(0)&&pagesToWatermark.get(0)<=i && i<pagesToWatermark.get(1))) {
 
-            // 根据纸张大小多次添加， 水印文字成30度角倾斜
-            for (int height = -5 + textH; height < pageHeight; height = height + YMOVE) {
-                for (int width = -5 + textW; width < pageWidth + textW; width = width + XMOVE) {
-                    content.showTextAligned(Element.ALIGN_LEFT, markStr, width - textW, height - textH, 30);
+                //在内容上方加水印
+                content = stamper.getOverContent(i);
+                gs.setFillOpacity(alpha);
+                content.saveState();
+                content.setGState(gs);
+                content.beginText();
+//            content.setRGBColorFill(0, 0, 0);
+                content.setFontAndSize(base, 20);
+                // 获取每一页的高度、宽度
+                pageSizeWithRotation = reader.getPageSizeWithRotation(i);
+                float pageHeight = pageSizeWithRotation.getHeight();
+                float pageWidth = pageSizeWithRotation.getWidth();
+
+                // 根据纸张大小多次添加， 水印文字成30度角倾斜
+                for (int height = -5 + textH; height < pageHeight; height = height + YMOVE) {
+                    for (int width = -5 + textW; width < pageWidth + textW; width = width + XMOVE) {
+                        content.showTextAligned(Element.ALIGN_LEFT, markStr, width - textW, height - textH, 30);
+                    }
                 }
+                content.endText();
             }
-            content.endText();
         }
         try {
             stamper.close();

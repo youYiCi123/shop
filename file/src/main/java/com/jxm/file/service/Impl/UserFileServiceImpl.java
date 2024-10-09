@@ -11,15 +11,9 @@ import com.jxm.file.bo.FilePositionBO;
 import com.jxm.file.constant.CommonConstant;
 import com.jxm.file.constant.FileConstant;
 import com.jxm.file.dto.*;
-import com.jxm.file.entity.FileOperateLog;
-import com.jxm.file.entity.RPanFile;
-import com.jxm.file.entity.RPanUserFile;
-import com.jxm.file.entity.TeamUser;
+import com.jxm.file.entity.*;
 import com.jxm.file.feign.UpstageService;
-import com.jxm.file.mapper.FileOperateLogMapper;
-import com.jxm.file.mapper.RPanFileMapper;
-import com.jxm.file.mapper.RPanUserFileMapper;
-import com.jxm.file.mapper.TeamUserMapper;
+import com.jxm.file.mapper.*;
 import com.jxm.file.service.IFileService;
 import com.jxm.file.service.IUserFileService;
 import com.jxm.file.service.IUserSearchHistoryService;
@@ -97,6 +91,9 @@ public class UserFileServiceImpl implements IUserFileService {
 
     @Autowired
     private TeamUserMapper teamUserMapper;
+
+    @Autowired
+    private FileUserAuthMapper fileUserAuthMapper;
 
     @Override
     public List<RPanUserFileDisplayVO> searchForName(Long pageType, String keyword, Long depId) {
@@ -349,7 +346,7 @@ public class UserFileServiceImpl implements IUserFileService {
      * 文件下载
      */
     @Override
-    public void download(Long fileId, String waterMark, HttpServletResponse response) {
+    public void download(Long fileId, String waterMark,List<Integer> pagesToWatermark,HttpServletResponse response) {
         try {
             getRPanUserFileByFileIdAndUserId(fileId);
         } catch (Exception e) {
@@ -363,7 +360,7 @@ public class UserFileServiceImpl implements IUserFileService {
             Asserts.fail("请输入水印内容");
         }
         RPanFile rPanFile = iFileService.getFileDetail(rPanUserFile.getRealFileId());
-        doDownload(rPanFile.getRealPath(), response, rPanUserFile.getFilename(), waterMark);
+        doDownload(rPanFile.getRealPath(), response, rPanUserFile.getFilename(), waterMark,pagesToWatermark);
     }
 
     @Override
@@ -749,12 +746,26 @@ public class UserFileServiceImpl implements IUserFileService {
     }
 
     @Override
+    public FileUserAuth getUserFileAuth(Long fileId, Long userId) {
+        return  fileUserAuthMapper.select(fileId,userId);
+    }
+
+    @Override
     public int editNotice(TeamUser teamUser) {
         TeamUser teamUser1 = teamUserMapper.select(teamUser.getTeamId());
         if(teamUser1==null){
             return  teamUserMapper.insert(teamUser);
         }else{
             return teamUserMapper.update(teamUser);
+        }
+    }
+
+    @Override
+    public int doUserFileAuth(FileUserAuth userFileAuth) {
+        if(userFileAuth.getId().equals(0)){
+            return  fileUserAuthMapper.insert(userFileAuth);
+        }else{
+            return fileUserAuthMapper.update(userFileAuth);
         }
     }
 
@@ -900,14 +911,14 @@ public class UserFileServiceImpl implements IUserFileService {
     /**
      * 执行下载文件
      */
-    private void doDownload(String filePath, HttpServletResponse response, String filename, String waterMark) {
+    private void doDownload(String filePath, HttpServletResponse response, String filename, String waterMark,List<Integer> pagesToWatermark) {
         addCommonResponseHeader(response, FileConstant.APPLICATION_OCTET_STREAM_STR);
         try {
             response.setHeader(FileConstant.CONTENT_DISPOSITION_STR, FileConstant.CONTENT_DISPOSITION_VALUE_PREFIX_STR + new String(filename.getBytes(FileConstant.GB2312_STR), FileConstant.IOS_8859_1_STR));
         } catch (UnsupportedEncodingException e) {
             log.error("下载文件失败", e);
         }
-        read2OutputStream(filePath, waterMark, response);
+        read2OutputStream(filePath, waterMark,pagesToWatermark,0,response);
     }
 
     /**
@@ -943,7 +954,7 @@ public class UserFileServiceImpl implements IUserFileService {
      */
     public void preview(String filePath, String userName, HttpServletResponse response, String filePreviewContentType) {
         addCommonResponseHeader(response, filePreviewContentType);
-        read2OutputStream(filePath, userName, response);
+        read2OutputStream(filePath, userName,Arrays.asList(),1, response);
     }
 
     /**
@@ -964,9 +975,9 @@ public class UserFileServiceImpl implements IUserFileService {
     /**
      * 文件写入响应实体
      */
-    private void read2OutputStream(String filePath, String waterMark, HttpServletResponse response) {
+    private void read2OutputStream(String filePath, String waterMark,List<Integer> pagesToWatermark,Integer readFlag, HttpServletResponse response) {
         try {
-            storageManager.read2OutputStream(filePath, waterMark, response.getOutputStream());
+            storageManager.read2OutputStream(filePath, waterMark, pagesToWatermark,readFlag,response.getOutputStream());
         } catch (Exception e) {
             log.error("文件写入响应实体失败", e);
         }

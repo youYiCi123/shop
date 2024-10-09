@@ -3,12 +3,8 @@ package com.jxm.file.controller;
 import cn.hutool.json.JSONUtil;
 import com.jxm.common.api.CommonPage;
 import com.jxm.common.api.CommonResult;
-import com.jxm.common.service.RedisService;
 import com.jxm.file.dto.*;
-import com.jxm.file.entity.FileOperateLog;
-import com.jxm.file.entity.Message;
-import com.jxm.file.entity.RPanUserFile;
-import com.jxm.file.entity.TeamUser;
+import com.jxm.file.entity.*;
 import com.jxm.file.feign.UpstageService;
 import com.jxm.file.mapper.RPanUserFileMapper;
 import com.jxm.file.po.*;
@@ -206,8 +202,15 @@ public class FileController {
     @PostMapping("/file/saveSet")
     public CommonResult saveSet(@Validated @RequestBody BasicSetFilePO basicSetFilePO) throws ParseException {
         Long loginUserId = getLoginUserId();
-        iUserFileService.saveSet(basicSetFilePO.getFileId(), basicSetFilePO.getIsWaterMater(), loginUserId);
-        return CommonResult.success();
+        //文件创建人本人、文件创建人的部门长,才可以设置文件
+        Long createUserId = iUserFileService.getUserByFileId(basicSetFilePO.getFileId());
+        Long depHeadId = upstageService.selectDepHeadIdByUser(createUserId).getData();
+        if (loginUserId.equals(createUserId) || loginUserId.equals(depHeadId)) {
+            iUserFileService.saveSet(basicSetFilePO.getFileId(), basicSetFilePO.getIsWaterMater(), loginUserId);
+            return CommonResult.success();
+        }else{
+            return CommonResult.failed("创建人本人或其部门长,才可设置该文件");
+        }
     }
 
 
@@ -451,8 +454,10 @@ public class FileController {
     public void download(@NotNull(message = "请选择要下载的文件") @RequestParam(value = "fileId", required = false) Long fileId,
                          @RequestParam(value = "userId", required = false) Long userId,
                          @RequestParam(value = "waterMark", required = false) String waterMark,
+                         @RequestParam(value = "pagesToWatermark", required = false) Integer[] pagesToWatermark,
                          HttpServletResponse response) {
-        iUserFileService.download(fileId, waterMark, response);
+        List<Integer> WMPages=pagesToWatermark.length>0?Arrays.asList(pagesToWatermark):Arrays.asList();
+        iUserFileService.download(fileId,waterMark,WMPages,response);
         String fileName = iUserFileService.getFileNameById(fileId);
         iUserFileService.downloadLog(fileId,fileName,userId, waterMark);
     }
@@ -505,18 +510,24 @@ public class FileController {
     @RequestMapping(value = "file/required/updateTeamUser", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult updateTeamUser(@RequestParam(defaultValue = "") String[] teamUsers,@RequestParam("folderId") Long folderId) throws ParseException {
-        //小组创建人本人才可以添加修改人员信息
-        Long createUserId = iUserFileService.getUserByFileId(folderId);
+
+
         String jsonStr = JSONUtil.toJsonStr(upstageService.getCurrentAdmin().getData());
         UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
-        if (userDepDto.getUserId().equals(createUserId)) {
+        FileUserAuth userFileAuth = iUserFileService.getUserFileAuth(folderId, userDepDto.getUserId());
+        if(userFileAuth!=null&&userFileAuth.getFileManageFlag().equals(0)){
+            return CommonResult.failed("你没有修改人员信息的权限，请联系管理员");
+        }
+        //小组创建人本人才可以添加修改人员信息
+        Long createUserId = iUserFileService.getUserByFileId(folderId);
+        if (userFileAuth==null&&userDepDto.getUserId().equals(createUserId)||userFileAuth.getFileManageFlag().equals(1)) {
             int count = iUserFileService.updateTeamUser(teamUsers, folderId);
             if(count>0){
                 return CommonResult.success();
             }
             return CommonResult.failed();
         } else {
-            return CommonResult.failed("小组创建人才可修改人员信息");
+            return CommonResult.failed("小组创建人或管理员才可修改人员信息");
         }
     }
 
@@ -526,6 +537,12 @@ public class FileController {
     )
     @PostMapping("file/transfer")
     public CommonResult transfer(@Validated @RequestBody TransferPO transferPO) throws ParseException {
+        String jsonStr = JSONUtil.toJsonStr(getLoginUser());
+        UserDepDto userDepDto = JSONUtil.toBean(jsonStr, UserDepDto.class);
+        FileUserAuth userFileAuth = iUserFileService.getUserFileAuth(transferPO.getTopFileId(), userDepDto.getUserId());
+        if(userFileAuth!=null&&userFileAuth.getMoveFileFlag().equals(0)){
+            return CommonResult.failed("你没有移动文件的权限，请联系管理员");
+        }
         iUserFileService.transfer(transferPO.getFileIds(), transferPO.getTargetParentId(), getLoginDepId());
         return CommonResult.success();
     }
@@ -576,6 +593,32 @@ public class FileController {
         return CommonResult.success(iUserFileService.editNotice(teamUser));
     }
 
+
+    @ApiOperation(
+            value = "提供获取团队人员权限的功能",
+            notes = "该接口获取团队人员权限的功能"
+    )
+    @GetMapping("file/required/getUserFileAuth")
+    public CommonResult getUserFileAuth(Long fileId,Long userId) {
+        return CommonResult.success(iUserFileService.getUserFileAuth(fileId,userId));
+    }
+
+    @ApiOperation(
+            value = "提供编辑团队人员权限的功能",
+            notes = "该接口编辑团队人员权限的功能"
+    )
+    @PostMapping("file/required/doUserFileAuth")
+    public CommonResult doUserFileAuth(@RequestBody FileUserAuth userFileAuth) throws ParseException {
+        Long userId = getLoginUserId();
+        FileUserAuth userFileAuth1 = iUserFileService.getUserFileAuth(userFileAuth.getFileId(), userId);
+            Long createUserId = iUserFileService.getUserByFileId(userFileAuth.getFileId());
+            Long depHeadId = upstageService.selectDepHeadIdByUser(createUserId).getData();
+            if ((userFileAuth1==null&&(userId.equals(createUserId) || userId.equals(depHeadId)))||(userFileAuth1!=null&&userFileAuth1.getFileManageFlag().equals(1))) {
+                return CommonResult.success(iUserFileService.doUserFileAuth(userFileAuth));
+            }else {
+                return CommonResult.failed("管理员或者创建人本人及其部门长,才可进行权限设置");
+            }
+    }
 
     /**
      * 通过文件名搜索文件列表
@@ -681,5 +724,4 @@ public class FileController {
         //String fileName = iUserFileService.getFileNameById(fileId);
        // iUserFileService.downloadLog(fileId,fileName,userId, "");   //记录迁移文件操作
     }
-
 }
